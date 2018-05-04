@@ -2,22 +2,32 @@ package mahjong;
 
 public class Tuile 
 {
-    private String typeTuile;
+    private final FamilleDeTuile typeTuile;
+    private final int id;
     private int coordonneeX, coordonneeY;
 
-    public Tuile(String typeTuile) {
+    public Tuile(FamilleDeTuile typeTuile, int id) {
         this.typeTuile = typeTuile;
+        this.id = id;
     }
 
-    public String getTypeTuile() {
+    public FamilleDeTuile getTypeTuile() {
         return typeTuile;
+    }
+    
+    public int getID()
+    {
+        return id;
     }
 
     @Override
     public boolean equals(Object obj) 
     {
         if(obj instanceof Tuile)
-            return ((Tuile)obj).typeTuile.equals(typeTuile);
+        {
+            Tuile tuile = ((Tuile)obj);
+            return tuile.typeTuile == this.typeTuile && tuile.id == this.id;
+        }
         return false;
     }
 
@@ -32,7 +42,7 @@ public class Tuile
 
     @Override
     public String toString() {
-        return typeTuile;
+        return typeTuile.toString().substring(0, 1)+id;
     }
     
     

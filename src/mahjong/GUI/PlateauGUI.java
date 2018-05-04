@@ -57,13 +57,13 @@ public class PlateauGUI extends JPanel implements MouseListener {
                     if (this.plateau.getTuilesSelectionnee() == tuile) {
                         BufferedImageOp op = new RescaleOp(new float[]{0.8f, 1.2f, 0.8f, 1.0f}, new float[4], null);
                         g.drawImage(
-                                op.filter(this.images[FamilleDeTuile.getIDUniqueTuile(tuile.getTypeTuile())], null),
+                                op.filter(this.images[tuile.getID()], null),
                                 indexColonne * LARGEUR_TUILE,
                                 indexLigne * HAUTEUR_TUILE,
                                 LARGEUR_TUILE, HAUTEUR_TUILE, this);
                     } else {
                         g.drawImage(
-                                this.images[FamilleDeTuile.getIDUniqueTuile(tuile.getTypeTuile())],
+                                this.images[tuile.getID()],
                                 indexColonne * LARGEUR_TUILE,
                                 indexLigne * HAUTEUR_TUILE,
                                 LARGEUR_TUILE, HAUTEUR_TUILE, this);

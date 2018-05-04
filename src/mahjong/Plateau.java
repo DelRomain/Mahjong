@@ -2,6 +2,7 @@ package mahjong;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Random;
 
 public class Plateau {
@@ -12,6 +13,7 @@ public class Plateau {
     private TypePlateau typeDePlateau;
     private Tuile tuilesSelectionnee;
     private final ArrayList<Coup> coups;
+    private final int[][] EMPLACEMENT_AJOUTABLE = new int[][]{{0, -1}, {-1, 0}, {0, 1}, {1, 0}};
 
     public Plateau() {
         tuilesSelectionnee = null;
@@ -26,23 +28,85 @@ public class Plateau {
      * @param typeDePlateau : gestion de la "physique" du terrain
      */
     public void genererNouveauPlateau(long seed, TypePlateau typeDePlateau) {
-        ArrayList<Tuile> tuiles = new ArrayList<>();
-        for (FamilleDeTuile famille : FamilleDeTuile.values()) {
-            for (int j = 0; j < famille.getNombreTuileDifferente(); j++) {
-                for (int i = 0; i < famille.getNombreExemplaireTuile(); i++) {
-                    tuiles.add(new Tuile(famille.toString().substring(0, 1) + (1 + j)));
+        Random random = new Random(seed);
+        ArrayList<Tuile[]> listeDePaires = genererTableDePaireDeTuile();
+        Collections.shuffle(listeDePaires, random);
+
+        ArrayList<int[]> emplacementPossible = new ArrayList<>();
+        emplacementPossible.add(new int[]{6, 6});
+        plateau = new Tuile[NOMBRE_LIGNE][NOMBRE_COLONNE];
+
+        System.out.println(listeDePaires.size());
+        while (listeDePaires.size() > 0) {
+            Tuile[] paires = listeDePaires.remove(0);
+            System.out.println(paires[0] + " " + paires[1]);
+
+            System.out.println("Nombre d'emplacement possible : " + emplacementPossible.size());
+            ajouterTuile(emplacementPossible,
+                    (int) (random.nextDouble() * emplacementPossible.size()),
+                    paires[0]);
+
+            System.out.println("Nombre d'emplacement possible : " + emplacementPossible.size());
+            ajouterTuile(emplacementPossible,
+                    (int) (random.nextDouble() * emplacementPossible.size()),
+                    paires[1]);
+            afficherTerrainSurConsole();
+        }
+        this.typeDePlateau = typeDePlateau;
+    }
+
+    public void ajouterTuile(ArrayList<int[]> emplacementPossible, int index, Tuile tuile) {
+        int ligneTuile = emplacementPossible.get(index)[0];
+        int colonneTuile = emplacementPossible.get(index)[1];
+
+        plateau[ligneTuile][colonneTuile] = tuile;
+        plateau[ligneTuile][colonneTuile].setCoordonnees(ligneTuile, colonneTuile);
+
+        emplacementPossible.remove(index);
+        for (int[] emplacement : EMPLACEMENT_AJOUTABLE) {
+            if (ligneTuile + emplacement[0] >= 0 && ligneTuile + emplacement[0] < NOMBRE_LIGNE) {
+                if (colonneTuile + emplacement[1] >= 0 && colonneTuile + emplacement[1] < NOMBRE_COLONNE) {
+                    int[] nouvelleEmplacement = new int[]{ligneTuile + emplacement[0], colonneTuile + emplacement[1]};
+                    if (emplacementPossible(emplacementPossible, nouvelleEmplacement)) {
+                        emplacementPossible.add(nouvelleEmplacement);
+                    }
                 }
             }
         }
-        Collections.shuffle(tuiles, new Random(seed));
-        plateau = new Tuile[NOMBRE_LIGNE][NOMBRE_COLONNE];
-        for (int indexLigne = 0; indexLigne < 12; indexLigne++) {
-            for (int indexColonne = 0; indexColonne < 12; indexColonne++) {
-                plateau[indexLigne][indexColonne] = tuiles.remove(0);
-                plateau[indexLigne][indexColonne].setCoordonnees(indexLigne, indexColonne);
+    }
+
+    public boolean emplacementPossible(ArrayList<int[]> emplacementPossible, int[] nouvelleEmplacement) {
+        boolean plateauLibreEmplacement = plateau[nouvelleEmplacement[0]][nouvelleEmplacement[1]] == null;
+        int i = 0;
+        while (plateauLibreEmplacement && i < emplacementPossible.size()) {
+            plateauLibreEmplacement
+                    = !(emplacementPossible.get(i)[0] == nouvelleEmplacement[0]
+                    && emplacementPossible.get(i)[1] == nouvelleEmplacement[1]);
+            i++;
+        }
+        return plateauLibreEmplacement;
+    }
+
+    /**
+     * Genere une liste de tuilles apairées afin d'etre placer sur le plateau
+     * @return liste de tuile apairés
+     */
+    public ArrayList<Tuile[]> genererTableDePaireDeTuile() {
+        ArrayList<Tuile[]> listeDePaire = new ArrayList<>();
+        for (FamilleDeTuile famille : FamilleDeTuile.values()) {
+            if (famille.getNombrePairesTuile() != 0) {  
+                //Tuile != de fleur ou saison
+                for (int idTuile = 0; idTuile < famille.getNombreTuileDifferente(); idTuile++) {
+                    for (int i = 0; i < famille.getNombrePairesTuile(); i++) {
+                        listeDePaire.add(new Tuile[]{new Tuile(famille, idTuile), new Tuile(famille, idTuile)});
+                    }
+                }
+            } else {
+                listeDePaire.add(new Tuile[]{new Tuile(famille, 0), new Tuile(famille, 1)});
+                listeDePaire.add(new Tuile[]{new Tuile(famille, 2), new Tuile(famille, 3)});
             }
         }
-        this.typeDePlateau = typeDePlateau;
+        return listeDePaire;
     }
 
     /**
@@ -60,7 +124,7 @@ public class Plateau {
             Tuile tuile = getTuile(indexLigne, indexColonne);
             if (tuile != null) {
                 if (verifierCoupJouable()) {
-                    Coup coup = new Coup(new Tuile[]{tuilesSelectionnee,tuile});
+                    Coup coup = new Coup(new Tuile[]{tuilesSelectionnee, tuile});
                     //On retire les references des objets de la selection et du plateau
                     tuilesSelectionnee = null;
                     plateau[coup.getTuiles()[0].getCoordonnees()[0]][coup.getTuiles()[0].getCoordonnees()[1]] = null;
@@ -111,7 +175,7 @@ public class Plateau {
                 if (plateau[indexLigne][indexColonne] != null) {
                     System.out.print(plateau[indexLigne][indexColonne].toString() + " ");
                 } else {
-                    System.out.print("  ");
+                    System.out.print("   ");
                 }
             }
             System.out.println();
