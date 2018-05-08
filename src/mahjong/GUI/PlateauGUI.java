@@ -1,8 +1,10 @@
 package mahjong.GUI;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.RescaleOp;
@@ -17,7 +19,7 @@ import mahjong.FamilleDeTuile;
 import mahjong.Plateau;
 import mahjong.Tuile;
 
-public class PlateauGUI extends JPanel implements MouseListener {
+public class PlateauGUI extends JPanel implements MouseListener, MouseMotionListener {
 
     private BufferedImage[] images;
     private final int LARGEUR_TUILE;
@@ -43,6 +45,7 @@ public class PlateauGUI extends JPanel implements MouseListener {
         this.HAUTEUR_TUILE = 46;
         this.plateau = plateau;
         this.addMouseListener(this);
+        this.addMouseMotionListener(this);
     }
 
     @Override
@@ -72,6 +75,7 @@ public class PlateauGUI extends JPanel implements MouseListener {
             }
 
         }
+        debugPathFinder(g);
     }
 
     @Override
@@ -105,5 +109,26 @@ public class PlateauGUI extends JPanel implements MouseListener {
 
     @Override
     public void mouseExited(MouseEvent e) {
+        
+    }
+    
+    public void debugPathFinder(Graphics g)
+    {
+        if(this.getMousePosition()!= null && this.plateau.getTuilesSelectionnee() != null)
+        {
+            int coordLigne = this.plateau.getTuilesSelectionnee().getCoordonnees()[0]*HAUTEUR_TUILE+HAUTEUR_TUILE/2;
+            int coordCol = this.plateau.getTuilesSelectionnee().getCoordonnees()[1]*LARGEUR_TUILE+LARGEUR_TUILE/2;        
+            g.setColor(Color.red);
+            g.drawLine(coordCol, coordLigne, this.getMousePosition().x, this.getMousePosition().y);
+        }
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        this.repaint();
     }
 }

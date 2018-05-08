@@ -2,7 +2,6 @@ package mahjong;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Random;
 
 public class Plateau {
@@ -33,29 +32,25 @@ public class Plateau {
         Collections.shuffle(listeDePaires, random);
 
         ArrayList<int[]> emplacementPossible = new ArrayList<>();
-        emplacementPossible.add(new int[]{6, 6});
+        emplacementPossible.add(new int[]{
+            (int) (random.nextDouble() * NOMBRE_LIGNE),
+            (int) (random.nextDouble() * NOMBRE_COLONNE)});
         plateau = new Tuile[NOMBRE_LIGNE][NOMBRE_COLONNE];
 
-        System.out.println(listeDePaires.size());
         while (listeDePaires.size() > 0) {
             Tuile[] paires = listeDePaires.remove(0);
-            System.out.println(paires[0] + " " + paires[1]);
-
-            System.out.println("Nombre d'emplacement possible : " + emplacementPossible.size());
-            ajouterTuile(emplacementPossible,
+            ajouterTuile(emplacementPossible, null,
                     (int) (random.nextDouble() * emplacementPossible.size()),
                     paires[0]);
 
-            System.out.println("Nombre d'emplacement possible : " + emplacementPossible.size());
-            ajouterTuile(emplacementPossible,
+            ajouterTuile(emplacementPossible, null,
                     (int) (random.nextDouble() * emplacementPossible.size()),
                     paires[1]);
-            afficherTerrainSurConsole();
         }
         this.typeDePlateau = typeDePlateau;
     }
 
-    public void ajouterTuile(ArrayList<int[]> emplacementPossible, int index, Tuile tuile) {
+    public void ajouterTuile(ArrayList<int[]> emplacementPossible, ArrayList<int[]> listeRestrictive, int index, Tuile tuile) {
         int ligneTuile = emplacementPossible.get(index)[0];
         int colonneTuile = emplacementPossible.get(index)[1];
 
@@ -68,7 +63,13 @@ public class Plateau {
                 if (colonneTuile + emplacement[1] >= 0 && colonneTuile + emplacement[1] < NOMBRE_COLONNE) {
                     int[] nouvelleEmplacement = new int[]{ligneTuile + emplacement[0], colonneTuile + emplacement[1]};
                     if (emplacementPossible(emplacementPossible, nouvelleEmplacement)) {
-                        emplacementPossible.add(nouvelleEmplacement);
+                        if (listeRestrictive == null) {
+                            emplacementPossible.add(nouvelleEmplacement);
+                        } else {
+                            if (emplacementPossible(listeRestrictive, nouvelleEmplacement)) {
+                                emplacementPossible.add(nouvelleEmplacement);
+                            }
+                        }
                     }
                 }
             }
@@ -89,12 +90,13 @@ public class Plateau {
 
     /**
      * Genere une liste de tuilles apairées afin d'etre placer sur le plateau
+     *
      * @return liste de tuile apairés
      */
     public ArrayList<Tuile[]> genererTableDePaireDeTuile() {
         ArrayList<Tuile[]> listeDePaire = new ArrayList<>();
         for (FamilleDeTuile famille : FamilleDeTuile.values()) {
-            if (famille.getNombrePairesTuile() != 0) {  
+            if (famille.getNombrePairesTuile() != 0) {
                 //Tuile != de fleur ou saison
                 for (int idTuile = 0; idTuile < famille.getNombreTuileDifferente(); idTuile++) {
                     for (int i = 0; i < famille.getNombrePairesTuile(); i++) {
@@ -181,5 +183,74 @@ public class Plateau {
             System.out.println();
         }
 
+    }
+
+    public void melangerPlateau() {     //A tester
+        ArrayList<Tuile[]> listeDePaires = new ArrayList<>();
+        ArrayList<int[]> emplacementLibre = new ArrayList<>();
+        int i = 0;
+        int nombreTuileEnJeu = 144 - 2 * coups.size();
+        while (nombreTuileEnJeu > 0) {
+            if (plateau[i % NOMBRE_COLONNE][i / NOMBRE_COLONNE] != null) {
+                int[] coordonneeTuileAppaire = rechercherTuile(i, plateau[i % NOMBRE_COLONNE][i / NOMBRE_COLONNE]);
+                listeDePaires.add(new Tuile[]{
+                    plateau[i % NOMBRE_COLONNE][i / NOMBRE_COLONNE],
+                    plateau[coordonneeTuileAppaire[0]][coordonneeTuileAppaire[1]]
+                });
+                plateau[i % NOMBRE_COLONNE][i / NOMBRE_COLONNE] = null;
+                plateau[coordonneeTuileAppaire[0]][coordonneeTuileAppaire[1]] = null;
+
+                nombreTuileEnJeu -= 2;
+
+                emplacementLibre.add(new int[]{i % NOMBRE_COLONNE, i / NOMBRE_COLONNE});
+                emplacementLibre.add(coordonneeTuileAppaire);
+            }
+            i++;
+        }
+
+        //!\ Ne prend pas en compte le path finding, revoir en le rajoutant pour crée une solution jouable
+        Random random = new Random(0);
+        Collections.shuffle(listeDePaires, random);
+        plateau = new Tuile[NOMBRE_LIGNE][NOMBRE_COLONNE];
+        ArrayList<int[]> emplacementPossible = new ArrayList<>();
+        regenererEmplacementPossible(random,emplacementLibre,emplacementPossible);
+
+        while (listeDePaires.size() > 0) {
+            Tuile[] paires = listeDePaires.remove(0);
+            ajouterTuile(emplacementPossible, emplacementLibre,
+                    (int) (random.nextDouble() * emplacementPossible.size()),
+                    paires[0]);
+            
+            if(emplacementPossible.isEmpty())
+                regenererEmplacementPossible(random,emplacementLibre,emplacementPossible);
+            
+            
+            ajouterTuile(emplacementPossible, emplacementLibre,
+                    (int) (random.nextDouble() * emplacementPossible.size()),
+                    paires[1]);
+             
+            if(emplacementPossible.isEmpty())
+                regenererEmplacementPossible(random,emplacementLibre,emplacementPossible);
+        }
+        this.typeDePlateau = typeDePlateau;
+    }
+
+    private void regenererEmplacementPossible(Random random, ArrayList<int[]> emplacementLibre, ArrayList<int[]> emplacementPossible)
+    {
+        emplacementPossible.add(emplacementLibre.remove((int) random.nextDouble() * emplacementPossible.size()));
+    }
+    
+    public int[] rechercherTuile(int indexDeBase, Tuile tuile) {
+        int[] solution = null;
+        final int indexMax = NOMBRE_LIGNE * NOMBRE_COLONNE;
+        int i = indexDeBase;
+        boolean enRecherche = true;
+        while (i < indexMax && enRecherche) {
+            if (tuile.equals(plateau[i % NOMBRE_COLONNE][i / NOMBRE_COLONNE])) {
+                enRecherche = false;
+                solution = new int[]{i % NOMBRE_COLONNE, i / NOMBRE_COLONNE};
+            }
+        }
+        return solution;
     }
 }
