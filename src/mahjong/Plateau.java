@@ -12,7 +12,6 @@ public class Plateau {
     private TypePlateau typeDePlateau;
     private Tuile tuilesSelectionnee;
     private final ArrayList<Coup> coups;
-    private final int[][] EMPLACEMENT_AJOUTABLE = new int[][]{{0, -1}, {-1, 0}, {0, 1}, {1, 0}};
 
     public Plateau() {
         tuilesSelectionnee = null;
@@ -58,10 +57,10 @@ public class Plateau {
         plateau[ligneTuile][colonneTuile].setCoordonnees(ligneTuile, colonneTuile);
 
         emplacementPossible.remove(index);
-        for (int[] emplacement : EMPLACEMENT_AJOUTABLE) {
-            if (ligneTuile + emplacement[0] >= 0 && ligneTuile + emplacement[0] < NOMBRE_LIGNE) {
-                if (colonneTuile + emplacement[1] >= 0 && colonneTuile + emplacement[1] < NOMBRE_COLONNE) {
-                    int[] nouvelleEmplacement = new int[]{ligneTuile + emplacement[0], colonneTuile + emplacement[1]};
+        for (CaseAdjacente emplacementRelatif : CaseAdjacente.values()) {
+            if (ligneTuile + emplacementRelatif.getX() >= 0 && ligneTuile + emplacementRelatif.getX() < NOMBRE_LIGNE) {
+                if (colonneTuile + emplacementRelatif.getY() >= 0 && colonneTuile + emplacementRelatif.getY() < NOMBRE_COLONNE) {
+                    int[] nouvelleEmplacement = new int[]{ligneTuile + emplacementRelatif.getX(), colonneTuile + emplacementRelatif.getY()};
                     if (emplacementPossible(emplacementPossible, nouvelleEmplacement)) {
                         if (listeRestrictive == null) {
                             emplacementPossible.add(nouvelleEmplacement);
@@ -125,8 +124,9 @@ public class Plateau {
         } else {
             Tuile tuile = getTuile(indexLigne, indexColonne);
             if (tuile != null) {
-                if (verifierCoupJouable()) {
-                    Coup coup = new Coup(new Tuile[]{tuilesSelectionnee, tuile});
+                Coup coup = new Coup(new Tuile[]{tuilesSelectionnee, tuile});
+                if (verifierCoupJouable(coup)) {
+                    
                     //On retire les references des objets de la selection et du plateau
                     tuilesSelectionnee = null;
                     plateau[coup.getTuiles()[0].getCoordonnees()[0]][coup.getTuiles()[0].getCoordonnees()[1]] = null;
@@ -145,9 +145,13 @@ public class Plateau {
      *
      * @return vrai si le coup est jouable, faux sinon
      */
-    public boolean verifierCoupJouable() {
-        //TODO verifier via le path finding (Antoine)
-        return true;
+    public boolean verifierCoupJouable(Coup coup) {
+        boolean coupValide = coup.isValid();
+        if(coupValide)
+        {
+            //verifier le pathFinding
+        }
+        return coupValide;
     }
 
     public boolean partieGagnee() {
@@ -232,7 +236,6 @@ public class Plateau {
             if(emplacementPossible.isEmpty())
                 regenererEmplacementPossible(random,emplacementLibre,emplacementPossible);
         }
-        this.typeDePlateau = typeDePlateau;
     }
 
     private void regenererEmplacementPossible(Random random, ArrayList<int[]> emplacementLibre, ArrayList<int[]> emplacementPossible)

@@ -11,4 +11,9 @@ public class Coup
     public Tuile[] getTuiles() {
         return tuiles;
     }
+
+    boolean isValid() 
+    {
+       return tuiles[0].equals(tuiles[1]);
+    }
 }

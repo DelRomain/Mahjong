@@ -45,5 +45,10 @@ public class Tuile {
     public String toString() {
         return typeTuile.toString().substring(0, 1) + id;
     }
+    
+    public int getImageID()
+    {
+        return FamilleDeTuile.indexBaseFammile[typeTuile.ordinal()]+id;
+    }
 
 }

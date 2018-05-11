@@ -5,6 +5,7 @@ public enum FamilleDeTuile {
 
     private final int nombreTuileDifferente;
     private final int nombrePairesTuile;
+    public static final int[] indexBaseFammile = new int[]{0,9,18,27,31,34,38};
 
     private FamilleDeTuile(int nombreTuileDifferente, int nombrePairesTuile) {
         this.nombreTuileDifferente = nombreTuileDifferente;
