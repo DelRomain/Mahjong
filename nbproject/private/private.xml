@@ -3,11 +3,16 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/D:/Programme/Java/Mahjong/src/mahjong/Mahjong.java</file>
             <file>file:/D:/Programme/Java/Mahjong/src/mahjong/Plateau.java</file>
             <file>file:/D:/Programme/Java/Mahjong/src/mahjong/CaseAdjacente.java</file>
+            <file>file:/D:/Programme/Java/Mahjong/src/mahjong/partie/Chrono.java</file>
+            <file>file:/D:/Programme/Java/Mahjong/src/mahjong/GUI/InterfaceDeJeu.java</file>
             <file>file:/D:/Programme/Java/Mahjong/src/mahjong/GUI/PlateauGUI.java</file>
             <file>file:/D:/Programme/Java/Mahjong/src/mahjong/FamilleDeTuile.java</file>
             <file>file:/D:/Programme/Java/Mahjong/src/mahjong/Tuile.java</file>
+            <file>file:/D:/Programme/Java/Mahjong/src/mahjong/partie/Partie.java</file>
+            <file>file:/D:/Programme/Java/Mahjong/src/mahjong/GUI/Fenetre.java</file>
             <file>file:/D:/Programme/Java/Mahjong/src/mahjong/Coup.java</file>
         </group>
     </open-files>
