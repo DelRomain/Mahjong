@@ -7,7 +7,7 @@ import mahjong.GUI.InterfaceDeJeu;
 
 public class Chrono extends TimerTask{
 
-    private InterfaceDeJeu interfaceDeJeu;
+    private final InterfaceDeJeu interfaceDeJeu;
     private int temp;
     
     public Chrono(InterfaceDeJeu interfaceDeJeu) {

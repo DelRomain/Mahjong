@@ -119,6 +119,7 @@ public class Plateau {
     public void jouer(int indexLigne, int indexColonne) {
         if (tuilesSelectionnee == null) {
             tuilesSelectionnee = getTuile(indexLigne, indexColonne);
+            System.out.println(tuilesSelectionnee);
         } else if (tuilesSelectionnee == plateau[indexLigne][indexColonne]) {
             tuilesSelectionnee = null;
         } else {

@@ -56,23 +56,23 @@ public class PlateauGUI extends JPanel implements MouseListener, MouseMotionList
         super.paintComponent(g);
         if (plateau != null) {
             Tuile tuile;
-            for (int indexLigne = 1; indexLigne < 12; indexLigne++) {
-                for (int indexColonne = 1; indexColonne < 12; indexColonne++) {
+            for (int indexLigne = 0; indexLigne < 12; indexLigne++) {
+                for (int indexColonne = 0; indexColonne < 12; indexColonne++) {
 
-                    tuile = this.plateau.getTuile(indexLigne-1, indexColonne-1);
+                    tuile = this.plateau.getTuile(indexLigne, indexColonne);
                     if (tuile != null) {
                         if (this.plateau.getTuilesSelectionnee() == tuile) {
                             BufferedImageOp op = new RescaleOp(new float[]{0.8f, 1.2f, 0.8f, 1.0f}, new float[4], null);
                             g.drawImage(
                                     op.filter(this.images[tuile.getImageID()], null),
-                                    indexColonne * LARGEUR_TUILE,
-                                    indexLigne * HAUTEUR_TUILE,
+                                    LARGEUR_TUILE + indexColonne * LARGEUR_TUILE,
+                                    HAUTEUR_TUILE + indexLigne * HAUTEUR_TUILE,
                                     LARGEUR_TUILE, HAUTEUR_TUILE, this);
                         } else {
                             g.drawImage(
                                     this.images[tuile.getImageID()],
-                                    indexColonne * LARGEUR_TUILE,
-                                    indexLigne * HAUTEUR_TUILE,
+                                    LARGEUR_TUILE + indexColonne * LARGEUR_TUILE,
+                                    HAUTEUR_TUILE + indexLigne * HAUTEUR_TUILE,
                                     LARGEUR_TUILE, HAUTEUR_TUILE, this);
                         }
                     }
