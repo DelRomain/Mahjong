@@ -12,7 +12,7 @@ public class Coup
         return tuiles;
     }
 
-    boolean isValid() 
+    public boolean isValid() 
     {
        return tuiles[0].equals(tuiles[1]);
     }

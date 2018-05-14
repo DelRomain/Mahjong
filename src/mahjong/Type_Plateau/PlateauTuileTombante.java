@@ -1,14 +1,16 @@
 package mahjong.Type_Plateau;
 
-import mahjong.Tuile;
+import mahjong.*;
 import mahjong.TypePlateau;
 
 public class PlateauTuileTombante extends TypePlateau
 {
     @Override
-    public void traitementTerrainPostCoup(Tuile[][] plateau) 
-    {
-        //TODO Antoine
+    public void traitementTerrainPostCoup(Tuile[][] plateau,Coup coup) {
+        if (Coup.isValid()){
+            
+        }
+        
     }
     
 }

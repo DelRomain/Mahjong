@@ -7,8 +7,10 @@ import java.util.Random;
 public class Plateau {
 
     private Tuile[][] plateau;
-    private final int NOMBRE_LIGNE = 12;
-    private final int NOMBRE_COLONNE = 12;
+    public static final int NOMBRE_LIGNE = 14;
+    public static final int NOMBRE_COLONNE = 14;
+    private final int NOMBRE_TUILE_PAR_LIGNE = 12;
+    private final int NOMBRE_TUILE_PAR_COLONNE = 12;
     private TypePlateau typeDePlateau;
     private Tuile tuilesSelectionnee;
     private final ArrayList<Coup> coups;
@@ -32,8 +34,8 @@ public class Plateau {
 
         ArrayList<int[]> emplacementPossible = new ArrayList<>();
         emplacementPossible.add(new int[]{
-            (int) (random.nextDouble() * NOMBRE_LIGNE),
-            (int) (random.nextDouble() * NOMBRE_COLONNE)});
+            1+(int) (random.nextDouble() * NOMBRE_TUILE_PAR_LIGNE),
+            1+(int) (random.nextDouble() * NOMBRE_TUILE_PAR_COLONNE)});
         plateau = new Tuile[NOMBRE_LIGNE][NOMBRE_COLONNE];
 
         while (listeDePaires.size() > 0) {
@@ -46,6 +48,7 @@ public class Plateau {
                     (int) (random.nextDouble() * emplacementPossible.size()),
                     paires[1]);
         }
+        System.out.println(listeDePaires.size());
         this.typeDePlateau = typeDePlateau;
     }
 
@@ -58,8 +61,8 @@ public class Plateau {
 
         emplacementPossible.remove(index);
         for (CaseAdjacente emplacementRelatif : CaseAdjacente.values()) {
-            if (ligneTuile + emplacementRelatif.getX() >= 0 && ligneTuile + emplacementRelatif.getX() < NOMBRE_LIGNE) {
-                if (colonneTuile + emplacementRelatif.getY() >= 0 && colonneTuile + emplacementRelatif.getY() < NOMBRE_COLONNE) {
+            if (ligneTuile + emplacementRelatif.getX() >= 1 && ligneTuile + emplacementRelatif.getX() < NOMBRE_LIGNE-1) {
+                if (colonneTuile + emplacementRelatif.getY() >= 1 && colonneTuile + emplacementRelatif.getY() < NOMBRE_COLONNE-1) {
                     int[] nouvelleEmplacement = new int[]{ligneTuile + emplacementRelatif.getX(), colonneTuile + emplacementRelatif.getY()};
                     if (emplacementPossible(emplacementPossible, nouvelleEmplacement)) {
                         if (listeRestrictive == null) {
@@ -117,6 +120,7 @@ public class Plateau {
      * @param indexColonne : index de la ligne sur une colonne
      */
     public void jouer(int indexLigne, int indexColonne) {
+        
         if (tuilesSelectionnee == null) {
             tuilesSelectionnee = getTuile(indexLigne, indexColonne);
         } else if (tuilesSelectionnee == plateau[indexLigne][indexColonne]) {
@@ -134,7 +138,7 @@ public class Plateau {
 
                     coups.add(coup);
 
-                    typeDePlateau.traitementTerrainPostCoup(plateau);
+                    typeDePlateau.traitementTerrainPostCoup(plateau,coup);
                 }
             }
         }
