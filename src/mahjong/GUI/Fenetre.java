@@ -17,7 +17,7 @@ public class Fenetre extends JFrame
         interfaceDeJeu = new InterfaceDeJeu();
         partie = new Partie(interfaceDeJeu);
         this.add(interfaceDeJeu);
-        this.setMinimumSize(new Dimension(PlateauGUI.LARGEUR_TUILE*18,PlateauGUI.HAUTEUR_TUILE*14));
+        this.setMinimumSize(new Dimension(PlateauGUI.LARGEUR_TUILE*15+150,PlateauGUI.HAUTEUR_TUILE*15));
         this.setVisible(true);
     }
     

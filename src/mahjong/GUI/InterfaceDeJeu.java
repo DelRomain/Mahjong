@@ -29,6 +29,7 @@ public class InterfaceDeJeu extends javax.swing.JPanel {
     public void changerBarTemps(int temp, Color color) {
         jProgressBarTempsRestant.setValue(temp);
         jProgressBarTempsRestant.setForeground(color);
+        jProgressBarTempsRestant.repaint();         //evite le saccadement
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -150,4 +151,8 @@ public class InterfaceDeJeu extends javax.swing.JPanel {
     private javax.swing.JLabel labelScoreJoueur;
     private mahjong.GUI.PlateauGUI plateauGUI;
     // End of variables declaration//GEN-END:variables
+
+    public void setTailleChronometre(int tempCoup) {
+        jProgressBarTempsRestant.setMaximum(tempCoup);
+    }
 }
