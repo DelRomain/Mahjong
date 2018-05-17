@@ -3,6 +3,7 @@ package mahjong.partie;
 import java.util.Timer;
 import mahjong.GUI.InterfaceDeJeu;
 import mahjong.Plateau;
+import mahjong.TypePlateau;
 import mahjong.Type_Plateau.PlateauTuileTombante;
 import mahjong.joueur.Joueur;
 
@@ -18,9 +19,12 @@ public class Partie
     private int score = 0;
     private int tempCoupChronoPause, tempTotalChronoPause;
     private int tempCoup;
-
+    
     public Partie(InterfaceDeJeu interfaceDeJeu) {
-        
+        this(interfaceDeJeu,(long)0, new PlateauTuileTombante());
+    }
+
+    public Partie(InterfaceDeJeu interfaceDeJeu, long seed, TypePlateau typePlateau) {
         timer = new Timer();
         joueur = new Joueur();
         plateau = new Plateau();
@@ -29,7 +33,7 @@ public class Partie
         this.interfaceDeJeu = interfaceDeJeu;
         
         chrono = new Chrono(this, tempCoup);
-        plateau.genererNouveauPlateau(0, new PlateauTuileTombante());
+        plateau.genererNouveauPlateau(seed, typePlateau);
         plateau.setPartie(this);
         interfaceDeJeu.setPartie(this);
         
@@ -78,6 +82,7 @@ public class Partie
     public void melangerPlateau() 
     {
         plateau.melangerPlateau();
+        interfaceDeJeu.repaint();
     }
     
     

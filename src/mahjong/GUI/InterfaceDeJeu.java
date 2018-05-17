@@ -16,10 +16,11 @@ import mahjong.partie.Partie;
 public class InterfaceDeJeu extends javax.swing.JPanel {
     
     private Partie partie;
-    
-    public InterfaceDeJeu() {
-        plateauGUI = new PlateauGUI();
+
+    public InterfaceDeJeu(Fenetre fenetre) 
+    {
         initComponents();
+        plateauGUI.setFenetre(fenetre);
     }
 
     public void setPartie(Partie partie) {

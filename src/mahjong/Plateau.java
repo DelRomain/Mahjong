@@ -30,14 +30,15 @@ public class Plateau {
      * @param typeDePlateau : gestion de la "physique" du terrain
      */
     public void genererNouveauPlateau(long seed, TypePlateau typeDePlateau) {
+        
         Random random = new Random(seed);
         ArrayList<Tuile[]> listeDePaires = genererTableDePaireDeTuile();
         Collections.shuffle(listeDePaires, random);
 
         ArrayList<int[]> emplacementPossible = new ArrayList<>();
         emplacementPossible.add(new int[]{
-            1+(int) (random.nextDouble() * NOMBRE_TUILE_PAR_LIGNE),
-            1+(int) (random.nextDouble() * NOMBRE_TUILE_PAR_COLONNE)});
+            1 + (int) (random.nextDouble() * NOMBRE_TUILE_PAR_LIGNE),
+            1 + (int) (random.nextDouble() * NOMBRE_TUILE_PAR_COLONNE)});
         plateau = new Tuile[NOMBRE_LIGNE][NOMBRE_COLONNE];
 
         while (listeDePaires.size() > 0) {
@@ -50,7 +51,6 @@ public class Plateau {
                     (int) (random.nextDouble() * emplacementPossible.size()),
                     paires[1]);
         }
-        System.out.println(listeDePaires.size());
         this.typeDePlateau = typeDePlateau;
     }
 
@@ -63,33 +63,50 @@ public class Plateau {
 
         emplacementPossible.remove(index);
         for (CaseAdjacente emplacementRelatif : CaseAdjacente.values()) {
-            if (ligneTuile + emplacementRelatif.getX() >= 1 && ligneTuile + emplacementRelatif.getX() < NOMBRE_LIGNE-1) {
-                if (colonneTuile + emplacementRelatif.getY() >= 1 && colonneTuile + emplacementRelatif.getY() < NOMBRE_COLONNE-1) {
-                    int[] nouvelleEmplacement = new int[]{ligneTuile + emplacementRelatif.getX(), colonneTuile + emplacementRelatif.getY()};
-                    if (emplacementPossible(emplacementPossible, nouvelleEmplacement)) {
-                        if (listeRestrictive == null) {
+            if (emplacementDansTerrain(ligneTuile + emplacementRelatif.getX(), colonneTuile + emplacementRelatif.getY())) {
+                
+                int[] nouvelleEmplacement = new int[]{
+                    ligneTuile + emplacementRelatif.getX(),
+                    colonneTuile + emplacementRelatif.getY()};
+                
+                if ( plateau[nouvelleEmplacement[0]][nouvelleEmplacement[1]] == null 
+                        && !emplacementInclus(emplacementPossible, nouvelleEmplacement)) {
+                    if (listeRestrictive == null) {
+                        emplacementPossible.add(nouvelleEmplacement);
+                    } else {
+                        if(emplacementInclus(listeRestrictive, nouvelleEmplacement)) {
                             emplacementPossible.add(nouvelleEmplacement);
-                        } else {
-                            if (emplacementPossible(listeRestrictive, nouvelleEmplacement)) {
-                                emplacementPossible.add(nouvelleEmplacement);
-                            }
                         }
                     }
                 }
             }
         }
     }
+    
+    /**
+     * @param ligne
+     * @param colonne
+     * @return Retourne vrai si les coordonnees sont incluse dans le terrain, faux sinon
+     */
+    private boolean emplacementDansTerrain(int ligne, int colonne) {
+        return ligne >= 1 && colonne >= 1 && ligne < NOMBRE_LIGNE - 1 && colonne < NOMBRE_COLONNE - 1;
+    }
 
-    public boolean emplacementPossible(ArrayList<int[]> emplacementPossible, int[] nouvelleEmplacement) {
-        boolean plateauLibreEmplacement = plateau[nouvelleEmplacement[0]][nouvelleEmplacement[1]] == null;
+    /**
+     * @param emplacementPossible
+     * @param nouvelleEmplacement
+     * @return renvoie vrai si {@param nouvelleEmplacement} est dans {@param emplacementPossible}, faux sinon
+     */
+    public boolean emplacementInclus(ArrayList<int[]> emplacementPossible, int[] nouvelleEmplacement) {
+        boolean emplacementTrouver = false;
         int i = 0;
-        while (plateauLibreEmplacement && i < emplacementPossible.size()) {
-            plateauLibreEmplacement
-                    = !(emplacementPossible.get(i)[0] == nouvelleEmplacement[0]
-                    && emplacementPossible.get(i)[1] == nouvelleEmplacement[1]);
+        while(!emplacementTrouver && i < emplacementPossible.size()) {
+            emplacementTrouver
+                    = emplacementPossible.get(i)[0] == nouvelleEmplacement[0]
+                    && emplacementPossible.get(i)[1] == nouvelleEmplacement[1];
             i++;
         }
-        return plateauLibreEmplacement;
+        return emplacementTrouver;
     }
 
     /**
@@ -122,7 +139,7 @@ public class Plateau {
      * @param indexColonne : index de la ligne sur une colonne
      */
     public void jouer(int indexLigne, int indexColonne) {
-        
+
         if (tuilesSelectionnee == null) {
             tuilesSelectionnee = getTuile(indexLigne, indexColonne);
         } else if (tuilesSelectionnee == plateau[indexLigne][indexColonne]) {
@@ -132,7 +149,7 @@ public class Plateau {
             if (tuile != null) {
                 Coup coup = new Coup(new Tuile[]{tuilesSelectionnee, tuile});
                 if (verifierCoupJouable(coup)) {
-                    
+
                     //On retire les references des objets de la selection et du plateau
                     tuilesSelectionnee = null;
                     plateau[coup.getTuiles()[0].getCoordonnees()[0]][coup.getTuiles()[0].getCoordonnees()[1]] = null;
@@ -141,7 +158,7 @@ public class Plateau {
                     coups.add(coup);
                     partie.resetChrono();
 
-                    typeDePlateau.traitementTerrainPostCoup(plateau,coup);
+                    typeDePlateau.traitementTerrainPostCoup(plateau, coup);
                 }
             }
         }
@@ -154,8 +171,7 @@ public class Plateau {
      */
     public boolean verifierCoupJouable(Coup coup) {
         boolean coupValide = coup.isValid();
-        if(coupValide)
-        {
+        if (coupValide) {
             //verifier le pathFinding
         }
         return coupValide;
@@ -222,50 +238,52 @@ public class Plateau {
         //!\ Ne prend pas en compte le path finding, revoir en le rajoutant pour crée une solution jouable
         Random random = new Random(0);
         Collections.shuffle(listeDePaires, random);
+        Collections.shuffle(emplacementLibre, random);
+
         plateau = new Tuile[NOMBRE_LIGNE][NOMBRE_COLONNE];
         ArrayList<int[]> emplacementPossible = new ArrayList<>();
-        regenererEmplacementPossible(random,emplacementLibre,emplacementPossible);
+        regenererEmplacementPossible(emplacementLibre, emplacementPossible);
 
         while (listeDePaires.size() > 0) {
             Tuile[] paires = listeDePaires.remove(0);
             ajouterTuile(emplacementPossible, emplacementLibre,
                     (int) (random.nextDouble() * emplacementPossible.size()),
                     paires[0]);
-            
-            if(emplacementPossible.isEmpty())
-                regenererEmplacementPossible(random,emplacementLibre,emplacementPossible);
-            
-            
+
+            if (emplacementPossible.isEmpty()) {
+                regenererEmplacementPossible(emplacementLibre, emplacementPossible);
+            }
+
             ajouterTuile(emplacementPossible, emplacementLibre,
                     (int) (random.nextDouble() * emplacementPossible.size()),
                     paires[1]);
-             
-            if(emplacementPossible.isEmpty())
-                regenererEmplacementPossible(random,emplacementLibre,emplacementPossible);
+
+            if (emplacementPossible.isEmpty()) {
+                regenererEmplacementPossible(emplacementLibre, emplacementPossible);
+            }
         }
     }
 
-    private void regenererEmplacementPossible(Random random, ArrayList<int[]> emplacementLibre, ArrayList<int[]> emplacementPossible)
-    {
-        emplacementPossible.add(emplacementLibre.remove((int) random.nextDouble() * emplacementPossible.size()));
+    private void regenererEmplacementPossible(ArrayList<int[]> emplacementLibre, ArrayList<int[]> emplacementPossible) {
+        emplacementPossible.add(emplacementLibre.remove(0));
     }
-    
+
     public int[] rechercherTuile(int indexDeBase, Tuile tuile) {
         int[] solution = null;
         final int indexMax = NOMBRE_LIGNE * NOMBRE_COLONNE;
-        int i = indexDeBase;
+        int i = indexDeBase + 1;
         boolean enRecherche = true;
         while (i < indexMax && enRecherche) {
             if (tuile.equals(plateau[i % NOMBRE_COLONNE][i / NOMBRE_COLONNE])) {
                 enRecherche = false;
                 solution = new int[]{i % NOMBRE_COLONNE, i / NOMBRE_COLONNE};
             }
+            i++;
         }
         return solution;
     }
 
-    public void setPartie(Partie partie) 
-    {
+    public void setPartie(Partie partie) {
         this.partie = partie;
     }
 }
