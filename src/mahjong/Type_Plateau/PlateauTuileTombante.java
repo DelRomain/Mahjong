@@ -7,7 +7,7 @@ public class PlateauTuileTombante extends TypePlateau
 {
     @Override
     public void traitementTerrainPostCoup(Tuile[][] plateau,Coup coup) {
-        if (Coup.isValid()){
+        if (coup.isValid()){
             
         }
         

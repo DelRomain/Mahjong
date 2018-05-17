@@ -3,7 +3,7 @@ package mahjong;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
-import mahjong.partie.Chrono;
+import mahjong.partie.Partie;
 
 public class Plateau {
 
@@ -15,7 +15,7 @@ public class Plateau {
     private TypePlateau typeDePlateau;
     private Tuile tuilesSelectionnee;
     private final ArrayList<Coup> coups;
-    private Chrono chrono;
+    private Partie partie;
 
     public Plateau() {
         tuilesSelectionnee = null;
@@ -28,9 +28,8 @@ public class Plateau {
      *
      * @param seed : graine de génération du terrain
      * @param typeDePlateau : gestion de la "physique" du terrain
-     * @param chrono le chrnometre de la partie
      */
-    public void genererNouveauPlateau(long seed, TypePlateau typeDePlateau, Chrono chrono) {
+    public void genererNouveauPlateau(long seed, TypePlateau typeDePlateau) {
         Random random = new Random(seed);
         ArrayList<Tuile[]> listeDePaires = genererTableDePaireDeTuile();
         Collections.shuffle(listeDePaires, random);
@@ -53,7 +52,6 @@ public class Plateau {
         }
         System.out.println(listeDePaires.size());
         this.typeDePlateau = typeDePlateau;
-        this.chrono = chrono;
     }
 
     public void ajouterTuile(ArrayList<int[]> emplacementPossible, ArrayList<int[]> listeRestrictive, int index, Tuile tuile) {
@@ -141,7 +139,7 @@ public class Plateau {
                     plateau[coup.getTuiles()[1].getCoordonnees()[0]][coup.getTuiles()[1].getCoordonnees()[1]] = null;
 
                     coups.add(coup);
-                    chrono.reset();
+                    partie.resetChrono();
 
                     typeDePlateau.traitementTerrainPostCoup(plateau,coup);
                 }
@@ -198,7 +196,7 @@ public class Plateau {
 
     }
 
-    public void melangerPlateau() {     //A tester
+    public void melangerPlateau() {     //Non fonctionnel
         ArrayList<Tuile[]> listeDePaires = new ArrayList<>();
         ArrayList<int[]> emplacementLibre = new ArrayList<>();
         int i = 0;
@@ -264,5 +262,10 @@ public class Plateau {
             }
         }
         return solution;
+    }
+
+    public void setPartie(Partie partie) 
+    {
+        this.partie = partie;
     }
 }

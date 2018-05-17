@@ -48,6 +48,7 @@ public class RechercheChemin {
                 }
             }
         }
+        return false;
     }
 
 }

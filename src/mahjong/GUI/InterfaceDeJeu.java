@@ -7,23 +7,24 @@ package mahjong.GUI;
 
 import java.awt.Color;
 import javax.swing.JProgressBar;
-import mahjong.Plateau;
+import mahjong.partie.Partie;
 
 /**
  *
  * @author aschneid
  */
 public class InterfaceDeJeu extends javax.swing.JPanel {
-     /**
-     * Creates new form InterfaceDeJeu
-     */
+    
+    private Partie partie;
+    
     public InterfaceDeJeu() {
         plateauGUI = new PlateauGUI();
         initComponents();
     }
 
-    public void setPlateau(Plateau plateau) {
-        plateauGUI.setPlateau(plateau);
+    public void setPartie(Partie partie) {
+        this.partie = partie;
+        plateauGUI.setPlateau(partie.getPlateau());
     }
 
     public void changerBarTemps(int temp, Color color) {
@@ -48,7 +49,9 @@ public class InterfaceDeJeu extends javax.swing.JPanel {
         jLabelLabelScore = new javax.swing.JLabel();
         jLabelLabelTemps = new javax.swing.JLabel();
         labelScoreJoueur = new javax.swing.JLabel();
-        labelPartie = new javax.swing.JLabel();
+        labelTempPartie = new javax.swing.JLabel();
+        boutonMelanger = new javax.swing.JButton();
+        boutonPause = new javax.swing.JButton();
         plateauGUI = new mahjong.GUI.PlateauGUI();
 
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.LINE_AXIS));
@@ -65,14 +68,29 @@ public class InterfaceDeJeu extends javax.swing.JPanel {
 
         jLabelLabelTemps.setText("Temps :");
 
-        labelScoreJoueur.setText("jLabel5");
+        labelScoreJoueur.setText("0");
 
-        labelPartie.setText("jLabel6");
+        labelTempPartie.setText("jLabel6");
+
+        boutonMelanger.setText("Melanger");
+        boutonMelanger.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                boutonMelangerActionPerformed(evt);
+            }
+        });
+
+        boutonPause.setText("Pause");
+        boutonPause.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                boutonPauseActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanelInfoJoueurLayout = new javax.swing.GroupLayout(jPanelInfoJoueur);
         jPanelInfoJoueur.setLayout(jPanelInfoJoueurLayout);
         jPanelInfoJoueurLayout.setHorizontalGroup(
             jPanelInfoJoueurLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(boutonMelanger, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanelInfoJoueurLayout.createSequentialGroup()
                 .addGroup(jPanelInfoJoueurLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanelInfoJoueurLayout.createSequentialGroup()
@@ -85,9 +103,10 @@ public class InterfaceDeJeu extends javax.swing.JPanel {
                             .addComponent(jLabelLabelTemps))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanelInfoJoueurLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(labelPartie)
+                            .addComponent(labelTempPartie)
                             .addComponent(labelScoreJoueur))))
-                .addGap(0, 43, Short.MAX_VALUE))
+                .addGap(0, 34, Short.MAX_VALUE))
+            .addComponent(boutonPause, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanelInfoJoueurLayout.setVerticalGroup(
             jPanelInfoJoueurLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -103,8 +122,11 @@ public class InterfaceDeJeu extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanelInfoJoueurLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabelLabelTemps)
-                    .addComponent(labelPartie))
-                .addContainerGap(243, Short.MAX_VALUE))
+                    .addComponent(labelTempPartie))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 183, Short.MAX_VALUE)
+                .addComponent(boutonPause)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(boutonMelanger))
         );
 
         javax.swing.GroupLayout jPanelInfoJeuLayout = new javax.swing.GroupLayout(jPanelInfoJeu);
@@ -128,7 +150,7 @@ public class InterfaceDeJeu extends javax.swing.JPanel {
         plateauGUI.setLayout(plateauGUILayout);
         plateauGUILayout.setHorizontalGroup(
             plateauGUILayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 287, Short.MAX_VALUE)
+            .addGap(0, 259, Short.MAX_VALUE)
         );
         plateauGUILayout.setVerticalGroup(
             plateauGUILayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -138,8 +160,22 @@ public class InterfaceDeJeu extends javax.swing.JPanel {
         add(plateauGUI);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void boutonPauseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boutonPauseActionPerformed
+        if(partie.estEnPaused())
+            boutonPause.setText("Pause");
+        else
+            boutonPause.setText("Reprendre");
+        partie.changePause();
+    }//GEN-LAST:event_boutonPauseActionPerformed
+
+    private void boutonMelangerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boutonMelangerActionPerformed
+        partie.melangerPlateau();
+    }//GEN-LAST:event_boutonMelangerActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton boutonMelanger;
+    private javax.swing.JButton boutonPause;
     private javax.swing.JLabel jLabelLabelNomJoueur;
     private javax.swing.JLabel jLabelLabelScore;
     private javax.swing.JLabel jLabelLabelTemps;
@@ -147,12 +183,25 @@ public class InterfaceDeJeu extends javax.swing.JPanel {
     private javax.swing.JPanel jPanelInfoJoueur;
     private javax.swing.JProgressBar jProgressBarTempsRestant;
     private javax.swing.JLabel labelNomJoueur;
-    private javax.swing.JLabel labelPartie;
     private javax.swing.JLabel labelScoreJoueur;
+    private javax.swing.JLabel labelTempPartie;
     private mahjong.GUI.PlateauGUI plateauGUI;
     // End of variables declaration//GEN-END:variables
 
     public void setTailleChronometre(int tempCoup) {
         jProgressBarTempsRestant.setMaximum(tempCoup);
+    }
+
+    public void updateTempJeu(String tempsTotalDeJeu) 
+    {
+        labelTempPartie.setText(tempsTotalDeJeu);
+    }
+
+    public void setScore(int score) {
+        labelScoreJoueur.setText(""+score);
+    }
+
+    public void bloquerPlateau(boolean b) {
+        plateauGUI.bloquerPlateau(b);
     }
 }
