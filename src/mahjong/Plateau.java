@@ -3,6 +3,7 @@ package mahjong;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
+import mahjong.partie.Chrono;
 
 public class Plateau {
 
@@ -14,6 +15,7 @@ public class Plateau {
     private TypePlateau typeDePlateau;
     private Tuile tuilesSelectionnee;
     private final ArrayList<Coup> coups;
+    private Chrono chrono;
 
     public Plateau() {
         tuilesSelectionnee = null;
@@ -26,8 +28,9 @@ public class Plateau {
      *
      * @param seed : graine de génération du terrain
      * @param typeDePlateau : gestion de la "physique" du terrain
+     * @param chrono le chrnometre de la partie
      */
-    public void genererNouveauPlateau(long seed, TypePlateau typeDePlateau) {
+    public void genererNouveauPlateau(long seed, TypePlateau typeDePlateau, Chrono chrono) {
         Random random = new Random(seed);
         ArrayList<Tuile[]> listeDePaires = genererTableDePaireDeTuile();
         Collections.shuffle(listeDePaires, random);
@@ -50,6 +53,7 @@ public class Plateau {
         }
         System.out.println(listeDePaires.size());
         this.typeDePlateau = typeDePlateau;
+        this.chrono = chrono;
     }
 
     public void ajouterTuile(ArrayList<int[]> emplacementPossible, ArrayList<int[]> listeRestrictive, int index, Tuile tuile) {
@@ -137,6 +141,7 @@ public class Plateau {
                     plateau[coup.getTuiles()[1].getCoordonnees()[0]][coup.getTuiles()[1].getCoordonnees()[1]] = null;
 
                     coups.add(coup);
+                    chrono.reset();
 
                     typeDePlateau.traitementTerrainPostCoup(plateau,coup);
                 }

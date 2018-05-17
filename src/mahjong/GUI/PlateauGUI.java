@@ -1,6 +1,7 @@
 package mahjong.GUI;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -22,11 +23,11 @@ import mahjong.Tuile;
 public class PlateauGUI extends JPanel implements MouseListener, MouseMotionListener {
 
     private BufferedImage[] images;
-    private final int LARGEUR_TUILE;
-    private final int HAUTEUR_TUILE;
-    private final Plateau plateau;
+    public static final int LARGEUR_TUILE = 35;
+    public static int HAUTEUR_TUILE = 46;
+    private Plateau plateau;
 
-    public PlateauGUI(Plateau plateau) {
+    public PlateauGUI() {
         super();
         images = new BufferedImage[42];
         int i = 0;
@@ -41,41 +42,44 @@ public class PlateauGUI extends JPanel implements MouseListener, MouseMotionList
             }
 
         }
-        this.LARGEUR_TUILE = 35;
-        this.HAUTEUR_TUILE = 46;
-        this.plateau = plateau;
+
         this.addMouseListener(this);
         this.addMouseMotionListener(this);
+    }
+
+    public void setPlateau(Plateau plateau) {
+        this.plateau = plateau;
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Tuile tuile;
-        for (int indexLigne = 0; indexLigne < 12; indexLigne++) {
-            for (int indexColonne = 0; indexColonne < 12; indexColonne++) {
-                
-                tuile = this.plateau.getTuile(indexLigne, indexColonne);
-                if (tuile != null) {
-                    if (this.plateau.getTuilesSelectionnee() == tuile) {
-                        BufferedImageOp op = new RescaleOp(new float[]{0.8f, 1.2f, 0.8f, 1.0f}, new float[4], null);
-                        g.drawImage(
-                                op.filter(this.images[tuile.getImageID()], null),
-                                indexColonne * LARGEUR_TUILE,
-                                indexLigne * HAUTEUR_TUILE,
-                                LARGEUR_TUILE, HAUTEUR_TUILE, this);
-                    } else {
-                        g.drawImage(
-                                this.images[tuile.getImageID()],
-                                indexColonne * LARGEUR_TUILE,
-                                indexLigne * HAUTEUR_TUILE,
-                                LARGEUR_TUILE, HAUTEUR_TUILE, this);
+        if (plateau != null) {
+            Tuile tuile;
+            for (int indexLigne = 0; indexLigne < 12; indexLigne++) {
+                for (int indexColonne = 0; indexColonne < 12; indexColonne++) {
+
+                    tuile = this.plateau.getTuile(indexLigne, indexColonne);
+                    if (tuile != null) {
+                        if (this.plateau.getTuilesSelectionnee() == tuile) {
+                            BufferedImageOp op = new RescaleOp(new float[]{0.8f, 1.2f, 0.8f, 1.0f}, new float[4], null);
+                            g.drawImage(
+                                    op.filter(this.images[tuile.getImageID()], null),
+                                    LARGEUR_TUILE + indexColonne * LARGEUR_TUILE,
+                                    HAUTEUR_TUILE + indexLigne * HAUTEUR_TUILE,
+                                    LARGEUR_TUILE, HAUTEUR_TUILE, this);
+                        } else {
+                            g.drawImage(
+                                    this.images[tuile.getImageID()],
+                                    LARGEUR_TUILE + indexColonne * LARGEUR_TUILE,
+                                    HAUTEUR_TUILE + indexLigne * HAUTEUR_TUILE,
+                                    LARGEUR_TUILE, HAUTEUR_TUILE, this);
+                        }
                     }
                 }
             }
-
+            debugPathFinder(g);
         }
-        debugPathFinder(g);
     }
 
     @Override
@@ -90,8 +94,8 @@ public class PlateauGUI extends JPanel implements MouseListener, MouseMotionList
     public void mouseReleased(MouseEvent e) {
         int ligneTuile;
         int colonneTuile;
-        final int curseurX = e.getX();
-        final int curseurY = e.getY();
+        final int curseurX = e.getX()-LARGEUR_TUILE;
+        final int curseurY = e.getY()-HAUTEUR_TUILE;
 
         colonneTuile = curseurX / LARGEUR_TUILE;
         ligneTuile = curseurY / HAUTEUR_TUILE;
@@ -109,15 +113,13 @@ public class PlateauGUI extends JPanel implements MouseListener, MouseMotionList
 
     @Override
     public void mouseExited(MouseEvent e) {
-        
+
     }
-    
-    public void debugPathFinder(Graphics g)
-    {
-        if(this.getMousePosition()!= null && this.plateau.getTuilesSelectionnee() != null)
-        {
-            int coordLigne = this.plateau.getTuilesSelectionnee().getCoordonnees()[0]*HAUTEUR_TUILE+HAUTEUR_TUILE/2;
-            int coordCol = this.plateau.getTuilesSelectionnee().getCoordonnees()[1]*LARGEUR_TUILE+LARGEUR_TUILE/2;        
+
+    public void debugPathFinder(Graphics g) {
+        if (this.getMousePosition() != null && this.plateau.getTuilesSelectionnee() != null) {
+            int coordLigne = this.plateau.getTuilesSelectionnee().getCoordonnees()[0] * HAUTEUR_TUILE + 3*HAUTEUR_TUILE / 2;
+            int coordCol = this.plateau.getTuilesSelectionnee().getCoordonnees()[1] * LARGEUR_TUILE + 3*LARGEUR_TUILE / 2;
             g.setColor(Color.red);
             g.drawLine(coordCol, coordLigne, this.getMousePosition().x, this.getMousePosition().y);
         }
