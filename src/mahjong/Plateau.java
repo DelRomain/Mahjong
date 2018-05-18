@@ -3,6 +3,7 @@ package mahjong;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
+import mahjong.PathFinder.RechercheChemin;
 import mahjong.partie.Partie;
 
 public class Plateau {
@@ -16,11 +17,13 @@ public class Plateau {
     private Tuile tuilesSelectionnee;
     private final ArrayList<Coup> coups;
     private Partie partie;
+    private final RechercheChemin rechercheChemin;
 
     public Plateau() {
         tuilesSelectionnee = null;
         plateau = new Tuile[NOMBRE_LIGNE][NOMBRE_COLONNE];
         coups = new ArrayList<>();
+        rechercheChemin = new RechercheChemin(this);
     }
 
     /**
@@ -156,7 +159,9 @@ public class Plateau {
                     plateau[coup.getTuiles()[1].getCoordonnees()[0]][coup.getTuiles()[1].getCoordonnees()[1]] = null;
 
                     coups.add(coup);
-                    partie.resetChrono();
+                    //XXX POUR LES TESTS
+                    if(partie != null)
+                        partie.resetChrono();
 
                     typeDePlateau.traitementTerrainPostCoup(plateau, coup);
                 }
@@ -172,7 +177,7 @@ public class Plateau {
     public boolean verifierCoupJouable(Coup coup) {
         boolean coupValide = coup.isValid();
         if (coupValide) {
-            //verifier le pathFinding
+            coupValide = rechercheChemin.rechercheChemin(coup.getTuiles()[0], coup.getTuiles()[1]);
         }
         return coupValide;
     }

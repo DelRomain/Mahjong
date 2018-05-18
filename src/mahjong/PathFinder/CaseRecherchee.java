@@ -12,7 +12,7 @@ import mahjong.CaseAdjacente;
  *
  * @author alafitte
  */
-public class CaseRecherchee {
+public class CaseRecherchee implements Comparable{
 
     private final int x,y;
     private int total;
@@ -82,5 +82,28 @@ public class CaseRecherchee {
         return nombreAngleDroit;
     }
 
-    
+    public void setParent(CaseRecherchee parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        CaseRecherchee caseAComparer = (CaseRecherchee)o;
+        if(this.total>caseAComparer.getTotal())
+            return 1;
+        else if(this.total == caseAComparer.total)
+            return 0;
+        else
+            return -1;
+    }
+
+    @Override
+    public String toString() {
+        return "CaseRecherchee{" + "x=" + x + ", y=" + y + ", total=" + total + ", parent=" + parent + ", nombreAngleDroit=" + nombreAngleDroit + ", direction=" + direction + '}';
+    }
+
+    void setDistance(int distance) 
+    {
+        this.total = distance + parent.getTotal();
+    }
 }
