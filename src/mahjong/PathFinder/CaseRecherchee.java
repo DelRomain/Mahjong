@@ -31,9 +31,22 @@ public class CaseRecherchee implements Comparable{
         this.y = y;
         this.direction = direction;
         
-        nombreAngleDroit = parent != null? 
-                parent.getNombreAngleDroit() + (direction != parent.getDirection()? 1 : 0 ):
-                0;
+        nombreAngleDroit = getNombreAngleDroit(parent);
+    }
+    
+    private int getNombreAngleDroit(CaseRecherchee parent)
+    {
+        int angleDroit = 0;
+        if(parent != null)
+        {
+            angleDroit = parent.getNombreAngleDroit();
+            if(parent.getDirection() != null)
+            {
+                if(direction != parent.getDirection())
+                    angleDroit++;
+            }
+        }
+        return angleDroit;
     }
 
     public int getTotal() {
@@ -99,11 +112,11 @@ public class CaseRecherchee implements Comparable{
 
     @Override
     public String toString() {
-        return "CaseRecherchee{" + "x=" + x + ", y=" + y + ", total=" + total + ", parent=" + parent + ", nombreAngleDroit=" + nombreAngleDroit + ", direction=" + direction + '}';
+        return "CaseRecherchee{" + "x=" + x + ", y=" + y + ", total=" + total + ", nombreAngleDroit=" + nombreAngleDroit + ", direction=" + direction + ", parent=" + parent + '}';
     }
 
     void setDistance(int distance) 
     {
-        this.total = distance + parent.getTotal();
+        this.total = distance;
     }
 }
