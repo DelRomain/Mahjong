@@ -6,17 +6,19 @@ import java.util.TimerTask;
 
 public class Chrono extends TimerTask{
 
-    private int temp;
+    private long temp;
     private long tempsTotalDeJeu;
+    private long tempsAffichageChemin;
     private final int TEMP_COUP;
     private final int TEMP_COUP_RETRAIT_POINT;
     private final int TEMP_COUP_FIN_CHRONO;
     private final Partie partie;
     
-    public Chrono(Partie partie, int tempCoup, int tempCoupRestant, int tempTotal) {
+    public Chrono(Partie partie, int tempCoup, long tempCoupRestant, long tempTotal, long tempsAffichageChemin) {
        this(partie,tempCoup);
        this.tempsTotalDeJeu = tempTotal;
        this.temp = tempCoupRestant;
+       this.tempsAffichageChemin = tempsAffichageChemin;
     }
     
     
@@ -29,6 +31,7 @@ public class Chrono extends TimerTask{
         this.TEMP_COUP_FIN_CHRONO = (int) (0.25*TEMP_COUP);
         this.partie = partie;
         this.partie.getInterfaceDeJeu().setTailleChronometre(TEMP_COUP);
+        this.tempsAffichageChemin = 0;
     }
 
     @Override
@@ -37,6 +40,16 @@ public class Chrono extends TimerTask{
         Color color; 
         this.temp --;
         this.tempsTotalDeJeu++;
+        
+        if(tempsAffichageChemin <= 20)
+            this.tempsAffichageChemin++;
+        
+        if(tempsAffichageChemin == 20)
+        {
+            this.partie.getPlateau().setAfficherChemin(false);
+            this.partie.getInterfaceDeJeu().repaintPlateau();
+        }
+        
         this.partie.getInterfaceDeJeu().updateTempJeu(getTempPartie());
         
         if(temp>TEMP_COUP_RETRAIT_POINT)
@@ -45,13 +58,18 @@ public class Chrono extends TimerTask{
             color = Color.ORANGE;
         else
             color = Color.RED;
-        this.partie.getInterfaceDeJeu().changerBarTemps(temp,color);
+        this.partie.getInterfaceDeJeu().changerBarTemps((int)temp,color);
      
     }
 
-    public void reset() 
+    public void resetChronoCoup() 
     {
-        temp = TEMP_COUP;
+        this.temp = this.TEMP_COUP;
+    }
+    
+    public void resetChronoAffichageChemin() 
+    {
+        this.tempsAffichageChemin = 0;
     }
     
     private String getTempPartie()
@@ -70,15 +88,19 @@ public class Chrono extends TimerTask{
         if(temp>TEMP_COUP_RETRAIT_POINT)
             pointGagnee = 20;
         else 
-            pointGagnee = temp/100;      
+            pointGagnee = (int)temp/100;      
         return pointGagnee;
     }
 
-    public int getTemp() {
+    public long getTemp() {
         return temp;
     }
 
     public long getTempsTotalDeJeu() {
         return tempsTotalDeJeu;
+    }
+
+    public long getTempsAffichage() {
+        return tempsAffichageChemin;
     }
 }

@@ -17,7 +17,7 @@ public class Partie
     private final InterfaceDeJeu interfaceDeJeu;
     private final Timer timer;
     private int score = 0;
-    private int tempCoupChronoPause, tempTotalChronoPause;
+    private long tempCoupChronoPause, tempTotalChronoPause, tempsChronoAffichagePause;
     private int tempCoup;
     
     public Partie(InterfaceDeJeu interfaceDeJeu) {
@@ -44,7 +44,8 @@ public class Partie
     {
         score +=chrono.getScoreTemp();
         interfaceDeJeu.setScore(score);
-        chrono.reset();
+        chrono.resetChronoCoup();
+        chrono.resetChronoAffichageChemin();
     }
 
     public InterfaceDeJeu getInterfaceDeJeu()
@@ -67,13 +68,14 @@ public class Partie
         if(enPause)
         {
             tempCoupChronoPause = chrono.getTemp();
-            tempTotalChronoPause = (int) chrono.getTempsTotalDeJeu();
+            tempTotalChronoPause = chrono.getTempsTotalDeJeu();
+            tempsChronoAffichagePause = chrono.getTempsAffichage();
             chrono.cancel();
             interfaceDeJeu.bloquerPlateau(true);
         }
         else
         {
-            chrono = new Chrono(this, tempCoup, tempCoupChronoPause, tempTotalChronoPause);
+            chrono = new Chrono(this, tempCoup, tempCoupChronoPause, tempTotalChronoPause, tempsChronoAffichagePause);
             timer.scheduleAtFixedRate(chrono, 0, 10);
             interfaceDeJeu.bloquerPlateau(false);
         }

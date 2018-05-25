@@ -205,4 +205,9 @@ public class InterfaceDeJeu extends javax.swing.JPanel {
     public void bloquerPlateau(boolean b) {
         plateauGUI.bloquerPlateau(b);
     }
+
+    public void repaintPlateau() 
+    {
+        plateauGUI.repaint();
+    }
 }

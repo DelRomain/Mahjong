@@ -17,6 +17,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import mahjong.FamilleDeTuile;
+import mahjong.PathFinder.CaseRecherchee;
 import mahjong.Plateau;
 import mahjong.Tuile;
 
@@ -81,6 +82,23 @@ public class PlateauGUI extends JPanel implements MouseListener, MouseMotionList
                     }
                 }
             }
+            CaseRecherchee caseRechercheChemin = plateau.getCheminTuile();
+            if(caseRechercheChemin != null)
+            {
+                g.setColor(Color.red);
+                CaseRecherchee parent = caseRechercheChemin.getParent();
+                while(parent != null)
+                {
+                    g.drawLine(
+                            caseRechercheChemin.getY()*LARGEUR_TUILE+LARGEUR_TUILE/2,
+                            caseRechercheChemin.getX()*HAUTEUR_TUILE+HAUTEUR_TUILE/2,
+                            parent.getY()*LARGEUR_TUILE+LARGEUR_TUILE/2,
+                            parent.getX()*HAUTEUR_TUILE+HAUTEUR_TUILE/2);
+                    
+                    caseRechercheChemin = parent;
+                    parent = caseRechercheChemin.getParent();
+                }
+            }
         }
     }
 
@@ -138,5 +156,7 @@ public class PlateauGUI extends JPanel implements MouseListener, MouseMotionList
     public void setFenetre(Fenetre fenetre) {
         this.fenetre = fenetre;
     }
+    
+    
 }
 

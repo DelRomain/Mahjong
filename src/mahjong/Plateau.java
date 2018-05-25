@@ -3,6 +3,7 @@ package mahjong;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
+import mahjong.PathFinder.CaseRecherchee;
 import mahjong.PathFinder.RechercheChemin;
 import mahjong.partie.Partie;
 
@@ -18,12 +19,14 @@ public class Plateau {
     private final ArrayList<Coup> coups;
     private Partie partie;
     private final RechercheChemin rechercheChemin;
+    private boolean afficherChemin;
 
     public Plateau() {
         tuilesSelectionnee = null;
         plateau = new Tuile[NOMBRE_LIGNE][NOMBRE_COLONNE];
         coups = new ArrayList<>();
         rechercheChemin = new RechercheChemin(this);
+        afficherChemin = false;
     }
 
     /**
@@ -33,7 +36,7 @@ public class Plateau {
      * @param typeDePlateau : gestion de la "physique" du terrain
      */
     public void genererNouveauPlateau(long seed, TypePlateau typeDePlateau) {
-        
+
         Random random = new Random(seed);
         ArrayList<Tuile[]> listeDePaires = genererTableDePaireDeTuile();
         Collections.shuffle(listeDePaires, random);
@@ -67,17 +70,17 @@ public class Plateau {
         emplacementPossible.remove(index);
         for (CaseAdjacente emplacementRelatif : CaseAdjacente.values()) {
             if (emplacementDansTerrain(ligneTuile + emplacementRelatif.getX(), colonneTuile + emplacementRelatif.getY())) {
-                
+
                 int[] nouvelleEmplacement = new int[]{
                     ligneTuile + emplacementRelatif.getX(),
                     colonneTuile + emplacementRelatif.getY()};
-                
-                if ( plateau[nouvelleEmplacement[0]][nouvelleEmplacement[1]] == null 
+
+                if (plateau[nouvelleEmplacement[0]][nouvelleEmplacement[1]] == null
                         && !emplacementInclus(emplacementPossible, nouvelleEmplacement)) {
                     if (listeRestrictive == null) {
                         emplacementPossible.add(nouvelleEmplacement);
                     } else {
-                        if(emplacementInclus(listeRestrictive, nouvelleEmplacement)) {
+                        if (emplacementInclus(listeRestrictive, nouvelleEmplacement)) {
                             emplacementPossible.add(nouvelleEmplacement);
                         }
                     }
@@ -85,11 +88,12 @@ public class Plateau {
             }
         }
     }
-    
+
     /**
      * @param ligne
      * @param colonne
-     * @return Retourne vrai si les coordonnees sont incluse dans le terrain, faux sinon
+     * @return Retourne vrai si les coordonnees sont incluse dans le terrain,
+     * faux sinon
      */
     private boolean emplacementDansTerrain(int ligne, int colonne) {
         return ligne >= 1 && colonne >= 1 && ligne < NOMBRE_LIGNE - 1 && colonne < NOMBRE_COLONNE - 1;
@@ -98,12 +102,14 @@ public class Plateau {
     /**
      * @param emplacementPossible
      * @param nouvelleEmplacement
-     * @return renvoie vrai si {@param nouvelleEmplacement} est dans {@param emplacementPossible}, faux sinon
+     * @return renvoie vrai si {
+     * @param nouvelleEmplacement} est dans {
+     * @param emplacementPossible}, faux sinon
      */
     public boolean emplacementInclus(ArrayList<int[]> emplacementPossible, int[] nouvelleEmplacement) {
         boolean emplacementTrouver = false;
         int i = 0;
-        while(!emplacementTrouver && i < emplacementPossible.size()) {
+        while (!emplacementTrouver && i < emplacementPossible.size()) {
             emplacementTrouver
                     = emplacementPossible.get(i)[0] == nouvelleEmplacement[0]
                     && emplacementPossible.get(i)[1] == nouvelleEmplacement[1];
@@ -155,15 +161,16 @@ public class Plateau {
 
                     //On retire les references des objets de la selection et du plateau
                     tuilesSelectionnee = null;
-                    plateau[coup.getTuiles()[0].getCoordonnees()[0]][coup.getTuiles()[0].getCoordonnees()[1]] = null;
-                    plateau[coup.getTuiles()[1].getCoordonnees()[0]][coup.getTuiles()[1].getCoordonnees()[1]] = null;
 
                     coups.add(coup);
                     //XXX POUR LES TESTS
-                    if(partie != null)
+                    if (partie != null) {
                         partie.resetChrono();
+                    }
+                    this.partie.getInterfaceDeJeu().bloquerPlateau(true);
 
-                    typeDePlateau.traitementTerrainPostCoup(plateau, coup);
+                    afficherChemin = true;
+                    
                 }
             }
         }
@@ -217,7 +224,7 @@ public class Plateau {
 
     }
 
-    public void melangerPlateau() {     //Non fonctionnel
+    public void melangerPlateau() { 
         ArrayList<Tuile[]> listeDePaires = new ArrayList<>();
         ArrayList<int[]> emplacementLibre = new ArrayList<>();
         int i = 0;
@@ -290,5 +297,24 @@ public class Plateau {
 
     public void setPartie(Partie partie) {
         this.partie = partie;
+    }
+
+    public CaseRecherchee getCheminTuile() {
+        return afficherChemin ? rechercheChemin.getCheminEnCours() : null;
+    }
+
+    public void setAfficherChemin(boolean afficherChemin) {
+        this.partie.getInterfaceDeJeu().bloquerPlateau(false);
+        appliquerCoup();
+        this.afficherChemin = afficherChemin;
+    }
+
+    public void appliquerCoup() {
+        if (!coups.isEmpty()) {
+            Coup coup = coups.get(coups.size() - 1);
+            plateau[coup.getTuiles()[0].getCoordonnees()[0]][coup.getTuiles()[0].getCoordonnees()[1]] = null;
+            plateau[coup.getTuiles()[1].getCoordonnees()[0]][coup.getTuiles()[1].getCoordonnees()[1]] = null;
+            typeDePlateau.traitementTerrainPostCoup(plateau, coup);
+        }
     }
 }
