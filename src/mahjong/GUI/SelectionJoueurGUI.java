@@ -21,7 +21,6 @@ public class SelectionJoueurGUI extends javax.swing.JPanel {
         super();
         initComponents();
         this.fenetre = fenetre;
-        nomJoueurActuel.setText(fenetre.getGestionnaireJoueurs().getJoueur().getNom());
         rechargerListeJoueur();
     }
 
@@ -165,17 +164,24 @@ public class SelectionJoueurGUI extends javax.swing.JPanel {
     }//GEN-LAST:event_jButtonSelectionnerJoueurActionPerformed
 
     private void jButtonRetirerJoueurActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRetirerJoueurActionPerformed
-        if (jTable2.getSelectedRow() != -1) {
-            ((JTableModeleJoueur) jTable2.getModel()).retirerEntree(jTable2.getSelectedRow());
+        int index = jTable2.getSelectedRow();
+        if (index != -1) {
+            Joueur joueur = ((JTableModeleJoueur) jTable2.getModel()).getListe().get(index);
+            fenetre.getGestionnaireJoueurs().supprimerJoueur(joueur);
+            ((JTableModeleJoueur) jTable2.getModel()).retirerEntree(index);
         }
+        rechargerListeJoueur();
     }//GEN-LAST:event_jButtonRetirerJoueurActionPerformed
 
     private void jButtonCreerJoueurActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCreerJoueurActionPerformed
         String nom = JOptionPane.showInputDialog(this, "Nom du nouveau joueur :", "Ajout joueur", JOptionPane.QUESTION_MESSAGE);
         if (!nom.equals("")) {
             Joueur joueur = new Joueur(nom);
-            ((JTableModeleJoueur) jTable2.getModel()).ajouterEntree(joueur);
-            fenetre.getGestionnaireJoueurs().add(joueur);
+            if (fenetre.getGestionnaireJoueurs().add(joueur)) {
+                ((JTableModeleJoueur) jTable2.getModel()).ajouterEntree(joueur);
+            } else {
+                JOptionPane.showMessageDialog(this, "Ce nom est déjà pris!", "Erreur", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }//GEN-LAST:event_jButtonCreerJoueurActionPerformed
 
@@ -201,7 +207,11 @@ public class SelectionJoueurGUI extends javax.swing.JPanel {
         for (int i = jTable2.getModel().getRowCount(); i > 0; i--) {
             ((JTableModeleJoueur) jTable2.getModel()).retirerEntree(0);
         }
-
+        if (fenetre.getGestionnaireJoueurs().getJoueur() != null) {
+            nomJoueurActuel.setText(fenetre.getGestionnaireJoueurs().getJoueur().getNom());
+        } else {
+            nomJoueurActuel.setText("");
+        }
         fenetre.getGestionnaireJoueurs().getListeJoueurs().forEach((j) -> {
             ((JTableModeleJoueur) jTable2.getModel()).ajouterEntree(j);
         });

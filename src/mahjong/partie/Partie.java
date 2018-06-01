@@ -1,19 +1,21 @@
 package mahjong.partie;
 
 import java.util.Timer;
+import javax.swing.JOptionPane;
 import mahjong.GUI.InterfaceDeJeu;
 import mahjong.Plateau;
 import mahjong.TypePlateau;
 import mahjong.Type_Plateau.PlateauTuileTombante;
+import static mahjong.partie.Chrono.getTempsFormate;
 
 
 public class Partie 
 {
     private boolean enPause;
     private final Plateau plateau;
-    private Chrono chrono;
-    private final InterfaceDeJeu interfaceDeJeu;
-    private final Timer timer;
+    private transient Chrono chrono;
+    private transient final InterfaceDeJeu interfaceDeJeu;
+    private transient final Timer timer;
     private int score = 0;
     private long tempCoupChronoPause, tempTotalChronoPause, tempsChronoAffichagePause;
     private int tempCoup;
@@ -45,6 +47,7 @@ public class Partie
         interfaceDeJeu.setScore(score);
         chrono.resetChronoCoup();
         chrono.resetChronoAffichageChemin();
+        verrifierVictoire();
         return scoreAjouter;
     }
 
@@ -95,5 +98,28 @@ public class Partie
         interfaceDeJeu.repaint();    
         if(plateau.getCoups().isEmpty())
             interfaceDeJeu.bloquerBoutonRetourCoup();
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public long getTempTotalChronoPause() {
+        return tempTotalChronoPause;
+    }
+    
+    public void verrifierVictoire()
+    {
+        if(plateau.partieGagnee())
+        {
+            tempCoupChronoPause = chrono.getTemp();
+            tempTotalChronoPause = chrono.getTempsTotalDeJeu();
+            tempsChronoAffichagePause = chrono.getTempsAffichage();
+            chrono.cancel();
+            interfaceDeJeu.bloquerPlateau(true);
+            JOptionPane.showMessageDialog(null, "Vous avez gagné !", "Victoire", JOptionPane.INFORMATION_MESSAGE);
+            interfaceDeJeu.victoire();
+            interfaceDeJeu.afficherMenuPrincipal();
+        }
     }
 }

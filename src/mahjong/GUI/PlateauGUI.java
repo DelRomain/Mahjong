@@ -28,7 +28,6 @@ public class PlateauGUI extends JPanel implements MouseListener, MouseMotionList
     public static int HAUTEUR_TUILE = 46;
     private Plateau plateau;
     private boolean estBloquee;
-    private Fenetre fenetre;
 
     public PlateauGUI() {
         super();
@@ -122,11 +121,6 @@ public class PlateauGUI extends JPanel implements MouseListener, MouseMotionList
             colonneTuile = curseurX / LARGEUR_TUILE;
             ligneTuile = curseurY / HAUTEUR_TUILE;
             this.plateau.jouer(ligneTuile, colonneTuile);
-
-            if (this.plateau.partieGagnee()) {
-                JOptionPane.showMessageDialog(null, "Vous avez gagné !", "Victoire", JOptionPane.INFORMATION_MESSAGE);
-                fenetre.afficherMenuPrincipal();
-            }
             this.repaint();
         }
     }
@@ -151,12 +145,6 @@ public class PlateauGUI extends JPanel implements MouseListener, MouseMotionList
 
     @Override
     public void mouseMoved(MouseEvent e){   
-    }
-
-    public void setFenetre(Fenetre fenetre) {
-        this.fenetre = fenetre;
-    }
-    
-    
+    }   
 }
 

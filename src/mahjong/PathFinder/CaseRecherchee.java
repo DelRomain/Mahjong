@@ -115,7 +115,7 @@ public class CaseRecherchee implements Comparable{
         return "CaseRecherchee{" + "x=" + x + ", y=" + y + ", total=" + total + ", nombreAngleDroit=" + nombreAngleDroit + ", direction=" + direction + ", parent=" + parent + '}';
     }
 
-    void setDistance(int distance) 
+    public void setDistance(int distance) 
     {
         this.total = distance;
     }

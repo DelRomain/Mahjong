@@ -16,14 +16,13 @@ public class Fenetre extends JFrame {
     private final MenuPrincipal menu;
     private final GestionnaireJoueur gestionnaireJoueurs;
     private final SelectionJoueurGUI ecranSelectionJoueur;
+    private final classementGUI classement;
 
     public Fenetre() {
         super("Mahjong");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         gestionnaireJoueurs = new GestionnaireJoueur();
-        gestionnaireJoueurs.add(new Joueur("test"));
-        gestionnaireJoueurs.setJoueur(gestionnaireJoueurs.getListeJoueurs().get(0));
         gestionnaireJoueurs.chargerJoueurs();
         
         container = new JPanel();
@@ -37,6 +36,9 @@ public class Fenetre extends JFrame {
         
         ecranSelectionJoueur = new SelectionJoueurGUI(this);
         container.add(ecranSelectionJoueur,"EcranSelectionJoueur");
+        
+        classement = new classementGUI(this);
+        container.add(classement, "Classement");
 
         this.setContentPane(container);
         this.setMinimumSize(new Dimension(PlateauGUI.LARGEUR_TUILE * 15 + 150, PlateauGUI.HAUTEUR_TUILE * 15));
@@ -63,5 +65,11 @@ public class Fenetre extends JFrame {
 
     public GestionnaireJoueur getGestionnaireJoueurs() {
         return gestionnaireJoueurs;
+    }
+
+    void afficherClassement() {
+        classement.rechargerListeJoueur();
+        CardLayout cl = (CardLayout) (container.getLayout());
+        cl.show(container, "Classement");
     }
 }

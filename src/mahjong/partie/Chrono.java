@@ -50,7 +50,7 @@ public class Chrono extends TimerTask{
             this.partie.getInterfaceDeJeu().repaintPlateau();
         }
         
-        this.partie.getInterfaceDeJeu().updateTempJeu(getTempPartie());
+        this.partie.getInterfaceDeJeu().updateTempJeu(getTempsFormate(tempsTotalDeJeu));
         
         if(temp>TEMP_COUP_RETRAIT_POINT)
             color = Color.GREEN;
@@ -72,9 +72,9 @@ public class Chrono extends TimerTask{
         this.tempsAffichageChemin = 0;
     }
     
-    private String getTempPartie()
+    public static String getTempsFormate(long temps)
     {
-        long tempTotalSeconde = tempsTotalDeJeu/100;
+        long tempTotalSeconde = temps/100;
         long nombreSeconde = tempTotalSeconde%60;
         long nombreMinute = ((tempTotalSeconde-nombreSeconde)/60)%60;
         long nombreHeure = (tempTotalSeconde - nombreMinute*60 - nombreSeconde)/3600;

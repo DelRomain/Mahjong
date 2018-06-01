@@ -14,14 +14,12 @@ import mahjong.partie.Partie;
  * @author aschneid
  */
 public class InterfaceDeJeu extends javax.swing.JPanel {
-    
+
     private Partie partie;
     private Fenetre fenetre;
 
-    public InterfaceDeJeu(Fenetre fenetre) 
-    {
+    public InterfaceDeJeu(Fenetre fenetre) {
         initComponents();
-        plateauGUI.setFenetre(fenetre);
         this.fenetre = fenetre;
     }
 
@@ -36,6 +34,7 @@ public class InterfaceDeJeu extends javax.swing.JPanel {
         jProgressBarTempsRestant.setForeground(color);
         jProgressBarTempsRestant.repaint();         //evite le saccadement
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -177,10 +176,11 @@ public class InterfaceDeJeu extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void boutonPauseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boutonPauseActionPerformed
-        if(partie.estEnPaused())
+        if (partie.estEnPaused()) {
             boutonPause.setText("Pause");
-        else
+        } else {
             boutonPause.setText("Reprendre");
+        }
         partie.changePause();
     }//GEN-LAST:event_boutonPauseActionPerformed
 
@@ -213,21 +213,19 @@ public class InterfaceDeJeu extends javax.swing.JPanel {
         jProgressBarTempsRestant.setMaximum(tempCoup);
     }
 
-    public void updateTempJeu(String tempsTotalDeJeu) 
-    {
+    public void updateTempJeu(String tempsTotalDeJeu) {
         labelTempPartie.setText(tempsTotalDeJeu);
     }
 
     public void setScore(int score) {
-        labelScoreJoueur.setText(""+score);
+        labelScoreJoueur.setText("" + score);
     }
 
     public void bloquerPlateau(boolean b) {
         plateauGUI.bloquerPlateau(b);
     }
 
-    public void repaintPlateau() 
-    {
+    public void repaintPlateau() {
         plateauGUI.repaint();
     }
 
@@ -237,5 +235,14 @@ public class InterfaceDeJeu extends javax.swing.JPanel {
 
     public void debloquerBoutonRetourCoup() {
         boutonCoupRedo.setEnabled(true);
+    }
+
+    public void afficherMenuPrincipal() {
+        fenetre.afficherMenuPrincipal();
+    }
+
+    public void victoire() 
+    {
+        fenetre.getGestionnaireJoueurs().getJoueur().ajouterUnePartie(partie);
     }
 }
