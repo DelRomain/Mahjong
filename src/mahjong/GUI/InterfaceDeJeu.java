@@ -92,6 +92,7 @@ public class InterfaceDeJeu extends javax.swing.JPanel {
         });
 
         boutonCoupRedo.setText("coup precedent");
+        boutonCoupRedo.setEnabled(false);
         boutonCoupRedo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 boutonCoupRedoActionPerformed(evt);
@@ -228,5 +229,13 @@ public class InterfaceDeJeu extends javax.swing.JPanel {
     public void repaintPlateau() 
     {
         plateauGUI.repaint();
+    }
+
+    public void bloquerBoutonRetourCoup() {
+        boutonCoupRedo.setEnabled(false);
+    }
+
+    public void debloquerBoutonRetourCoup() {
+        boutonCoupRedo.setEnabled(true);
     }
 }

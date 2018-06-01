@@ -111,7 +111,7 @@ public class MenuPrincipal extends javax.swing.JPanel {
     }//GEN-LAST:event_boutonJouerActionPerformed
 
     private void boutonChangerDeJoueurActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boutonChangerDeJoueurActionPerformed
-        // TODO add your handling code here:
+        fenetre.afficherEcranSelectionJoueur();
     }//GEN-LAST:event_boutonChangerDeJoueurActionPerformed
 
     private void boutonAccesClassementActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boutonAccesClassementActionPerformed

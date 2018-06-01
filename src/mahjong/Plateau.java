@@ -327,4 +327,8 @@ public class Plateau {
         }
         return score;
     }
+
+    public ArrayList<Coup> getCoups() {
+        return coups;
+    }
 }

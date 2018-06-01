@@ -1,5 +1,6 @@
 package mahjong.GUI;
 
+import mahjong.GestionnaireJoueur;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import javax.swing.JFrame;
@@ -13,12 +14,18 @@ public class Fenetre extends JFrame {
     private final JPanel container;
     private final InterfaceDeJeu interfaceDeJeu;
     private final MenuPrincipal menu;
-    private static GestionnaireJoueur gestionnaireJoueurs;
+    private final GestionnaireJoueur gestionnaireJoueurs;
+    private final SelectionJoueurGUI ecranSelectionJoueur;
 
     public Fenetre() {
         super("Mahjong");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        gestionnaireJoueurs = new GestionnaireJoueur();
+        gestionnaireJoueurs.add(new Joueur("test"));
+        gestionnaireJoueurs.setJoueur(gestionnaireJoueurs.getListeJoueurs().get(0));
+        gestionnaireJoueurs.chargerJoueurs();
+        
         container = new JPanel();
         container.setLayout(new CardLayout());
 
@@ -27,15 +34,13 @@ public class Fenetre extends JFrame {
 
         interfaceDeJeu = new InterfaceDeJeu(this);
         container.add(interfaceDeJeu, "Interface");
+        
+        ecranSelectionJoueur = new SelectionJoueurGUI(this);
+        container.add(ecranSelectionJoueur,"EcranSelectionJoueur");
 
         this.setContentPane(container);
         this.setMinimumSize(new Dimension(PlateauGUI.LARGEUR_TUILE * 15 + 150, PlateauGUI.HAUTEUR_TUILE * 15));
         this.setVisible(true);
-        
-        gestionnaireJoueurs = new GestionnaireJoueur();
-        gestionnaireJoueurs.add(new Joueur("test"));
-        gestionnaireJoueurs.setJoueur(gestionnaireJoueurs.getListeJoueurs().get(0));
-        gestionnaireJoueurs.chargerJoueurs();
     }
 
     public void lancerPartie(long seed, TypePlateau typePlateau) {
@@ -48,6 +53,13 @@ public class Fenetre extends JFrame {
         CardLayout cl = (CardLayout) (container.getLayout());
         cl.show(container, "Menu");
     }    
+    
+    public void afficherEcranSelectionJoueur() {
+        gestionnaireJoueurs.chargerJoueurs();
+        ecranSelectionJoueur.rechargerListeJoueur();
+        CardLayout cl = (CardLayout) (container.getLayout());
+        cl.show(container, "EcranSelectionJoueur");
+    } 
 
     public GestionnaireJoueur getGestionnaireJoueurs() {
         return gestionnaireJoueurs;

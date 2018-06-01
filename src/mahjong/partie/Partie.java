@@ -41,6 +41,7 @@ public class Partie
     {
         int scoreAjouter = chrono.getScoreTemp();
         score += scoreAjouter;
+        interfaceDeJeu.debloquerBoutonRetourCoup();
         interfaceDeJeu.setScore(score);
         chrono.resetChronoCoup();
         chrono.resetChronoAffichageChemin();
@@ -88,8 +89,11 @@ public class Partie
 
     public void retourCoup() 
     {
+        chrono.resetChronoCoup();
         score -=plateau.retourCoup()+10;
         interfaceDeJeu.setScore(score);
-        interfaceDeJeu.repaint();     
+        interfaceDeJeu.repaint();    
+        if(plateau.getCoups().isEmpty())
+            interfaceDeJeu.bloquerBoutonRetourCoup();
     }
 }
