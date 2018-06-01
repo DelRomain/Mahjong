@@ -15,16 +15,17 @@ import mahjong.ListeTypePlateau;
  */
 public class DialogueCreationDePartie extends javax.swing.JDialog {
 
-    private Fenetre fenetre;
+    private final Fenetre fenetre;
     /**
      * Creates new form DialogueCreationDePartie
      * @param parent
      * @param modal
      */
-    public DialogueCreationDePartie(javax.swing.JFrame parent, boolean modal) {
+    public DialogueCreationDePartie(Fenetre parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        this.fenetre = (Fenetre) parent;
+        this.fenetre = parent;
+        this.labelNomJoeur.setText(fenetre.getGestionnaireJoueurs().getJoueur().getNom());
         this.comboBoxTypeTerrain.setSelectedIndex(0);
     }
 
@@ -186,53 +187,11 @@ public class DialogueCreationDePartie extends javax.swing.JDialog {
         {
             Random random = new Random();
             seed = random.nextLong();
-            System.out.println("generation seed");
+            System.out.println("generation seed : "+seed);
         }
         fenetre.lancerPartie(seed,ListeTypePlateau.getTypeParNom((String)comboBoxTypeTerrain.getSelectedItem()).getTypePlateau());
         dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }//GEN-LAST:event_boutonLancerActionPerformed
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(DialogueCreationDePartie.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(DialogueCreationDePartie.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(DialogueCreationDePartie.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(DialogueCreationDePartie.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                DialogueCreationDePartie dialog = new DialogueCreationDePartie(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
-    }
     
     private String[] genererListeComboBox()
     {

@@ -16,15 +16,18 @@ import mahjong.partie.Partie;
 public class InterfaceDeJeu extends javax.swing.JPanel {
     
     private Partie partie;
+    private Fenetre fenetre;
 
     public InterfaceDeJeu(Fenetre fenetre) 
     {
         initComponents();
         plateauGUI.setFenetre(fenetre);
+        this.fenetre = fenetre;
     }
 
     public void setPartie(Partie partie) {
         this.partie = partie;
+        this.labelNomJoueur.setText(fenetre.getGestionnaireJoueurs().getJoueur().getNom());
         plateauGUI.setPlateau(partie.getPlateau());
     }
 
@@ -53,6 +56,7 @@ public class InterfaceDeJeu extends javax.swing.JPanel {
         labelTempPartie = new javax.swing.JLabel();
         boutonMelanger = new javax.swing.JButton();
         boutonPause = new javax.swing.JButton();
+        boutonCoupRedo = new javax.swing.JButton();
         plateauGUI = new mahjong.GUI.PlateauGUI();
 
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.LINE_AXIS));
@@ -87,11 +91,19 @@ public class InterfaceDeJeu extends javax.swing.JPanel {
             }
         });
 
+        boutonCoupRedo.setText("coup precedent");
+        boutonCoupRedo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                boutonCoupRedoActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanelInfoJoueurLayout = new javax.swing.GroupLayout(jPanelInfoJoueur);
         jPanelInfoJoueur.setLayout(jPanelInfoJoueurLayout);
         jPanelInfoJoueurLayout.setHorizontalGroup(
             jPanelInfoJoueurLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(boutonMelanger, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(boutonPause, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanelInfoJoueurLayout.createSequentialGroup()
                 .addGroup(jPanelInfoJoueurLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanelInfoJoueurLayout.createSequentialGroup()
@@ -106,8 +118,8 @@ public class InterfaceDeJeu extends javax.swing.JPanel {
                         .addGroup(jPanelInfoJoueurLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(labelTempPartie)
                             .addComponent(labelScoreJoueur))))
-                .addGap(0, 34, Short.MAX_VALUE))
-            .addComponent(boutonPause, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(boutonCoupRedo, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
         );
         jPanelInfoJoueurLayout.setVerticalGroup(
             jPanelInfoJoueurLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -124,7 +136,9 @@ public class InterfaceDeJeu extends javax.swing.JPanel {
                 .addGroup(jPanelInfoJoueurLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabelLabelTemps)
                     .addComponent(labelTempPartie))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 183, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 154, Short.MAX_VALUE)
+                .addComponent(boutonCoupRedo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(boutonPause)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(boutonMelanger))
@@ -173,8 +187,13 @@ public class InterfaceDeJeu extends javax.swing.JPanel {
         partie.melangerPlateau();
     }//GEN-LAST:event_boutonMelangerActionPerformed
 
+    private void boutonCoupRedoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boutonCoupRedoActionPerformed
+        partie.retourCoup();
+    }//GEN-LAST:event_boutonCoupRedoActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton boutonCoupRedo;
     private javax.swing.JButton boutonMelanger;
     private javax.swing.JButton boutonPause;
     private javax.swing.JLabel jLabelLabelNomJoueur;

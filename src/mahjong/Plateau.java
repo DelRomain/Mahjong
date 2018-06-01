@@ -165,12 +165,12 @@ public class Plateau {
                     coups.add(coup);
                     //XXX POUR LES TESTS
                     if (partie != null) {
-                        partie.resetChrono();
+                        coup.setScore(partie.resetChrono());
                     }
                     this.partie.getInterfaceDeJeu().bloquerPlateau(true);
 
                     afficherChemin = true;
-                    
+
                 }
             }
         }
@@ -224,7 +224,7 @@ public class Plateau {
 
     }
 
-    public void melangerPlateau() { 
+    public void melangerPlateau() {
         ArrayList<Tuile[]> listeDePaires = new ArrayList<>();
         ArrayList<int[]> emplacementLibre = new ArrayList<>();
         int i = 0;
@@ -316,5 +316,15 @@ public class Plateau {
             plateau[coup.getTuiles()[1].getCoordonnees()[0]][coup.getTuiles()[1].getCoordonnees()[1]] = null;
             typeDePlateau.traitementTerrainPostCoup(plateau, coup);
         }
+    }
+
+    public int retourCoup() {
+        int score = 0;
+        if (!coups.isEmpty() && !afficherChemin) {
+            Coup coup = coups.remove(coups.size() - 1);
+            typeDePlateau.remonterCoup(plateau, coup);
+            score = coup.getScore();
+        }
+        return score;
     }
 }

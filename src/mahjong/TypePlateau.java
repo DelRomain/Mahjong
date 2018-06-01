@@ -7,5 +7,5 @@ public abstract class TypePlateau
      * @param plateau sur lequel la physique est appliqué
      */
     public abstract void traitementTerrainPostCoup(Tuile[][] plateau, Coup coup);
-    //public abstract void remonterCoup(Tuile[][] plateau, Coup coup);
+    public abstract void remonterCoup(Tuile[][] plateau, Coup coup);
 }

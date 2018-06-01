@@ -5,14 +5,12 @@ import mahjong.GUI.InterfaceDeJeu;
 import mahjong.Plateau;
 import mahjong.TypePlateau;
 import mahjong.Type_Plateau.PlateauTuileTombante;
-import mahjong.joueur.Joueur;
 
 
 public class Partie 
 {
     private boolean enPause;
     private final Plateau plateau;
-    private final Joueur joueur;
     private Chrono chrono;
     private final InterfaceDeJeu interfaceDeJeu;
     private final Timer timer;
@@ -26,7 +24,6 @@ public class Partie
 
     public Partie(InterfaceDeJeu interfaceDeJeu, long seed, TypePlateau typePlateau) {
         timer = new Timer();
-        joueur = new Joueur();
         plateau = new Plateau();
         tempCoup = 20;
         
@@ -40,12 +37,14 @@ public class Partie
         timer.scheduleAtFixedRate(chrono, 0, 10);
     }
 
-    public void resetChrono() 
+    public int resetChrono() 
     {
-        score +=chrono.getScoreTemp();
+        int scoreAjouter = chrono.getScoreTemp();
+        score += scoreAjouter;
         interfaceDeJeu.setScore(score);
         chrono.resetChronoCoup();
         chrono.resetChronoAffichageChemin();
+        return scoreAjouter;
     }
 
     public InterfaceDeJeu getInterfaceDeJeu()
@@ -86,8 +85,11 @@ public class Partie
         plateau.melangerPlateau();
         interfaceDeJeu.repaint();
     }
-    
-    
-    
-    
+
+    public void retourCoup() 
+    {
+        score -=plateau.retourCoup()+10;
+        interfaceDeJeu.setScore(score);
+        interfaceDeJeu.repaint();     
+    }
 }
