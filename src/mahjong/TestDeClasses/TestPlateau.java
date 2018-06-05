@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 import mahjong.GUI.PlateauGUI;
 import mahjong.Plateau;
 import mahjong.Type_Plateau.PlateauTuileTombante;
+import mahjong.Type_Plateau.TypePlateau;
 
 /**
  *
@@ -23,7 +24,7 @@ public class TestPlateau
         
         PlateauGUI gui = new PlateauGUI();
         Plateau plateau = new Plateau();
-        plateau.genererNouveauPlateau(0, new PlateauTuileTombante());
+        plateau.genererNouveauPlateau(0, TypePlateau.TUILE_TOMBANTE);
         
         gui.setPlateau(plateau);
         

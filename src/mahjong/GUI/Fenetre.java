@@ -1,15 +1,21 @@
 package mahjong.GUI;
 
-import mahjong.GestionnaireJoueur;
+import mahjong.joueur.GestionnaireJoueur;
 import java.awt.CardLayout;
 import java.awt.Dimension;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.File;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import mahjong.TypePlateau;
-import mahjong.joueur.Joueur;
+import mahjong.Type_Plateau.PlateauGenerique;
+import mahjong.Type_Plateau.TypePlateau;
 import mahjong.partie.Partie;
+import mahjong.partie.SauvegardePartie;
 
-public class Fenetre extends JFrame {
+public class Fenetre extends JFrame implements WindowListener {
 
     private final JPanel container;
     private final InterfaceDeJeu interfaceDeJeu;
@@ -17,14 +23,16 @@ public class Fenetre extends JFrame {
     private final GestionnaireJoueur gestionnaireJoueurs;
     private final SelectionJoueurGUI ecranSelectionJoueur;
     private final classementGUI classement;
+    private Partie partie;
 
     public Fenetre() {
         super("Mahjong");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        this.addWindowListener(this);
 
         gestionnaireJoueurs = new GestionnaireJoueur();
         gestionnaireJoueurs.chargerJoueurs();
-        
+
         container = new JPanel();
         container.setLayout(new CardLayout());
 
@@ -33,10 +41,10 @@ public class Fenetre extends JFrame {
 
         interfaceDeJeu = new InterfaceDeJeu(this);
         container.add(interfaceDeJeu, "Interface");
-        
+
         ecranSelectionJoueur = new SelectionJoueurGUI(this);
-        container.add(ecranSelectionJoueur,"EcranSelectionJoueur");
-        
+        container.add(ecranSelectionJoueur, "EcranSelectionJoueur");
+
         classement = new classementGUI(this);
         container.add(classement, "Classement");
 
@@ -46,22 +54,23 @@ public class Fenetre extends JFrame {
     }
 
     public void lancerPartie(long seed, TypePlateau typePlateau) {
-        new Partie(interfaceDeJeu, seed, typePlateau);
+        partie = new Partie(interfaceDeJeu, seed, typePlateau);
         CardLayout cl = (CardLayout) (container.getLayout());
         cl.show(container, "Interface");
     }
 
     public void afficherMenuPrincipal() {
+        partie = null;
         CardLayout cl = (CardLayout) (container.getLayout());
         cl.show(container, "Menu");
-    }    
-    
+    }
+
     public void afficherEcranSelectionJoueur() {
         gestionnaireJoueurs.chargerJoueurs();
         ecranSelectionJoueur.rechargerListeJoueur();
         CardLayout cl = (CardLayout) (container.getLayout());
         cl.show(container, "EcranSelectionJoueur");
-    } 
+    }
 
     public GestionnaireJoueur getGestionnaireJoueurs() {
         return gestionnaireJoueurs;
@@ -71,5 +80,63 @@ public class Fenetre extends JFrame {
         classement.rechargerListeJoueur();
         CardLayout cl = (CardLayout) (container.getLayout());
         cl.show(container, "Classement");
+    }
+
+    @Override
+    public void windowOpened(WindowEvent e) {
+    }
+
+    @Override
+    public void windowClosing(WindowEvent e) {
+        boolean doitFermer = true;
+        if (partie != null) {
+            int option = JOptionPane.showConfirmDialog(this, "Voulez-vous sauvegarder la partie courante ?", "Fermeture fenetre", JOptionPane.YES_NO_CANCEL_OPTION);
+            if (option == JOptionPane.YES_OPTION) {
+                JFileChooser fileChooser = new JFileChooser("partie");
+                fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+
+                int returnVal = fileChooser.showSaveDialog(this);
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    File file = fileChooser.getSelectedFile();
+                    
+                    SauvegardePartie save = new SauvegardePartie(partie, gestionnaireJoueurs.getJoueur());
+                    save.sauvegarder(file.getAbsolutePath()+".mprt");
+                    
+                } else if (returnVal == JFileChooser.CANCEL_OPTION) {
+                    doitFermer = false;
+                }
+            }
+            if (option == JOptionPane.CANCEL_OPTION) {
+                doitFermer = false;
+            }
+        }
+        if (doitFermer) {
+            System.exit(0);
+        }
+    }
+
+    @Override
+    public void windowClosed(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowIconified(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowDeiconified(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowActivated(WindowEvent e) {
+
+    }
+
+    @Override
+    public void windowDeactivated(WindowEvent e) {
+
     }
 }

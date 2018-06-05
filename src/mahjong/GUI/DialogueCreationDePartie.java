@@ -7,7 +7,7 @@ package mahjong.GUI;
 
 import java.awt.event.WindowEvent;
 import java.util.Random;
-import mahjong.ListeTypePlateau;
+import mahjong.Type_Plateau.TypePlateau;
 
 /**
  *
@@ -189,16 +189,16 @@ public class DialogueCreationDePartie extends javax.swing.JDialog {
             seed = random.nextLong();
             System.out.println("generation seed : "+seed);
         }
-        fenetre.lancerPartie(seed,ListeTypePlateau.getTypeParNom((String)comboBoxTypeTerrain.getSelectedItem()).getTypePlateau());
+        fenetre.lancerPartie(seed,TypePlateau.getTypeParNom((String)comboBoxTypeTerrain.getSelectedItem()));
         dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }//GEN-LAST:event_boutonLancerActionPerformed
     
     private String[] genererListeComboBox()
     {
-        String[] listeItems = new String[ListeTypePlateau.values().length];
-        for(int i = 0; i<ListeTypePlateau.values().length; i++)
+        String[] listeItems = new String[TypePlateau.values().length];
+        for(int i = 0; i<TypePlateau.values().length; i++)
         {
-            listeItems[i] = ListeTypePlateau.values()[i].getNom();
+            listeItems[i] = TypePlateau.values()[i].getNom();
         }
         return listeItems;
     }

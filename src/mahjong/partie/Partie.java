@@ -1,15 +1,16 @@
 package mahjong.partie;
 
+import java.io.BufferedReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Timer;
 import javax.swing.JOptionPane;
 import mahjong.GUI.InterfaceDeJeu;
 import mahjong.Plateau;
-import mahjong.TypePlateau;
-import mahjong.Type_Plateau.PlateauTuileTombante;
-import static mahjong.partie.Chrono.getTempsFormate;
+import mahjong.Type_Plateau.TypePlateau;
 
 
-public class Partie 
+public class Partie
 {
     private boolean enPause;
     private final Plateau plateau;
@@ -21,7 +22,7 @@ public class Partie
     private int tempCoup;
     
     public Partie(InterfaceDeJeu interfaceDeJeu) {
-        this(interfaceDeJeu,(long)0, new PlateauTuileTombante());
+        this(interfaceDeJeu,(long)0, TypePlateau.TUILE_TOMBANTE);
     }
 
     public Partie(InterfaceDeJeu interfaceDeJeu, long seed, TypePlateau typePlateau) {
@@ -37,6 +38,13 @@ public class Partie
         interfaceDeJeu.setPartie(this);
         
         timer.scheduleAtFixedRate(chrono, 0, 10);
+    }
+
+    public Partie() 
+    {
+        plateau = new Plateau();
+        interfaceDeJeu = null;
+        timer = null;
     }
 
     public int resetChrono() 
@@ -121,5 +129,20 @@ public class Partie
             interfaceDeJeu.victoire();
             interfaceDeJeu.afficherMenuPrincipal();
         }
+    }
+    
+    public void save(FileWriter fichier) throws IOException
+    {
+        fichier.write(score+"/"+tempCoupChronoPause+"/"+tempTotalChronoPause+"\n");
+        plateau.save(fichier);     
+    }
+
+    public void charger(BufferedReader fichier) throws IOException 
+    {
+        String[] values = fichier.readLine().split("/");
+        score = Integer.parseInt(values[0]);
+        tempCoupChronoPause = Long.parseLong(values[1]);
+        tempTotalChronoPause = Long.parseLong(values[2]);
+        plateau.charger(fichier);
     }
 }

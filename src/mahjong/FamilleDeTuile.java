@@ -27,4 +27,20 @@ public enum FamilleDeTuile {
         }
         return nomFichierImages;
     }
+    
+    public static FamilleDeTuile getFamilleParPremiereLettre(String nom)
+    {
+        boolean familleEnRecherche = true;
+        int i = 0;
+        while(familleEnRecherche && i<FamilleDeTuile.values().length)
+        {
+            if(nom.equalsIgnoreCase(FamilleDeTuile.values()[i].toString().substring(0,1)))
+            {
+                familleEnRecherche = false;
+            }
+            else
+                i++;
+        }
+        return FamilleDeTuile.values()[i];
+    }
 }

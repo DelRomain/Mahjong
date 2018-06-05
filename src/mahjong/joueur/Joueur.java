@@ -1,16 +1,17 @@
 package mahjong.joueur;
 
-import java.io.Serializable;
+import java.io.BufferedReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Objects;
-import mahjong.partie.Chrono;
 import mahjong.partie.Partie;
 
-public class Joueur implements Serializable {
+public class Joueur{
 
     private String nom;
+    private long meilleurTemps;
+    private int meilleurScore;
     private ArrayList<Partie> listePartie;
 
     public Joueur(String nom, ArrayList<Partie> listePartie) {
@@ -20,6 +21,10 @@ public class Joueur implements Serializable {
 
     public Joueur(String nom) {
         this.nom = nom;
+        this.listePartie = new ArrayList<>();
+    }
+
+    public Joueur() {
         this.listePartie = new ArrayList<>();
     }
 
@@ -33,6 +38,10 @@ public class Joueur implements Serializable {
 
     public void ajouterUnePartie(Partie partie) {
         listePartie.add(partie);
+        if(partie.getScore()>meilleurScore)
+            meilleurScore = partie.getScore();
+        if(partie.getTempTotalChronoPause()>meilleurTemps)
+            meilleurTemps = partie.getTempTotalChronoPause();
     }
 
     @Override
@@ -54,52 +63,43 @@ public class Joueur implements Serializable {
     }
 
     public String getMeilleurTemps() {
-        String result;
-        if (!listePartie.isEmpty()) {
-            result = Chrono.getTempsFormate(Collections.max(listePartie, new Comparator<Partie>() {
-                @Override
-                public int compare(Partie partie1, Partie partie2) {
-                    if (partie1.getTempTotalChronoPause() > partie2.getTempTotalChronoPause()) {
-                        return 1;
-                    } else if (partie1.getTempTotalChronoPause() == partie2.getTempTotalChronoPause()) {
-                        return 0;
-                    } else {
-                        return -1;
-                    }
-                }
-            }).getTempTotalChronoPause());
-            
-        } else {
-            result = "/";
-        }
-
-        return result;
+        return meilleurTemps+"";
     }
 
     public String getMeilleurScore() {
-        String result;
-        if (!listePartie.isEmpty()) {
-            result = "" + Collections.max(listePartie, new Comparator<Partie>() {
-                @Override
-                public int compare(Partie partie1, Partie partie2) {
-                    if (partie1.getScore() > partie2.getScore()) {
-                        return 1;
-                    } else if (partie1.getScore() == partie2.getScore()) {
-                        return 0;
-                    } else {
-                        return -1;
-                    }
-                }
-            }).getScore();
-        } else {
-            result = "/";
-        }
-
-        return result;
+        return meilleurScore+"";
     }
 
     public String getNombrePartie() {
         return listePartie.size() + "";
     }
 
+    public void save(FileWriter fichier) throws IOException
+    {
+        fichier.write(nom+"\n");
+        fichier.write(getNombrePartie()+"/"+getMeilleurScore()+"/"+getMeilleurTemps()+"\n");
+        for(Partie partie : listePartie)
+        {
+           partie.save(fichier);
+           fichier.write("\n");
+           fichier.flush();
+        }
+    }
+
+    public void charger(BufferedReader fichier) throws IOException 
+    {
+        nom = fichier.readLine();
+        String valeurs[] = fichier.readLine().split("/");
+        
+        meilleurScore = Integer.parseInt(valeurs[1]);
+        meilleurTemps = Long.parseLong(valeurs[2]);
+        int nombrePartie = Integer.parseInt(valeurs[0]);
+        
+        for(int i = 0; i<nombrePartie;i++)
+        {
+            Partie partie = new Partie();
+            partie.charger(fichier);
+            listePartie.add(partie);
+        }
+    }
 }

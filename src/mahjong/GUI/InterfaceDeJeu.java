@@ -243,6 +243,6 @@ public class InterfaceDeJeu extends javax.swing.JPanel {
 
     public void victoire() 
     {
-        fenetre.getGestionnaireJoueurs().getJoueur().ajouterUnePartie(partie);
+        fenetre.getGestionnaireJoueurs().ajouterPartieAuJoueurCourant(partie);
     }
 }

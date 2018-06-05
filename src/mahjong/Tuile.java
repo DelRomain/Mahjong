@@ -11,6 +11,15 @@ public class Tuile {
         this.id = id;
     }
 
+    public Tuile(String chaineCaractereSauvegarde) 
+    {
+        String values[] = chaineCaractereSauvegarde.split("/");
+        typeTuile = FamilleDeTuile.valueOf(values[0]);
+        this.id = Integer.parseInt(values[1]);
+        this.coordonneeX = Integer.parseInt(values[2]);
+        this.coordonneeY = Integer.parseInt(values[3]);
+    }
+
     public FamilleDeTuile getTypeTuile() {
         return typeTuile;
     }
@@ -50,5 +59,9 @@ public class Tuile {
     {
         return FamilleDeTuile.indexBaseFammile[typeTuile.ordinal()]+id;
     }
-
+    
+    public String save()
+    {
+        return typeTuile.toString()+"/"+id+"/"+coordonneeX+"/"+coordonneeY;
+    }
 }

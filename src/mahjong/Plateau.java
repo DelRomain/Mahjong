@@ -1,6 +1,12 @@
 package mahjong;
 
+import mahjong.Type_Plateau.TypePlateau;
+import mahjong.Type_Plateau.PlateauGenerique;
+import java.io.BufferedReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
 import mahjong.PathFinder.CaseRecherchee;
@@ -314,7 +320,7 @@ public class Plateau {
             Coup coup = coups.get(coups.size() - 1);
             plateau[coup.getTuiles()[0].getCoordonnees()[0]][coup.getTuiles()[0].getCoordonnees()[1]] = null;
             plateau[coup.getTuiles()[1].getCoordonnees()[0]][coup.getTuiles()[1].getCoordonnees()[1]] = null;
-            typeDePlateau.traitementTerrainPostCoup(plateau, coup);
+            typeDePlateau.getPhysiquePlateau().traitementTerrainPostCoup(plateau, coup);
         }
     }
 
@@ -322,7 +328,7 @@ public class Plateau {
         int score = 0;
         if (!coups.isEmpty() && !afficherChemin) {
             Coup coup = coups.remove(coups.size() - 1);
-            typeDePlateau.remonterCoup(plateau, coup);
+            typeDePlateau.getPhysiquePlateau().remonterCoup(plateau, coup);
             score = coup.getScore();
         }
         return score;
@@ -330,5 +336,44 @@ public class Plateau {
 
     public ArrayList<Coup> getCoups() {
         return coups;
+    }
+
+    public void save(FileWriter fichier) throws IOException
+    {
+        fichier.write(typeDePlateau.toString()+"\n");
+        String savePlateau = "";
+        for (int indexLigne = 0; indexLigne < NOMBRE_LIGNE; indexLigne++) {
+            for (int indexColonne = 0; indexColonne < NOMBRE_COLONNE; indexColonne++) {
+                if (plateau[indexLigne][indexColonne] != null) {
+                    savePlateau += plateau[indexLigne][indexColonne].save();
+                }
+                savePlateau += ":";
+            }
+            savePlateau += ";";
+        }
+        fichier.write(savePlateau+"\n");
+        savePlateau="";
+        for (Coup coup : coups) {
+            savePlateau += coup.save() + ";";
+        }
+        fichier.write(savePlateau.substring(0,savePlateau.length()-1));
+    }
+
+    public void charger(BufferedReader fichier) throws IOException {
+        typeDePlateau = TypePlateau.valueOf(fichier.readLine());
+        String lignes[] = fichier.readLine().split(";");
+        for (int indexLigne = 0; indexLigne < NOMBRE_LIGNE; indexLigne++) {
+            String colonnes[] = lignes[indexLigne].split(":");
+            
+            for (int indexColonne = 0; indexColonne < NOMBRE_COLONNE; indexColonne++) {
+                if(indexColonne<colonnes.length && !colonnes[indexColonne].equals(""))
+                    plateau[indexLigne][indexColonne] = new Tuile(colonnes[indexColonne]);
+            }
+        }
+
+        String sauvegardeCoups[] = fichier.readLine().split(";");
+        for (String sauvegarde : sauvegardeCoups) {
+            this.coups.add(new Coup(sauvegarde));
+        }
     }
 }
