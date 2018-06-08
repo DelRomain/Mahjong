@@ -2,6 +2,7 @@ package mahjong.GUI.utils;
 
 import java.util.ArrayList;
 import mahjong.joueur.Joueur;
+import mahjong.partie.Chrono;
 
 /**
  *
@@ -26,7 +27,7 @@ public class JTableModeleClassement extends JTableModel<Joueur> {
             case 2:
                 return liste.get(row).getMeilleurScore();
             case 3:
-                return liste.get(row).getMeilleurTemps();
+                return Chrono.getTempsFormate(liste.get(row).getMeilleurTemps());
             default:
                 return col;
         }

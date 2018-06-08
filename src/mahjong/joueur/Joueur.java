@@ -62,12 +62,12 @@ public class Joueur{
         return true;
     }
 
-    public String getMeilleurTemps() {
-        return meilleurTemps+"";
+    public long getMeilleurTemps() {
+        return meilleurTemps;
     }
 
-    public String getMeilleurScore() {
-        return meilleurScore+"";
+    public int getMeilleurScore() {
+        return meilleurScore;
     }
 
     public String getNombrePartie() {
