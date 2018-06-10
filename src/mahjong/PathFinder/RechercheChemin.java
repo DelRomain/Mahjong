@@ -38,12 +38,12 @@ public class RechercheChemin {
 
     private boolean rechercheChemin(CaseRecherchee caseRecherchee) {
         for (CaseAdjacente positionRelative : CaseAdjacente.values()) {
-            int x = caseRecherchee.getX() + positionRelative.getX();
-            int y = caseRecherchee.getY() + positionRelative.getY();
+            int x = caseRecherchee.getLigne() + positionRelative.getLigne();
+            int y = caseRecherchee.getColonne() + positionRelative.getColonne();
             if (estSurPlateau(x, y)) {
                 Tuile tuile = plateau.getTuile(x, y);
 
-                if (tuile == null || (caseArrivee.getX() == x && caseArrivee.getY() == y)) {
+                if (tuile == null || (caseArrivee.getLigne() == x && caseArrivee.getColonne() == y)) {
                     CaseRecherchee caseObservee = new CaseRecherchee(caseRecherchee, x, y, positionRelative);
                     caseObservee.setDistance(getDistance(caseArrivee, caseObservee));
                     if (caseObservee.getNombreAngleDroit() <= 2) {
@@ -74,8 +74,8 @@ public class RechercheChemin {
     }
 
     private int getDistance(CaseRecherchee caseAEvaluer, CaseRecherchee caseReference) {
-        return (int) Math.pow(caseAEvaluer.getX() - caseReference.getX(), 2)
-                + (int) Math.pow(caseAEvaluer.getY() - caseReference.getY(), 2);
+        return (int) Math.pow(caseAEvaluer.getLigne() - caseReference.getLigne(), 2)
+                + (int) Math.pow(caseAEvaluer.getColonne() - caseReference.getColonne(), 2);
     }
 
     private boolean estSurPlateau(int x, int y) {

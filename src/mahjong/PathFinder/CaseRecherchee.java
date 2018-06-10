@@ -14,7 +14,7 @@ import mahjong.CaseAdjacente;
  */
 public class CaseRecherchee implements Comparable{
 
-    private final int x,y;
+    private final int ligne,colonne;
     private int total;
     private CaseRecherchee parent;
     private int nombreAngleDroit;
@@ -25,10 +25,10 @@ public class CaseRecherchee implements Comparable{
     }
 
     
-    public CaseRecherchee(CaseRecherchee parent,int x, int y, CaseAdjacente direction) {
+    public CaseRecherchee(CaseRecherchee parent,int ligne, int colonne, CaseAdjacente direction) {
         this.parent = parent; 
-        this.x = x;
-        this.y = y;
+        this.ligne = ligne;
+        this.colonne = colonne;
         this.direction = direction;
         
         nombreAngleDroit = getNombreAngleDroit(parent);
@@ -61,12 +61,12 @@ public class CaseRecherchee implements Comparable{
         return parent;
     }
 
-    public int getX() {
-        return x;
+    public int getLigne() {
+        return ligne;
     }
 
-    public int getY() {
-        return y;
+    public int getColonne() {
+        return colonne;
     }
 
     @Override
@@ -81,10 +81,10 @@ public class CaseRecherchee implements Comparable{
             return false;
         }
         final CaseRecherchee other = (CaseRecherchee) obj;
-        if (this.x != other.x) {
+        if (this.ligne != other.ligne) {
             return false;
         }
-        if (this.y != other.y) {
+        if (this.colonne != other.colonne) {
             return false;
         }
         return true;
@@ -112,7 +112,7 @@ public class CaseRecherchee implements Comparable{
 
     @Override
     public String toString() {
-        return "CaseRecherchee{" + "x=" + x + ", y=" + y + ", total=" + total + ", nombreAngleDroit=" + nombreAngleDroit + ", direction=" + direction + ", parent=" + parent + '}';
+        return "CaseRecherchee{" + "lgn=" + ligne + ", col=" + colonne + ", total=" + total + ", nombreAngleDroit=" + nombreAngleDroit + ", direction=" + direction + ", parent=" + parent + '}';
     }
 
     public void setDistance(int distance) 

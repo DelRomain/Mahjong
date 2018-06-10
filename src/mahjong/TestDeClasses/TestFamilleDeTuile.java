@@ -17,7 +17,7 @@ public class TestFamilleDeTuile {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        System.out.println(FamilleDeTuile.ROND.getNombrePairesTuile());
+        System.out.println(FamilleDeTuile.ROND.estAAppairageStrict());
         System.out.println(FamilleDeTuile.ROND.getNombreTuileDifferente());
         System.out.println(Arrays.toString(FamilleDeTuile.ROND.getNomFichier()));
         

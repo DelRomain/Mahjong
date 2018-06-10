@@ -1,12 +1,12 @@
 package mahjong.Type_Plateau;
 
-import mahjong.Coup;
+import mahjong.coup.CoupRetirerTuile;
 import mahjong.Tuile;
 
 public class PlateauTuileTombante extends PlateauGenerique {
 
     @Override
-    public void traitementTerrainPostCoup(Tuile[][] plateau, Coup coup) {
+    public void traitementTerrainPostCoup(Tuile[][] plateau, CoupRetirerTuile coup) {
 
         int[] premiereTuile;
         int[] deuxiemeTuile;
@@ -36,7 +36,7 @@ public class PlateauTuileTombante extends PlateauGenerique {
     }
 
     @Override
-    public void remonterCoup(Tuile[][] plateau, Coup coup) {
+    public void remonterCoup(Tuile[][] plateau, CoupRetirerTuile coup) {
         int[] premiereTuile;
         int[] deuxiemeTuile;
         if (coup.getTuiles()[0].getCoordonnees()[0] > coup.getTuiles()[1].getCoordonnees()[0]) {
@@ -54,6 +54,7 @@ public class PlateauTuileTombante extends PlateauGenerique {
                 plateau[i][premiereTuile[1]].setCoordonnees(i, premiereTuile[1]);
         }
         plateau[premiereTuile[0]][premiereTuile[1]]=coup.getTuiles()[0];
+        //plateau[premiereTuile[0]][premiereTuile[1]].setCoordonnees(premiereTuile[0],premiereTuile[1]);
         
        for (int i = 0; i < deuxiemeTuile[0]; i++) {
             plateau[i][deuxiemeTuile[1]] = plateau[i + 1][deuxiemeTuile[1]];
@@ -63,5 +64,6 @@ public class PlateauTuileTombante extends PlateauGenerique {
                 plateau[i][deuxiemeTuile[1]].setCoordonnees(i, deuxiemeTuile[1]);    
         }
         plateau[deuxiemeTuile[0]][deuxiemeTuile[1]]=coup.getTuiles()[1];
+        //plateau[deuxiemeTuile[0]][deuxiemeTuile[1]].setCoordonnees(deuxiemeTuile[0],deuxiemeTuile[1]);
     }
 }

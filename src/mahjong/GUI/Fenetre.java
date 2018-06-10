@@ -1,6 +1,5 @@
 package mahjong.GUI;
 
-import mahjong.joueur.GestionnaireJoueur;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.event.WindowEvent;
@@ -10,8 +9,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import mahjong.Type_Plateau.PlateauGenerique;
 import mahjong.Type_Plateau.TypePlateau;
+import mahjong.joueur.GestionnaireJoueur;
 import mahjong.partie.Partie;
 import mahjong.partie.SauvegardePartie;
 

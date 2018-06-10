@@ -32,10 +32,10 @@ public class Tuile {
     public boolean equals(Object obj) {
         if (obj instanceof Tuile) {
             Tuile tuile = ((Tuile) obj);
-            if (this.typeTuile.getNombrePairesTuile() == 0) {
-                return tuile.typeTuile == this.typeTuile;
-            } else {
+            if (this.typeTuile.estAAppairageStrict()) {
                 return tuile.typeTuile == this.typeTuile && tuile.id == this.id;
+            } else {
+                return tuile.typeTuile == this.typeTuile;
             }
         }
         return false;
@@ -63,5 +63,10 @@ public class Tuile {
     public String save()
     {
         return typeTuile.toString()+"/"+id+"/"+coordonneeX+"/"+coordonneeY;
+    }
+    
+    public Tuile deepCopy()
+    {
+        return new Tuile(typeTuile,id);
     }
 }

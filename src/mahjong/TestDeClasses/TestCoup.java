@@ -5,6 +5,7 @@
  */
 package mahjong.TestDeClasses;
 
+import mahjong.coup.CoupRetirerTuile;
 import java.util.Arrays;
 import mahjong.*;
 
@@ -23,7 +24,7 @@ public class TestCoup {
         Tuile tuile2 = new Tuile(FamilleDeTuile.FLEUR,2);
         Tuile tuile[]=new Tuile[]{tuile1,tuile2};
         
-        Coup coup = new Coup(tuile);
+        CoupRetirerTuile coup = new CoupRetirerTuile(tuile);
         
         System.out.println(Arrays.toString(coup.getTuiles()));
         

@@ -1,20 +1,24 @@
 package mahjong;
 
+import mahjong.Type_Plateau.PlateauGenerique;
 import mahjong.Type_Plateau.PlateauTuileTombante;
 
+/**
+ * Enumeration de tout les type de jeu disponible
+ */
 public enum ListeTypePlateau 
 {
     TUILE_TOMBANTE("Tuile tombante", new PlateauTuileTombante());
     
-    private final TypePlateau typePlateau;
+    private final PlateauGenerique typePlateau;
     private final String nom;
 
-    private ListeTypePlateau(String nom, TypePlateau typePlateau) {
+    private ListeTypePlateau(String nom, PlateauGenerique typePlateau) {
         this.nom = nom;
         this.typePlateau = typePlateau;
     }
 
-    public TypePlateau getTypePlateau() {
+    public PlateauGenerique getTypePlateau() {
         return typePlateau;
     }
 

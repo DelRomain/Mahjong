@@ -18,8 +18,8 @@ public class TestCaseAdjacente {
      */
     public static void main(String[] args) {
         
-        System.out.println(CaseAdjacente.BAS.getX());
-        System.out.println(CaseAdjacente.HAUT.getY());
+        System.out.println(CaseAdjacente.BAS.getLigne());
+        System.out.println(CaseAdjacente.HAUT.getColonne());
         
     }
     

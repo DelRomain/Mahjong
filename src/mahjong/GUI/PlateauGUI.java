@@ -89,10 +89,10 @@ public class PlateauGUI extends JPanel implements MouseListener, MouseMotionList
                 while(parent != null)
                 {
                     g.drawLine(
-                            caseRechercheChemin.getY()*LARGEUR_TUILE+LARGEUR_TUILE/2,
-                            caseRechercheChemin.getX()*HAUTEUR_TUILE+HAUTEUR_TUILE/2,
-                            parent.getY()*LARGEUR_TUILE+LARGEUR_TUILE/2,
-                            parent.getX()*HAUTEUR_TUILE+HAUTEUR_TUILE/2);
+                            caseRechercheChemin.getColonne()*LARGEUR_TUILE+LARGEUR_TUILE/2,
+                            caseRechercheChemin.getLigne()*HAUTEUR_TUILE+HAUTEUR_TUILE/2,
+                            parent.getColonne()*LARGEUR_TUILE+LARGEUR_TUILE/2,
+                            parent.getLigne()*HAUTEUR_TUILE+HAUTEUR_TUILE/2);
                     
                     caseRechercheChemin = parent;
                     parent = caseRechercheChemin.getParent();
