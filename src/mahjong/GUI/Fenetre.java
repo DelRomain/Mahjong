@@ -89,7 +89,8 @@ public class Fenetre extends JFrame implements WindowListener {
     public void windowClosing(WindowEvent e) {
         boolean doitFermer = true;
         if (partie != null) {
-            partie.changePause();
+            if(partie.estEnPaused())
+                partie.togglePause();
             int option = JOptionPane.showConfirmDialog(this, "Voulez-vous sauvegarder la partie courante ?", "Fermeture fenetre", JOptionPane.YES_NO_CANCEL_OPTION);
             if (option == JOptionPane.YES_OPTION) {
                 JFileChooser fileChooser = new JFileChooser("partie");
@@ -104,12 +105,10 @@ public class Fenetre extends JFrame implements WindowListener {
                     
                 } else if (returnVal == JFileChooser.CANCEL_OPTION) {
                     doitFermer = false;
-                    partie.changePause();
                 }
             }
             if (option == JOptionPane.CANCEL_OPTION) {
                 doitFermer = false;
-                partie.changePause();
             }
         }
         if (doitFermer) {

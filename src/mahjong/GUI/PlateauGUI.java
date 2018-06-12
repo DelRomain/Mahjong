@@ -122,7 +122,8 @@ public class PlateauGUI extends JPanel implements MouseListener {
             colonneTuile = curseurX / PlateauGUI.LARGEUR_TUILE;
             ligneTuile = curseurY / PlateauGUI.HAUTEUR_TUILE;
             this.dernierCoup = this.plateau.genererCoup(ligneTuile, colonneTuile);
-            fireGenererCoup(dernierCoup);
+            if(dernierCoup != null)
+                fireGenererCoup(dernierCoup);
             this.repaint();
         } else if (e.getButton() == MouseEvent.BUTTON3) {
             this.plateau.deselectionnerTuile();
@@ -138,7 +139,8 @@ public class PlateauGUI extends JPanel implements MouseListener {
     }
 
     public void effacerCheminLiaisonTuiles() {
-        this.plateau.appliquerCoup(this.dernierCoup);
+        if(dernierCoup != null)
+            this.plateau.jouerCoup(this.dernierCoup, false);
         this.dernierCoup = null;
         this.repaint();
     }

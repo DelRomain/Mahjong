@@ -29,17 +29,17 @@ public class Partie implements ChronoListener, PlateauListener, InterfaceListene
     private InterfaceDeJeu interfaceDeJeu;
 
     public Partie(InterfaceDeJeu interfaceDeJeu, long seed, TypePlateau typePlateau) {
-        this.timer = new Timer();
-        this.timer.scheduleAtFixedRate(chrono, 0, 10);
-
         this.seed = seed;
 
         this.chrono = new Chrono(this, TEMP_PAR_COUP);
         this.chrono.addChronoListener(interfaceDeJeu);
         this.chrono.addChronoListener(this);
 
-        plateau = new Plateau();
-        plateau.genererNouveauPlateau(seed, typePlateau);
+        this.timer = new Timer();
+        this.timer.scheduleAtFixedRate(chrono, 0, 10);
+        
+        this.plateau = new Plateau();
+        this.plateau.genererNouveauPlateau(seed, typePlateau);
 
         this.interfaceDeJeu = interfaceDeJeu;
         this.interfaceDeJeu.setPartie(this);
@@ -118,11 +118,14 @@ public class Partie implements ChronoListener, PlateauListener, InterfaceListene
     @Override
     public void togglePause() {
         this.enPause = !enPause;
+        System.out.println("toggle");
         if (enPause) {
             chrono.cancel();
             interfaceDeJeu.verrouillerPlateau();
         } else {
             chrono = new Chrono(chrono);
+            this.chrono.addChronoListener(interfaceDeJeu);
+            this.chrono.addChronoListener(this);
             timer.scheduleAtFixedRate(chrono, 0, 10);
             interfaceDeJeu.deverrouillerPlateau();
         }
@@ -131,7 +134,7 @@ public class Partie implements ChronoListener, PlateauListener, InterfaceListene
     @Override
     public void annulerCoup() {
         chrono.resetChronoCoup();
-        score -= plateau.annulerCoup() + 10;
+        score -= plateau.annulerCoup();
         interfaceDeJeu.setScore(score);
         interfaceDeJeu.repaint();
 

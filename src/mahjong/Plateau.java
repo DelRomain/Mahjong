@@ -15,12 +15,12 @@ public class Plateau {
 
     public static final int NOMBRE_LIGNE = 14;
     public static final int NOMBRE_COLONNE = 14;
-    
+
     private Tuile[][] plateau;
     private TypePlateau typeDePlateau;
     private final ArrayList<Coup> coups;
     private final ArrayList<Tuile> tuileEnJeu;
-    
+
     private Tuile tuilesSelectionnee;
     private final RechercheChemin rechercheChemin;
     private Melangeur melangeur;
@@ -58,15 +58,18 @@ public class Plateau {
                 coup = new CoupRetirerTuile(tuilesSelectionnee, tuile);
                 if (!verifierCoupJouable(coup)) {
                     coup = null;
-                }
-                else
+                } else {
                     tuilesSelectionnee = null;
+                }
             }
         }
         return coup;
     }
 
-    public void jouerCoup(CoupRetirerTuile coup) {
+    public void jouerCoup(CoupRetirerTuile coup, boolean regenerationTerrain) {
+        if (!regenerationTerrain) {
+            coups.add(coup);
+        }
         tuileEnJeu.remove(coup.getTuiles()[0]);
         tuileEnJeu.remove(coup.getTuiles()[1]);
         plateau[coup.getTuiles()[0].getLigne()][coup.getTuiles()[0].getColonne()] = null;
@@ -82,9 +85,9 @@ public class Plateau {
      */
     public boolean verifierCoupJouable(CoupRetirerTuile coup) {
         boolean coupValide = coup.isValid();
-        System.out.println("====");
-        System.out.println(coup.getTuiles()[0] + " : " + coup.getTuiles()[0].getCoordonnees());
-        System.out.println(coup.getTuiles()[1] + " : " + coup.getTuiles()[1].getCoordonnees());
+//        System.out.println("====");
+//        System.out.println(coup.getTuiles()[0] + " : " + coup.getTuiles()[0].getCoordonnees());
+//        System.out.println(coup.getTuiles()[1] + " : " + coup.getTuiles()[1].getCoordonnees());
         if (coupValide) {
             coupValide = rechercheChemin.rechercheChemin(coup.getTuiles()[0], coup.getTuiles()[1]);
         }
@@ -137,11 +140,15 @@ public class Plateau {
 
     public void appliquerCoup(Coup coup) {
         if (coup instanceof CoupRetirerTuile) {
-            jouerCoup((CoupRetirerTuile) coup);
+            jouerCoup((CoupRetirerTuile) coup, true);
         } else {
-            regenererListeTuileEnJeu();
+            ArrayList<Tuile> copieDeTuileEnJeu = new ArrayList<>();
+            for (Tuile tuile : tuileEnJeu) {
+                copieDeTuileEnJeu.add(tuile.deepCopy());
+            }
             CoupMelangerPlateau coupMelange = (CoupMelangerPlateau) coup;
-            melangeur.melangerPlateau(plateau, tuileEnJeu, coupMelange.getSeed());
+            Object[] result = melangeur.melangerPlateau(plateau, copieDeTuileEnJeu, coupMelange.getSeed());
+            plateau = (Tuile[][]) result[0];
         }
     }
 
@@ -154,9 +161,10 @@ public class Plateau {
                 typeDePlateau.getPhysiquePlateau().annulerCoup(plateau, coupRetirer);
                 tuileEnJeu.add(coupRetirer.getTuiles()[0]);
                 tuileEnJeu.add(coupRetirer.getTuiles()[1]);
-                score = coupRetirer.getScore();
+                score = coupRetirer.getScore() - 10;
             } else {
                 plateau = melangeur.genererNouveauPlateau();
+                regenererListeTuileEnJeu();
                 for (int i = 0; i < coups.size(); i++) {
                     appliquerCoup(coups.get(i));
                 }
@@ -184,7 +192,7 @@ public class Plateau {
         }
         fichier.write(savePlateau + "\n");
         savePlateau = "";
-        for (Coup coup : coups) {
+        for(Coup coup : coups) {
             savePlateau += coup.save() + ";";
         }
         fichier.write(savePlateau.substring(0, savePlateau.length() - 1));
@@ -248,6 +256,7 @@ public class Plateau {
     }
 
     private void regenererListeTuileEnJeu() {
+        tuileEnJeu.clear();
         for (int indexLigne = 1; indexLigne < NOMBRE_LIGNE - 1; indexLigne++) {
             for (int indexColonne = 1; indexColonne < NOMBRE_COLONNE - 1; indexColonne++) {
                 Tuile tuile = plateau[indexLigne][indexColonne];

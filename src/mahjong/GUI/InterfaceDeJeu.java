@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package mahjong.GUI;
 
 import java.awt.Color;
@@ -13,15 +9,12 @@ import mahjong.partie.Partie;
 import mahjong.Listener.ChronoListener;
 import mahjong.Listener.InterfaceListener;
 
-/**
- *
- * @author aschneid
- */
-public class InterfaceDeJeu extends javax.swing.JPanel implements ChronoListener{
+
+public class InterfaceDeJeu extends javax.swing.JPanel implements ChronoListener {
 
     private Partie partie;
     private final Fenetre fenetre;
-    
+
     private final EventListenerList listeners = new EventListenerList();
 
     public InterfaceDeJeu(Fenetre fenetre) {
@@ -244,8 +237,7 @@ public class InterfaceDeJeu extends javax.swing.JPanel implements ChronoListener
         fenetre.afficherMenuPrincipal();
     }
 
-    public void victoire() 
-    {
+    public void victoire() {
         fenetre.getGestionnaireJoueurs().ajouterPartieAuJoueurCourant(partie);
     }
 
@@ -257,21 +249,19 @@ public class InterfaceDeJeu extends javax.swing.JPanel implements ChronoListener
     }
 
     @Override
-    public void mettreAJourChronometreDeJeu(long temps) 
-    {
+    public void mettreAJourChronometreDeJeu(long temps) {
         labelTempPartie.setText(Chrono.getTempsFormate(temps));
     }
 
     @Override
-    public void effacerCheminLiaisonTuiles() 
-    {
+    public void effacerCheminLiaisonTuiles() {
         plateauGUI.effacerCheminLiaisonTuiles();
     }
 
     public void addInterfaceListener(InterfaceListener listener) {
         listeners.add(InterfaceListener.class, listener);
     }
-    
+
     public void removeInterfaceListener(InterfaceListener listener) {
         listeners.remove(InterfaceListener.class, listener);
     }
@@ -284,5 +274,23 @@ public class InterfaceDeJeu extends javax.swing.JPanel implements ChronoListener
     public void deverrouillerPlateau() {
         boutonAnnulerCoup.setEnabled(true);
         boutonMelanger.setEnabled(true);
+    }
+
+    private void fireTogglePause() {
+        for (InterfaceListener listener : listeners.getListeners(InterfaceListener.class)) {
+            listener.togglePause();
+        }
+    }
+
+    private void fireMelangerPlateau() {
+        for (InterfaceListener listener : listeners.getListeners(InterfaceListener.class)) {
+            listener.melangerPlateau();
+        }
+    }
+
+    private void fireAnnulerCoup() {
+        for (InterfaceListener listener : listeners.getListeners(InterfaceListener.class)) {
+            listener.annulerCoup();
+        }
     }
 }

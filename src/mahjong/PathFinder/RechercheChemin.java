@@ -34,14 +34,14 @@ public class RechercheChemin {
 
     private boolean rechercheChemin(CaseRecherchee caseRecherchee) {
         Emplacement emplacement;
-        System.out.println("Coordonées pere: "+caseRecherchee.getEmplacement());
+        //System.out.println("Coordonées pere: "+caseRecherchee.getEmplacement());
         for (CaseAdjacente positionRelative : CaseAdjacente.values()) {
             emplacement = caseRecherchee.getEmplacement().add(new Emplacement(positionRelative.getLigne(),positionRelative.getColonne()));
             if (estSurPlateau(emplacement.getLigne(), emplacement.getColonne())) {
                 Tuile tuile = plateau.getTuile(emplacement.getLigne(), emplacement.getColonne());
                 
-                System.out.println("> Verrif de la tuile : "+emplacement);
-                System.out.println("> Tuile emplacemnt: "+tuile);
+//                    System.out.println("> Verrif de la tuile : "+emplacement);
+//                    System.out.println("> Tuile emplacemnt: "+tuile);
                 if (tuile == null) {
                     
                     CaseRecherchee caseObservee = new CaseRecherchee(caseRecherchee, emplacement, positionRelative);

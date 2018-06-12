@@ -87,6 +87,10 @@ public class Melangeur {
         while (!listeDePaires.isEmpty()) {
             Tuile[] paire = listeDePaires.remove(0);
             
+            //System.out.println("nb possible : "+emplacementPossible.size());
+            //System.out.println("nb dispo : "+emplacementDisponible.size());
+            //System.out.println("nb paire : "+listeDePaires.size());
+            
             coordonnees = emplacementDisponible.remove(random.nextInt(emplacementDisponible.size()));
             plateau[coordonnees.getLigne()][coordonnees.getColonne()] = paire[0];
             plateau[coordonnees.getLigne()][coordonnees.getColonne()].setCoordonnees(coordonnees.getLigne(), coordonnees.getColonne());
@@ -96,7 +100,7 @@ public class Melangeur {
             plateau[coordonnees.getLigne()][coordonnees.getColonne()] = paire[1];
             plateau[coordonnees.getLigne()][coordonnees.getColonne()].setCoordonnees(coordonnees.getLigne(), coordonnees.getColonne());
             mettreAJourEmplacementDisponible(coordonnees, random, emplacementDisponible, emplacementPossible);
-            Plateau.afficherTerrainSurConsole(plateau);
+            //Plateau.afficherTerrainSurConsole(plateau);
         }
 
         return plateau;
