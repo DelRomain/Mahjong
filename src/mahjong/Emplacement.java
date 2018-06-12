@@ -21,6 +21,24 @@ public class Emplacement {
         return colonne;
     }
 
+    public void setLigne(int ligne) {
+        this.ligne = ligne;
+    }
+
+    public void setColonne(int colonne) {
+        this.colonne = colonne;
+    }
+    
+    public Emplacement add(Emplacement toAdd)
+    {
+        return new Emplacement(this.ligne+toAdd.ligne,this.colonne+toAdd.colonne);
+    }
+    
+    public Emplacement copy()
+    {
+        return new Emplacement(ligne, colonne);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -40,5 +58,10 @@ public class Emplacement {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return this.ligne+"/"+this.colonne; 
     }
 }

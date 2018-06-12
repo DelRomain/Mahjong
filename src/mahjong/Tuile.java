@@ -4,11 +4,12 @@ public class Tuile {
 
     private final FamilleDeTuile typeTuile;
     private final int id;
-    private int coordonneeX, coordonneeY;
+    private final Emplacement coordonnees;
 
     public Tuile(FamilleDeTuile typeTuile, int id) {
         this.typeTuile = typeTuile;
         this.id = id;
+        coordonnees = new Emplacement(-1, -1);
     }
 
     public Tuile(String chaineCaractereSauvegarde) 
@@ -16,8 +17,7 @@ public class Tuile {
         String values[] = chaineCaractereSauvegarde.split("/");
         typeTuile = FamilleDeTuile.valueOf(values[0]);
         this.id = Integer.parseInt(values[1]);
-        this.coordonneeX = Integer.parseInt(values[2]);
-        this.coordonneeY = Integer.parseInt(values[3]);
+        this.coordonnees = new Emplacement(Integer.parseInt(values[2]),Integer.parseInt(values[3]));
     }
 
     public FamilleDeTuile getTypeTuile() {
@@ -42,12 +42,22 @@ public class Tuile {
     }
 
     public void setCoordonnees(int coordonneeX, int coordonneeY) {
-        this.coordonneeX = coordonneeX;
-        this.coordonneeY = coordonneeY;
+        this.coordonnees.setLigne(coordonneeX);
+        this.coordonnees.setColonne(coordonneeY);
     }
 
-    public int[] getCoordonnees() {
-        return new int[]{coordonneeX, coordonneeY};
+    public int getLigne()
+    {
+        return coordonnees.getLigne();
+    }
+    
+    public int getColonne()
+    {
+        return coordonnees.getColonne();
+    }
+
+    public Emplacement getCoordonnees() {
+        return coordonnees;
     }
 
     @Override
@@ -62,7 +72,7 @@ public class Tuile {
     
     public String save()
     {
-        return typeTuile.toString()+"/"+id+"/"+coordonneeX+"/"+coordonneeY;
+        return typeTuile.toString()+"/"+id+"/"+coordonnees.getLigne()+"/"+coordonnees.getColonne();
     }
     
     public Tuile deepCopy()

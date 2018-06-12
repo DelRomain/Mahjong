@@ -1,11 +1,9 @@
 package mahjong.GUI;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.awt.image.RescaleOp;
@@ -14,25 +12,29 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.event.EventListenerList;
 import mahjong.FamilleDeTuile;
+import mahjong.Listener.PlateauListener;
 import mahjong.PathFinder.CaseRecherchee;
 import mahjong.Plateau;
 import mahjong.Tuile;
+import mahjong.coup.CoupRetirerTuile;
 
-public class PlateauGUI extends JPanel implements MouseListener, MouseMotionListener {
+public class PlateauGUI extends JPanel implements MouseListener {
 
     private BufferedImage[] images;
     public static final int LARGEUR_TUILE = 35;
     public static int HAUTEUR_TUILE = 46;
     private Plateau plateau;
-    private boolean estBloquee;
+    private CoupRetirerTuile dernierCoup;
+
+    private final EventListenerList listeners = new EventListenerList();
 
     public PlateauGUI() {
         super();
-        estBloquee = false;
         images = new BufferedImage[42];
+        dernierCoup = null;
         int i = 0;
         for (FamilleDeTuile famille : FamilleDeTuile.values()) {
             for (String nom : famille.getNomFichier()) {
@@ -45,9 +47,7 @@ public class PlateauGUI extends JPanel implements MouseListener, MouseMotionList
             }
 
         }
-
         this.addMouseListener(this);
-        this.addMouseMotionListener(this);
     }
 
     public void setPlateau(Plateau plateau) {
@@ -81,19 +81,18 @@ public class PlateauGUI extends JPanel implements MouseListener, MouseMotionList
                     }
                 }
             }
-            CaseRecherchee caseRechercheChemin = plateau.getCheminTuile();
-            if(caseRechercheChemin != null)
-            {
+
+            CaseRecherchee caseRechercheChemin = plateau.getCheminLiaisonTuiles();
+            if (caseRechercheChemin != null && dernierCoup != null) {
                 g.setColor(Color.red);
                 CaseRecherchee parent = caseRechercheChemin.getParent();
-                while(parent != null)
-                {
+                while (parent != null) {
                     g.drawLine(
-                            caseRechercheChemin.getColonne()*LARGEUR_TUILE+LARGEUR_TUILE/2,
-                            caseRechercheChemin.getLigne()*HAUTEUR_TUILE+HAUTEUR_TUILE/2,
-                            parent.getColonne()*LARGEUR_TUILE+LARGEUR_TUILE/2,
-                            parent.getLigne()*HAUTEUR_TUILE+HAUTEUR_TUILE/2);
-                    
+                            caseRechercheChemin.getColonne() * LARGEUR_TUILE + LARGEUR_TUILE / 2,
+                            caseRechercheChemin.getLigne() * HAUTEUR_TUILE + HAUTEUR_TUILE / 2,
+                            parent.getColonne() * LARGEUR_TUILE + LARGEUR_TUILE / 2,
+                            parent.getLigne() * HAUTEUR_TUILE + HAUTEUR_TUILE / 2);
+
                     caseRechercheChemin = parent;
                     parent = caseRechercheChemin.getParent();
                 }
@@ -111,17 +110,22 @@ public class PlateauGUI extends JPanel implements MouseListener, MouseMotionList
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        if(!estBloquee)
-        {
+        if (this.dernierCoup != null) {
+            effacerCheminLiaisonTuiles();
+        }
+        if (e.getButton() == MouseEvent.BUTTON1) {
             int ligneTuile;
             int colonneTuile;
             final int curseurX = e.getX();
             final int curseurY = e.getY();
 
-            colonneTuile = curseurX / LARGEUR_TUILE;
-            ligneTuile = curseurY / HAUTEUR_TUILE;
-            this.plateau.jouer(ligneTuile, colonneTuile);
+            colonneTuile = curseurX / PlateauGUI.LARGEUR_TUILE;
+            ligneTuile = curseurY / PlateauGUI.HAUTEUR_TUILE;
+            this.dernierCoup = this.plateau.genererCoup(ligneTuile, colonneTuile);
+            fireGenererCoup(dernierCoup);
             this.repaint();
+        } else if (e.getButton() == MouseEvent.BUTTON3) {
+            this.plateau.deselectionnerTuile();
         }
     }
 
@@ -131,20 +135,26 @@ public class PlateauGUI extends JPanel implements MouseListener, MouseMotionList
 
     @Override
     public void mouseExited(MouseEvent e) {
-
     }
 
-    @Override
-    public void mouseDragged(MouseEvent e) {
+    public void effacerCheminLiaisonTuiles() {
+        this.plateau.appliquerCoup(this.dernierCoup);
+        this.dernierCoup = null;
+        this.repaint();
     }
-
-    public void bloquerPlateau(boolean estBloquee)
+    
+    public void fireGenererCoup(CoupRetirerTuile coup)
     {
-        this.estBloquee = estBloquee;
-    } 
+        for(PlateauListener listener : listeners.getListeners(PlateauListener.class)) {
+            listener.genererCoup(coup);
+        }
+    }
 
-    @Override
-    public void mouseMoved(MouseEvent e){   
-    }   
+    public void addPlateauListener(PlateauListener listener) {
+        listeners.add(PlateauListener.class, listener);
+    }
+    
+    public void removePlateauListener(PlateauListener listener) {
+        listeners.remove(PlateauListener.class, listener);
+    }
 }
-

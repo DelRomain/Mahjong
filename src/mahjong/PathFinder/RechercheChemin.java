@@ -1,13 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package mahjong.PathFinder;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import mahjong.CaseAdjacente;
+import mahjong.Emplacement;
 import mahjong.Plateau;
 import mahjong.Tuile;
 
@@ -18,8 +14,8 @@ import mahjong.Tuile;
 public class RechercheChemin {
 
     private CaseRecherchee caseArrivee;
-    private ArrayList<CaseRecherchee> listeOuverte;
-    private ArrayList<CaseRecherchee> listeFermee;
+    private final ArrayList<CaseRecherchee> listeOuverte;
+    private final ArrayList<CaseRecherchee> listeFermee;
     private final Plateau plateau;
 
     public RechercheChemin(Plateau plateau) {
@@ -32,32 +28,54 @@ public class RechercheChemin {
         listeOuverte.clear();
         listeFermee.clear();
 
-        caseArrivee = new CaseRecherchee(null, arrivee.getCoordonnees()[0], arrivee.getCoordonnees()[1], null);
-        return rechercheChemin(new CaseRecherchee(null, depart.getCoordonnees()[0], depart.getCoordonnees()[1], null));
+        caseArrivee = new CaseRecherchee(null, arrivee.getCoordonnees(), null);
+        return rechercheChemin(new CaseRecherchee(null, depart.getCoordonnees(), null));
     }
 
     private boolean rechercheChemin(CaseRecherchee caseRecherchee) {
+        Emplacement emplacement;
+        System.out.println("Coordonées pere: "+caseRecherchee.getEmplacement());
         for (CaseAdjacente positionRelative : CaseAdjacente.values()) {
-            int x = caseRecherchee.getLigne() + positionRelative.getLigne();
-            int y = caseRecherchee.getColonne() + positionRelative.getColonne();
-            if (estSurPlateau(x, y)) {
-                Tuile tuile = plateau.getTuile(x, y);
-
-                if (tuile == null || (caseArrivee.getLigne() == x && caseArrivee.getColonne() == y)) {
-                    CaseRecherchee caseObservee = new CaseRecherchee(caseRecherchee, x, y, positionRelative);
+            emplacement = caseRecherchee.getEmplacement().add(new Emplacement(positionRelative.getLigne(),positionRelative.getColonne()));
+            if (estSurPlateau(emplacement.getLigne(), emplacement.getColonne())) {
+                Tuile tuile = plateau.getTuile(emplacement.getLigne(), emplacement.getColonne());
+                
+                System.out.println("> Verrif de la tuile : "+emplacement);
+                System.out.println("> Tuile emplacemnt: "+tuile);
+                if (tuile == null) {
+                    
+                    CaseRecherchee caseObservee = new CaseRecherchee(caseRecherchee, emplacement, positionRelative);
                     caseObservee.setDistance(getDistance(caseArrivee, caseObservee));
+                    
                     if (caseObservee.getNombreAngleDroit() <= 2) {
                         if (listeOuverte.contains(caseObservee)) {
                             int index = listeOuverte.indexOf(caseObservee);
                             int distanceArrivee = getDistance(caseObservee, caseArrivee);
-
-                            if (listeOuverte.get(index).getTotal() > distanceArrivee) {
+                            CaseRecherchee caseListe = listeOuverte.get(index);
+                            if (caseListe.getTotal() > distanceArrivee || caseListe.getNombreAngleDroit() > caseObservee.getNombreAngleDroit()) {
                                 listeOuverte.get(index).setTotal(distanceArrivee);
+                                listeOuverte.get(index).setNombreAngleDroit(caseObservee.getNombreAngleDroit());
                                 listeOuverte.get(index).setParent(caseObservee.getParent());
                             }
+                            /*
+                            if(listeOuverte.get(index).getNombreAngleDroit()<caseObservee.getNombreAngleDroit())
+                            {
+                                listeOuverte.get(index).setNombreAngleDroit(caseObservee.getNombreAngleDroit());
+                                listeOuverte.get(index).setParent(caseObservee.getParent());
+                            }
+                            //*/
                         } else {
                             listeOuverte.add(caseObservee);
+                            //listeFermee.add(caseObservee);
                         }
+                    }
+                }
+                else if(caseArrivee.getEmplacement().equals(emplacement))
+                {
+                    CaseRecherchee caseObservee = new CaseRecherchee(caseRecherchee, emplacement, positionRelative);
+                    if (caseObservee.getNombreAngleDroit() <= 2) {
+                        caseObservee.setDistance(getDistance(caseArrivee, caseObservee));
+                        listeOuverte.add(caseObservee);
                     }
                 }
             }
@@ -83,6 +101,7 @@ public class RechercheChemin {
     }
 
     public CaseRecherchee getCheminEnCours() {
-        return listeOuverte.get(listeOuverte.indexOf(caseArrivee));
+        int index = listeOuverte.indexOf(caseArrivee);
+        return index != -1 ? listeOuverte.get(index):null;
     }
 }

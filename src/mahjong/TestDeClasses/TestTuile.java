@@ -29,7 +29,7 @@ public class TestTuile {
         System.out.println(tuile1.equals(tuile2));
         
         tuile1.setCoordonnees(1, 2);
-        System.out.println(Arrays.toString(tuile1.getCoordonnees()));
+        System.out.println(tuile1.getCoordonnees());
         System.out.println(tuile1.toString());
         
         System.out.println(tuile2.getImageID());

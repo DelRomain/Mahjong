@@ -5,8 +5,11 @@
  */
 package mahjong.GUI;
 
+import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import mahjong.GUI.utils.JTableModeleClassement;
-import mahjong.GUI.utils.JTableModeleJoueur;
+import mahjong.joueur.Joueur;
 
 public class classementGUI extends javax.swing.JPanel {
 
@@ -14,10 +17,24 @@ public class classementGUI extends javax.swing.JPanel {
 
     /**
      * Creates new form classementGUI
+     * @param fenetre
      */
     public classementGUI(Fenetre fenetre) {
         initComponents();
         this.fenetre = fenetre;
+        
+        jTable1.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent mouseEvent) {
+                Point point = mouseEvent.getPoint();
+                int row = jTable1.rowAtPoint(point);
+                if (mouseEvent.getClickCount() == 2) {  
+                    Joueur joueur = ((JTableModeleClassement) jTable1.getModel()).getListe().get(row);
+                    PartieJoueurGUI GUIListeDePartie = new PartieJoueurGUI(fenetre, true, joueur);
+                    GUIListeDePartie.setVisible(true);
+                }
+            }
+        });
     }
 
     /**

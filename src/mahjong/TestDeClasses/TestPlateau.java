@@ -9,7 +9,6 @@ import java.awt.Dimension;
 import javax.swing.JFrame;
 import mahjong.GUI.PlateauGUI;
 import mahjong.Plateau;
-import mahjong.Type_Plateau.PlateauTuileTombante;
 import mahjong.Type_Plateau.TypePlateau;
 
 /**

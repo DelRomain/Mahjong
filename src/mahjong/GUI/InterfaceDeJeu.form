@@ -76,7 +76,7 @@
                       </Group>
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="boutonCoupRedo" alignment="0" pref="114" max="32767" attributes="0"/>
+                  <Component id="boutonAnnulerCoup" alignment="0" pref="114" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -98,7 +98,7 @@
                           <Component id="labelTempPartie" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace pref="154" max="32767" attributes="0"/>
-                      <Component id="boutonCoupRedo" min="-2" max="-2" attributes="0"/>
+                      <Component id="boutonAnnulerCoup" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="boutonPause" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -154,13 +154,13 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="boutonPauseActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JButton" name="boutonCoupRedo">
+            <Component class="javax.swing.JButton" name="boutonAnnulerCoup">
               <Properties>
                 <Property name="text" type="java.lang.String" value="coup precedent"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="boutonCoupRedoActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="boutonAnnulerCoupActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>

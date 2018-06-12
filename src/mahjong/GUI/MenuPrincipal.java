@@ -5,7 +5,10 @@
  */
 package mahjong.GUI;
 
+import java.awt.CardLayout;
 import java.awt.event.WindowEvent;
+import javax.swing.JOptionPane;
+import mahjong.partie.Partie;
 
 /**
  *
@@ -106,8 +109,15 @@ public class MenuPrincipal extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void boutonJouerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boutonJouerActionPerformed
-        DialogueCreationDePartie dialogueCreationDePartie = new DialogueCreationDePartie(fenetre, true);
-        dialogueCreationDePartie.setVisible(true);
+        if(fenetre.getGestionnaireJoueurs().getJoueur()!=null)
+        {
+            DialogueCreationDePartie dialogueCreationDePartie = new DialogueCreationDePartie(fenetre, true);
+            dialogueCreationDePartie.setVisible(true);
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(this, "Il n'y a aucun joueur de sélectionner", "Aucun joueur !", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_boutonJouerActionPerformed
 
     private void boutonChangerDeJoueurActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boutonChangerDeJoueurActionPerformed

@@ -7,16 +7,22 @@ package mahjong.GUI;
 
 import java.awt.Color;
 import javax.swing.JProgressBar;
+import javax.swing.event.EventListenerList;
+import mahjong.partie.Chrono;
 import mahjong.partie.Partie;
+import mahjong.Listener.ChronoListener;
+import mahjong.Listener.InterfaceListener;
 
 /**
  *
  * @author aschneid
  */
-public class InterfaceDeJeu extends javax.swing.JPanel {
+public class InterfaceDeJeu extends javax.swing.JPanel implements ChronoListener{
 
     private Partie partie;
-    private Fenetre fenetre;
+    private final Fenetre fenetre;
+    
+    private final EventListenerList listeners = new EventListenerList();
 
     public InterfaceDeJeu(Fenetre fenetre) {
         initComponents();
@@ -27,6 +33,7 @@ public class InterfaceDeJeu extends javax.swing.JPanel {
         this.partie = partie;
         this.labelNomJoueur.setText(fenetre.getGestionnaireJoueurs().getJoueur().getNom());
         plateauGUI.setPlateau(partie.getPlateau());
+        plateauGUI.addPlateauListener(partie);
     }
 
     public void changerBarTemps(int temp, Color color) {
@@ -55,7 +62,7 @@ public class InterfaceDeJeu extends javax.swing.JPanel {
         labelTempPartie = new javax.swing.JLabel();
         boutonMelanger = new javax.swing.JButton();
         boutonPause = new javax.swing.JButton();
-        boutonCoupRedo = new javax.swing.JButton();
+        boutonAnnulerCoup = new javax.swing.JButton();
         plateauGUI = new mahjong.GUI.PlateauGUI();
 
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.LINE_AXIS));
@@ -90,11 +97,11 @@ public class InterfaceDeJeu extends javax.swing.JPanel {
             }
         });
 
-        boutonCoupRedo.setText("coup precedent");
-        boutonCoupRedo.setEnabled(false);
-        boutonCoupRedo.addActionListener(new java.awt.event.ActionListener() {
+        boutonAnnulerCoup.setText("coup precedent");
+        boutonAnnulerCoup.setEnabled(false);
+        boutonAnnulerCoup.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                boutonCoupRedoActionPerformed(evt);
+                boutonAnnulerCoupActionPerformed(evt);
             }
         });
 
@@ -119,7 +126,7 @@ public class InterfaceDeJeu extends javax.swing.JPanel {
                             .addComponent(labelTempPartie)
                             .addComponent(labelScoreJoueur))))
                 .addGap(0, 0, Short.MAX_VALUE))
-            .addComponent(boutonCoupRedo, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
+            .addComponent(boutonAnnulerCoup, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
         );
         jPanelInfoJoueurLayout.setVerticalGroup(
             jPanelInfoJoueurLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -137,7 +144,7 @@ public class InterfaceDeJeu extends javax.swing.JPanel {
                     .addComponent(jLabelLabelTemps)
                     .addComponent(labelTempPartie))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 154, Short.MAX_VALUE)
-                .addComponent(boutonCoupRedo)
+                .addComponent(boutonAnnulerCoup)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(boutonPause)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -181,20 +188,20 @@ public class InterfaceDeJeu extends javax.swing.JPanel {
         } else {
             boutonPause.setText("Reprendre");
         }
-        partie.changePause();
+        fireTogglePause();
     }//GEN-LAST:event_boutonPauseActionPerformed
 
     private void boutonMelangerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boutonMelangerActionPerformed
-        partie.melangerPlateau();
+        fireMelangerPlateau();
     }//GEN-LAST:event_boutonMelangerActionPerformed
 
-    private void boutonCoupRedoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boutonCoupRedoActionPerformed
-        partie.retourCoup();
-    }//GEN-LAST:event_boutonCoupRedoActionPerformed
+    private void boutonAnnulerCoupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boutonAnnulerCoupActionPerformed
+        fireAnnulerCoup();
+    }//GEN-LAST:event_boutonAnnulerCoupActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton boutonCoupRedo;
+    private javax.swing.JButton boutonAnnulerCoup;
     private javax.swing.JButton boutonMelanger;
     private javax.swing.JButton boutonPause;
     private javax.swing.JLabel jLabelLabelNomJoueur;
@@ -221,20 +228,16 @@ public class InterfaceDeJeu extends javax.swing.JPanel {
         labelScoreJoueur.setText("" + score);
     }
 
-    public void bloquerPlateau(boolean b) {
-        plateauGUI.bloquerPlateau(b);
-    }
-
     public void repaintPlateau() {
         plateauGUI.repaint();
     }
 
     public void bloquerBoutonRetourCoup() {
-        boutonCoupRedo.setEnabled(false);
+        boutonAnnulerCoup.setEnabled(false);
     }
 
     public void debloquerBoutonRetourCoup() {
-        boutonCoupRedo.setEnabled(true);
+        boutonAnnulerCoup.setEnabled(true);
     }
 
     public void afficherMenuPrincipal() {
@@ -244,5 +247,42 @@ public class InterfaceDeJeu extends javax.swing.JPanel {
     public void victoire() 
     {
         fenetre.getGestionnaireJoueurs().ajouterPartieAuJoueurCourant(partie);
+    }
+
+    @Override
+    public void mettreAJourChronometreDeCoup(long temps, Color color) {
+        jProgressBarTempsRestant.setValue((int) temps);
+        jProgressBarTempsRestant.setForeground(color);
+        jProgressBarTempsRestant.repaint();
+    }
+
+    @Override
+    public void mettreAJourChronometreDeJeu(long temps) 
+    {
+        labelTempPartie.setText(Chrono.getTempsFormate(temps));
+    }
+
+    @Override
+    public void effacerCheminLiaisonTuiles() 
+    {
+        plateauGUI.effacerCheminLiaisonTuiles();
+    }
+
+    public void addInterfaceListener(InterfaceListener listener) {
+        listeners.add(InterfaceListener.class, listener);
+    }
+    
+    public void removeInterfaceListener(InterfaceListener listener) {
+        listeners.remove(InterfaceListener.class, listener);
+    }
+
+    public void verrouillerPlateau() {
+        boutonAnnulerCoup.setEnabled(false);
+        boutonMelanger.setEnabled(false);
+    }
+
+    public void deverrouillerPlateau() {
+        boutonAnnulerCoup.setEnabled(true);
+        boutonMelanger.setEnabled(true);
     }
 }

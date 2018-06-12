@@ -56,12 +56,15 @@ public class GestionnaireJoueur {
         listeJoueurs.forEach((joueur) -> {
             sauvegarderJoueur(joueur);
         });
-        try {
-            FileWriter fichier = new FileWriter("joueurs/default.djur");
-            fichier.write(joueurActuel.getNom());
-            fichier.close();
-        } catch (IOException ex) {
-            Logger.getLogger(GestionnaireJoueur.class.getName()).log(Level.SEVERE, null, ex);
+        if(joueurActuel != null)
+        {
+            try {
+                FileWriter fichier = new FileWriter("joueurs/default.djur");
+                fichier.write(joueurActuel.getNom());
+                fichier.close();
+            } catch (IOException ex) {
+                Logger.getLogger(GestionnaireJoueur.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
     

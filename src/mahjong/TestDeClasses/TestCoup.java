@@ -22,9 +22,8 @@ public class TestCoup {
     public static void main(String[] args) {
         Tuile tuile1 = new Tuile(FamilleDeTuile.FLEUR,1);
         Tuile tuile2 = new Tuile(FamilleDeTuile.FLEUR,2);
-        Tuile tuile[]=new Tuile[]{tuile1,tuile2};
         
-        CoupRetirerTuile coup = new CoupRetirerTuile(tuile);
+        CoupRetirerTuile coup = new CoupRetirerTuile(tuile1,tuile2);
         
         System.out.println(Arrays.toString(coup.getTuiles()));
         
