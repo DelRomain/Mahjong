@@ -199,6 +199,7 @@ public class Plateau {
     }
 
     public void charger(BufferedReader fichier) throws IOException {
+        this.plateau = new Tuile[NOMBRE_LIGNE][NOMBRE_COLONNE];
         typeDePlateau = TypePlateau.valueOf(fichier.readLine());
         String lignes[] = fichier.readLine().split(";");
         for (int indexLigne = 0; indexLigne < NOMBRE_LIGNE; indexLigne++) {
@@ -210,7 +211,7 @@ public class Plateau {
                 }
             }
         }
-
+        regenererListeTuileEnJeu();
         String sauvegardeCoups[] = fichier.readLine().split(";");
         for (String sauvegarde : sauvegardeCoups) {
 

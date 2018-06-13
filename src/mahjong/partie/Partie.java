@@ -45,18 +45,43 @@ public class Partie implements ChronoListener, PlateauListener, InterfaceListene
         this.interfaceDeJeu.setPartie(this);
         this.interfaceDeJeu.addInterfaceListener(this);
         this.interfaceDeJeu.setTailleChronometre(TEMP_PAR_COUP * 100);
+        
+        this.enPause = false;
+    }
+    
+    public Partie(InterfaceDeJeu interfaceDeJeu, Partie partie) {
+        this.seed = partie.seed;
+        this.score = partie.score;
+        this.plateau = partie.plateau;
+
+        this.chrono = new Chrono(this, TEMP_PAR_COUP);
+        this.chrono.setTempsTotalDeJeu(partie.getTempsDejeu());
+        this.chrono.addChronoListener(interfaceDeJeu);
+        this.chrono.addChronoListener(this);
+
+        this.timer = new Timer();
+        this.timer.scheduleAtFixedRate(chrono, 0, 10);
+
+        this.interfaceDeJeu = interfaceDeJeu;
+        this.interfaceDeJeu.setPartie(this);
+        this.interfaceDeJeu.setScore(this.score);
+        this.interfaceDeJeu.addInterfaceListener(this);
+        this.interfaceDeJeu.setTailleChronometre(TEMP_PAR_COUP * 100);
+        
+        this.enPause = false;
     }
 
     public Partie() {
-        timer = null;
-        score = 0;
+        this.plateau = new Plateau();
+        this.timer = null;
+        this.score = 0;
     }
 
     public Plateau getPlateau() {
         return plateau;
     }
 
-    public boolean estEnPaused() {
+    public boolean enPause() {
         return enPause;
     }
 
@@ -118,7 +143,6 @@ public class Partie implements ChronoListener, PlateauListener, InterfaceListene
     @Override
     public void togglePause() {
         this.enPause = !enPause;
-        System.out.println("toggle");
         if (enPause) {
             chrono.cancel();
             interfaceDeJeu.verrouillerPlateau();

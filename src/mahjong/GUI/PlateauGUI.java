@@ -23,11 +23,13 @@ import mahjong.coup.CoupRetirerTuile;
 
 public class PlateauGUI extends JPanel implements MouseListener {
 
+    private BufferedImage imagePause;
     private BufferedImage[] images;
     public static final int LARGEUR_TUILE = 35;
     public static int HAUTEUR_TUILE = 46;
     private Plateau plateau;
     private CoupRetirerTuile dernierCoup;
+    private boolean enPause;
 
     private final EventListenerList listeners = new EventListenerList();
 
@@ -35,6 +37,8 @@ public class PlateauGUI extends JPanel implements MouseListener {
         super();
         images = new BufferedImage[42];
         dernierCoup = null;
+        enPause = false;
+
         int i = 0;
         for (FamilleDeTuile famille : FamilleDeTuile.values()) {
             for (String nom : famille.getNomFichier()) {
@@ -45,8 +49,13 @@ public class PlateauGUI extends JPanel implements MouseListener {
                 }
                 i++;
             }
-
         }
+        try {
+            imagePause = ImageIO.read(new File("tuiles/pause.png"));
+        } catch (IOException ex) {
+            Logger.getLogger(PlateauGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        i++;
         this.addMouseListener(this);
     }
 
@@ -58,44 +67,51 @@ public class PlateauGUI extends JPanel implements MouseListener {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         if (plateau != null) {
-            Tuile tuile;
-            for (int indexLigne = 0; indexLigne < Plateau.NOMBRE_LIGNE; indexLigne++) {
-                for (int indexColonne = 0; indexColonne < Plateau.NOMBRE_COLONNE; indexColonne++) {
+            if(!enPause)
+            {
+                Tuile tuile;
+                for (int indexLigne = 0; indexLigne < Plateau.NOMBRE_LIGNE; indexLigne++) {
+                    for (int indexColonne = 0; indexColonne < Plateau.NOMBRE_COLONNE; indexColonne++) {
 
-                    tuile = this.plateau.getTuile(indexLigne, indexColonne);
-                    if (tuile != null) {
-                        if (this.plateau.getTuilesSelectionnee() == tuile) {
-                            BufferedImageOp op = new RescaleOp(new float[]{0.8f, 1.2f, 0.8f, 1.0f}, new float[4], null);
-                            g.drawImage(
-                                    op.filter(this.images[tuile.getImageID()], null),
-                                    indexColonne * LARGEUR_TUILE,
-                                    indexLigne * HAUTEUR_TUILE,
-                                    LARGEUR_TUILE, HAUTEUR_TUILE, this);
-                        } else {
-                            g.drawImage(
-                                    this.images[tuile.getImageID()],
-                                    indexColonne * LARGEUR_TUILE,
-                                    indexLigne * HAUTEUR_TUILE,
-                                    LARGEUR_TUILE, HAUTEUR_TUILE, this);
+                        tuile = this.plateau.getTuile(indexLigne, indexColonne);
+                        if (tuile != null) {
+                            if (this.plateau.getTuilesSelectionnee() == tuile) {
+                                BufferedImageOp op = new RescaleOp(new float[]{0.8f, 1.2f, 0.8f, 1.0f}, new float[4], null);
+                                g.drawImage(
+                                        op.filter(this.images[tuile.getImageID()], null),
+                                        indexColonne * LARGEUR_TUILE,
+                                        indexLigne * HAUTEUR_TUILE,
+                                        LARGEUR_TUILE, HAUTEUR_TUILE, this);
+                            } else {
+                                g.drawImage(
+                                        this.images[tuile.getImageID()],
+                                        indexColonne * LARGEUR_TUILE,
+                                        indexLigne * HAUTEUR_TUILE,
+                                        LARGEUR_TUILE, HAUTEUR_TUILE, this);
+                            }
                         }
                     }
                 }
-            }
+            
+                CaseRecherchee caseRechercheChemin = plateau.getCheminLiaisonTuiles();
+                if (caseRechercheChemin != null && dernierCoup != null) {
+                    g.setColor(Color.red);
+                    CaseRecherchee parent = caseRechercheChemin.getParent();
+                    while (parent != null) {
+                        g.drawLine(
+                                caseRechercheChemin.getColonne() * LARGEUR_TUILE + LARGEUR_TUILE / 2,
+                                caseRechercheChemin.getLigne() * HAUTEUR_TUILE + HAUTEUR_TUILE / 2,
+                                parent.getColonne() * LARGEUR_TUILE + LARGEUR_TUILE / 2,
+                                parent.getLigne() * HAUTEUR_TUILE + HAUTEUR_TUILE / 2);
 
-            CaseRecherchee caseRechercheChemin = plateau.getCheminLiaisonTuiles();
-            if (caseRechercheChemin != null && dernierCoup != null) {
-                g.setColor(Color.red);
-                CaseRecherchee parent = caseRechercheChemin.getParent();
-                while (parent != null) {
-                    g.drawLine(
-                            caseRechercheChemin.getColonne() * LARGEUR_TUILE + LARGEUR_TUILE / 2,
-                            caseRechercheChemin.getLigne() * HAUTEUR_TUILE + HAUTEUR_TUILE / 2,
-                            parent.getColonne() * LARGEUR_TUILE + LARGEUR_TUILE / 2,
-                            parent.getLigne() * HAUTEUR_TUILE + HAUTEUR_TUILE / 2);
-
-                    caseRechercheChemin = parent;
-                    parent = caseRechercheChemin.getParent();
+                        caseRechercheChemin = parent;
+                        parent = caseRechercheChemin.getParent();
+                    }
                 }
+            }
+            else
+            {
+                g.drawImage(imagePause,0,0,this);
             }
         }
     }
@@ -122,8 +138,9 @@ public class PlateauGUI extends JPanel implements MouseListener {
             colonneTuile = curseurX / PlateauGUI.LARGEUR_TUILE;
             ligneTuile = curseurY / PlateauGUI.HAUTEUR_TUILE;
             this.dernierCoup = this.plateau.genererCoup(ligneTuile, colonneTuile);
-            if(dernierCoup != null)
+            if (dernierCoup != null) {
                 fireGenererCoup(dernierCoup);
+            }
             this.repaint();
         } else if (e.getButton() == MouseEvent.BUTTON3) {
             this.plateau.deselectionnerTuile();
@@ -137,17 +154,23 @@ public class PlateauGUI extends JPanel implements MouseListener {
     @Override
     public void mouseExited(MouseEvent e) {
     }
+    
+    public void setPause(boolean enPause)
+    {
+        this.enPause = enPause;
+        this.repaint();
+    }
 
     public void effacerCheminLiaisonTuiles() {
-        if(dernierCoup != null)
+        if (dernierCoup != null) {
             this.plateau.jouerCoup(this.dernierCoup, false);
+        }
         this.dernierCoup = null;
         this.repaint();
     }
-    
-    public void fireGenererCoup(CoupRetirerTuile coup)
-    {
-        for(PlateauListener listener : listeners.getListeners(PlateauListener.class)) {
+
+    public void fireGenererCoup(CoupRetirerTuile coup) {
+        for (PlateauListener listener : listeners.getListeners(PlateauListener.class)) {
             listener.genererCoup(coup);
         }
     }
@@ -155,7 +178,7 @@ public class PlateauGUI extends JPanel implements MouseListener {
     public void addPlateauListener(PlateauListener listener) {
         listeners.add(PlateauListener.class, listener);
     }
-    
+
     public void removePlateauListener(PlateauListener listener) {
         listeners.remove(PlateauListener.class, listener);
     }

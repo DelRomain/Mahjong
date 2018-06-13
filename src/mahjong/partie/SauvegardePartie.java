@@ -41,22 +41,19 @@ public class SauvegardePartie {
         }
     }
 
-    public static SauvegardePartie charger(String path, GestionnaireJoueur gestionnaire) {
-        SauvegardePartie sauvegarde = null;
+    public void charger(String path) {
         if (path.endsWith(".mprt")) {
             try {
                 BufferedReader fichier = new BufferedReader(new FileReader(path));
                 String nomJoueur = fichier.readLine();
-                Partie partie = new Partie();
-                partie.charger(fichier);
-                gestionnaire.setJoueur(new Joueur(nomJoueur));
-                sauvegarde = new SauvegardePartie(partie, gestionnaire.getJoueur());
+                this.partie = new Partie();
+                this.partie.charger(fichier);
+                this.joueur = new Joueur(nomJoueur);
                 
                 fichier.close();
             } catch (IOException ex) {
                 Logger.getLogger(GestionnaireJoueur.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        return sauvegarde;
     }
 }

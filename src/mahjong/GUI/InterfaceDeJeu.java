@@ -176,11 +176,6 @@ public class InterfaceDeJeu extends javax.swing.JPanel implements ChronoListener
     }// </editor-fold>//GEN-END:initComponents
 
     private void boutonPauseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boutonPauseActionPerformed
-        if (partie.estEnPaused()) {
-            boutonPause.setText("Pause");
-        } else {
-            boutonPause.setText("Reprendre");
-        }
         fireTogglePause();
     }//GEN-LAST:event_boutonPauseActionPerformed
 
@@ -275,8 +270,21 @@ public class InterfaceDeJeu extends javax.swing.JPanel implements ChronoListener
         boutonAnnulerCoup.setEnabled(true);
         boutonMelanger.setEnabled(true);
     }
+    
+    public void tooglePause()
+    {
+        if (partie.enPause()) {
+            plateauGUI.setPause(false);
+            boutonPause.setText("Pause");
+        } else {
+            plateauGUI.setPause(true);
+            boutonPause.setText("Reprendre");
+        }
+    }
 
-    private void fireTogglePause() {
+    private void fireTogglePause() 
+    {
+        tooglePause();
         for (InterfaceListener listener : listeners.getListeners(InterfaceListener.class)) {
             listener.togglePause();
         }

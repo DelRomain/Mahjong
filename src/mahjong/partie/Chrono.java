@@ -113,6 +113,10 @@ public class Chrono extends TimerTask
         return tempsTotalDeJeu;
     }
 
+    public void setTempsTotalDeJeu(long tempsTotalDeJeu) {
+        this.tempsTotalDeJeu = tempsTotalDeJeu;
+    }
+    
     public long getTempsAffichage() {
         return tempsAffichageChemin;
     }
