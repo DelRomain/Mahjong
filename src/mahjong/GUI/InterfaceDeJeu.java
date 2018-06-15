@@ -2,6 +2,7 @@
 package mahjong.GUI;
 
 import java.awt.Color;
+import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.event.EventListenerList;
 import mahjong.partie.Chrono;
@@ -56,6 +57,7 @@ public class InterfaceDeJeu extends javax.swing.JPanel implements ChronoListener
         boutonMelanger = new javax.swing.JButton();
         boutonPause = new javax.swing.JButton();
         boutonAnnulerCoup = new javax.swing.JButton();
+        boutonHint = new javax.swing.JButton();
         plateauGUI = new mahjong.GUI.PlateauGUI();
 
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.LINE_AXIS));
@@ -98,12 +100,20 @@ public class InterfaceDeJeu extends javax.swing.JPanel implements ChronoListener
             }
         });
 
+        boutonHint.setText("Hint (-30 points)");
+        boutonHint.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                boutonHintActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanelInfoJoueurLayout = new javax.swing.GroupLayout(jPanelInfoJoueur);
         jPanelInfoJoueur.setLayout(jPanelInfoJoueurLayout);
         jPanelInfoJoueurLayout.setHorizontalGroup(
             jPanelInfoJoueurLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(boutonMelanger, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(boutonPause, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(boutonAnnulerCoup, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
             .addGroup(jPanelInfoJoueurLayout.createSequentialGroup()
                 .addGroup(jPanelInfoJoueurLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanelInfoJoueurLayout.createSequentialGroup()
@@ -119,7 +129,7 @@ public class InterfaceDeJeu extends javax.swing.JPanel implements ChronoListener
                             .addComponent(labelTempPartie)
                             .addComponent(labelScoreJoueur))))
                 .addGap(0, 0, Short.MAX_VALUE))
-            .addComponent(boutonAnnulerCoup, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
+            .addComponent(boutonHint, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanelInfoJoueurLayout.setVerticalGroup(
             jPanelInfoJoueurLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -136,7 +146,9 @@ public class InterfaceDeJeu extends javax.swing.JPanel implements ChronoListener
                 .addGroup(jPanelInfoJoueurLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabelLabelTemps)
                     .addComponent(labelTempPartie))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 154, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 125, Short.MAX_VALUE)
+                .addComponent(boutonHint)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(boutonAnnulerCoup)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(boutonPause)
@@ -187,9 +199,14 @@ public class InterfaceDeJeu extends javax.swing.JPanel implements ChronoListener
         fireAnnulerCoup();
     }//GEN-LAST:event_boutonAnnulerCoupActionPerformed
 
+    private void boutonHintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boutonHintActionPerformed
+        fireHint();
+    }//GEN-LAST:event_boutonHintActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton boutonAnnulerCoup;
+    private javax.swing.JButton boutonHint;
     private javax.swing.JButton boutonMelanger;
     private javax.swing.JButton boutonPause;
     private javax.swing.JLabel jLabelLabelNomJoueur;
@@ -300,5 +317,16 @@ public class InterfaceDeJeu extends javax.swing.JPanel implements ChronoListener
         for (InterfaceListener listener : listeners.getListeners(InterfaceListener.class)) {
             listener.annulerCoup();
         }
+    }
+
+    private void fireHint() {
+        for (InterfaceListener listener : listeners.getListeners(InterfaceListener.class)) {
+            listener.hint();
+        }
+    }
+
+    public void afficherAvertisementPlusDeCoup() 
+    {
+        JOptionPane.showConfirmDialog(this, "Plus de coups disponible", "Plus de coup", JOptionPane.ERROR_MESSAGE);
     }
 }

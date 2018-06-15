@@ -82,6 +82,15 @@ public class PlateauGUI extends JPanel implements MouseListener {
                                         indexColonne * LARGEUR_TUILE,
                                         indexLigne * HAUTEUR_TUILE,
                                         LARGEUR_TUILE, HAUTEUR_TUILE, this);
+                            } else if(plateau.getHint()!=null &&
+                                    (plateau.getHint().getTuiles()[0] == tuile ||
+                                    plateau.getHint().getTuiles()[1] == tuile)){
+                                BufferedImageOp op = new RescaleOp(new float[]{1.2f, 1.2f, 0.8f, 1.0f}, new float[4], null);
+                                g.drawImage(
+                                        op.filter(this.images[tuile.getImageID()], null),
+                                        indexColonne * LARGEUR_TUILE,
+                                        indexLigne * HAUTEUR_TUILE,
+                                        LARGEUR_TUILE, HAUTEUR_TUILE, this);
                             } else {
                                 g.drawImage(
                                         this.images[tuile.getImageID()],
@@ -128,6 +137,7 @@ public class PlateauGUI extends JPanel implements MouseListener {
     public void mouseReleased(MouseEvent e) {
         if (this.dernierCoup != null) {
             effacerCheminLiaisonTuiles();
+            this.plateau.effacerCoupHint();
         }
         if (e.getButton() == MouseEvent.BUTTON1) {
             int ligneTuile;

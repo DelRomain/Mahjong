@@ -24,12 +24,15 @@ public class Plateau {
     private Tuile tuilesSelectionnee;
     private final RechercheChemin rechercheChemin;
     private Melangeur melangeur;
+    private Hint hint;
+    private CoupRetirerTuile hintCoup;
 
     public Plateau() {
         tuilesSelectionnee = null;
         coups = new ArrayList<>();
         tuileEnJeu = new ArrayList<>();
         rechercheChemin = new RechercheChemin(this);
+        this.hint = new Hint(this);
     }
 
     /**
@@ -44,6 +47,7 @@ public class Plateau {
         plateau = melangeur.genererNouveauPlateau();
         regenererListeTuileEnJeu();
         this.typeDePlateau = typeDePlateau;
+        hint.regenererListeCoupPossible();
     }
 
     public CoupRetirerTuile genererCoup(int indexLigne, int indexColonne) {
@@ -75,6 +79,7 @@ public class Plateau {
         plateau[coup.getTuiles()[0].getLigne()][coup.getTuiles()[0].getColonne()] = null;
         plateau[coup.getTuiles()[1].getLigne()][coup.getTuiles()[1].getColonne()] = null;
         typeDePlateau.getPhysiquePlateau().traitementTerrainPostCoup(plateau, coup);
+        hint.regenererListeCoupPossible();
     }
 
     /**
@@ -121,21 +126,7 @@ public class Plateau {
         Object[] result = melangeur.melangerPlateau(plateau, copieDeTuileEnJeu);
         plateau = (Tuile[][]) result[0];
         coups.add(new CoupMelangerPlateau((long) result[1]));
-    }
-
-    public int[] rechercherTuile(int indexDeBase, Tuile tuile) {
-        int[] solution = null;
-        final int indexMax = NOMBRE_LIGNE * NOMBRE_COLONNE;
-        int i = indexDeBase + 1;
-        boolean enRecherche = true;
-        while (i < indexMax && enRecherche) {
-            if (tuile.equals(plateau[i % NOMBRE_COLONNE][i / NOMBRE_COLONNE])) {
-                enRecherche = false;
-                solution = new int[]{i % NOMBRE_COLONNE, i / NOMBRE_COLONNE};
-            }
-            i++;
-        }
-        return solution;
+        hint.regenererListeCoupPossible();
     }
 
     public void appliquerCoup(Coup coup) {
@@ -217,6 +208,7 @@ public class Plateau {
 
             this.coups.add(Coup.loadSave(sauvegarde));
         }
+        hint.regenererListeCoupPossible();
     }
 
     /**
@@ -278,5 +270,23 @@ public class Plateau {
 
     public void deselectionnerTuile() {
         this.tuilesSelectionnee = null;
+    }
+
+    public void showHint() 
+    {
+        hintCoup = hint.getUnCoupPossible();
+    }
+
+    public CoupRetirerTuile getHint() {
+        return hintCoup;
+    }
+
+    public void effacerCoupHint() 
+    {
+        this.hintCoup = null;
+    }
+
+    public boolean aEncoreUnCoup() {
+        return hint.aCoupValide();
     }
 }

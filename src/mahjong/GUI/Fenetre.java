@@ -23,7 +23,7 @@ public class Fenetre extends JFrame implements WindowListener {
     private final MenuPrincipal menu;
     private final GestionnaireJoueur gestionnaireJoueurs;
     private final SelectionJoueurGUI ecranSelectionJoueur;
-    private final classementGUI classement;
+    private final ClassementGUI classement;
     private Partie partie;
 
     private final EventListenerList listeners = new EventListenerList();
@@ -48,7 +48,7 @@ public class Fenetre extends JFrame implements WindowListener {
         ecranSelectionJoueur = new SelectionJoueurGUI(this);
         container.add(ecranSelectionJoueur, "EcranSelectionJoueur");
 
-        classement = new classementGUI(this);
+        classement = new ClassementGUI(this);
         container.add(classement, "Classement");
 
         this.setContentPane(container);

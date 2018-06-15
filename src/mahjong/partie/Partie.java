@@ -94,6 +94,10 @@ public class Partie implements ChronoListener, PlateauListener, InterfaceListene
     }
 
     public void verrifierVictoire() {
+        if(!plateau.aEncoreUnCoup())
+        {
+            interfaceDeJeu.afficherAvertisementPlusDeCoup();
+        }
         if (plateau.partieGagnee()) {
             chrono.cancel();
             interfaceDeJeu.verrouillerPlateau();
@@ -177,5 +181,15 @@ public class Partie implements ChronoListener, PlateauListener, InterfaceListene
     public void melangerPlateau() {
         plateau.melangerPlateau();
         interfaceDeJeu.repaint();
+    }
+
+    @Override
+    public void hint() 
+    {
+        plateau.showHint();
+        score -= 30;
+        interfaceDeJeu.setScore(score);
+        interfaceDeJeu.repaint();
+        
     }
 }
