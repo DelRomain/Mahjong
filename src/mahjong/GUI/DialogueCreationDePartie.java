@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package mahjong.GUI;
 
 import java.awt.event.WindowEvent;
@@ -16,15 +11,14 @@ import mahjong.partie.Chrono;
 import mahjong.partie.SauvegardePartie;
 
 /**
- *
- * @author axelp
+ * Gère la fenetre permettant de créer ou charger une partie
  */
 public class DialogueCreationDePartie extends javax.swing.JDialog {
 
     private final Fenetre fenetre;
 
     /**
-     * Creates new form DialogueCreationDePartie
+     * Crée une nouvelle fenetre de parametrage de partie
      *
      * @param parent
      * @param modal
@@ -195,10 +189,18 @@ public class DialogueCreationDePartie extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Permet de revenir au menu principale
+     * @param evt 
+     */
     private void boutonAnnulerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boutonAnnulerActionPerformed
         dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }//GEN-LAST:event_boutonAnnulerActionPerformed
 
+    /**
+     * Lance une nouvelle partie
+     * @param evt 
+     */
     private void boutonLancerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boutonLancerActionPerformed
         long seed;
         if (textFieldSeed.getValue() != null) {
@@ -212,6 +214,10 @@ public class DialogueCreationDePartie extends javax.swing.JDialog {
         dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }//GEN-LAST:event_boutonLancerActionPerformed
 
+    /**
+     * Affiche la fenetre de chargement d'une partie sauvegardé
+     * @param evt 
+     */
     private void boutonChargerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boutonChargerActionPerformed
         JFileChooser fileChooser = new JFileChooser("partie");
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -253,7 +259,11 @@ public class DialogueCreationDePartie extends javax.swing.JDialog {
             }
         }
     }//GEN-LAST:event_boutonChargerActionPerformed
-
+    
+    /**
+     * Gènere la liste des types de plateaux disponible pour l'affichage dans la comboBox
+     * @return la liste des noms de type de plateau
+     */
     private String[] genererListeComboBox() {
         String[] listeItems = new String[TypePlateau.values().length];
         for (int i = 0; i < TypePlateau.values().length; i++) {

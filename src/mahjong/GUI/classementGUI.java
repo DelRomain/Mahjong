@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package mahjong.GUI;
 
 import java.awt.Point;
@@ -11,14 +6,14 @@ import java.awt.event.MouseEvent;
 import mahjong.GUI.utils.JTableModeleClassement;
 import mahjong.joueur.Joueur;
 
+/**
+ * Gère la fenetre affichant la liste des joueurs avec leur meilleur temps et meilleur score.
+ * 
+ */
 public class ClassementGUI extends javax.swing.JPanel {
 
     private final Fenetre fenetre;
 
-    /**
-     * Creates new form classementGUI
-     * @param fenetre
-     */
     public ClassementGUI(Fenetre fenetre) {
         initComponents();
         this.fenetre = fenetre;
@@ -103,6 +98,9 @@ public class ClassementGUI extends javax.swing.JPanel {
     private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
     
+    /**
+     * Actualise la liste des joueurs présent dans le tableau de classement
+     */
     public final void rechargerListeJoueur() {
         for (int i = jTable1.getModel().getRowCount(); i > 0; i--) {
             ((JTableModeleClassement) jTable1.getModel()).retirerEntree(0);

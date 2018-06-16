@@ -16,6 +16,9 @@ import mahjong.joueur.GestionnaireJoueur;
 import mahjong.partie.Partie;
 import mahjong.partie.SauvegardePartie;
 
+/**
+ * Fenetre du mahjong
+ */
 public class Fenetre extends JFrame implements WindowListener {
 
     private final JPanel container;
@@ -56,8 +59,27 @@ public class Fenetre extends JFrame implements WindowListener {
         this.setVisible(true);
     }
 
+    /**
+     * Lance une nouvelle partie avec la seed et le type de plateau indiqués
+     *
+     * @param seed de la partie
+     * @param typePlateau de la partie
+     */
     public void lancerPartie(long seed, TypePlateau typePlateau) {
         partie = new Partie(interfaceDeJeu, seed, typePlateau);
+        addInterfaceListener(partie);
+        CardLayout cl = (CardLayout) (container.getLayout());
+        cl.show(container, "Interface");
+    }
+
+    /**
+     * Lance une partie à partir d'un fichier de sauvegarde
+     *
+     * @param partieChargee
+     */
+    public void lancerPartie(SauvegardePartie partieChargee) {
+        gestionnaireJoueurs.setJoueur(partieChargee.getJoueur());
+        partie = new Partie(interfaceDeJeu, partieChargee.getPartie());
         addInterfaceListener(partie);
         CardLayout cl = (CardLayout) (container.getLayout());
         cl.show(container, "Interface");
@@ -153,24 +175,13 @@ public class Fenetre extends JFrame implements WindowListener {
     public void removeInterfaceListener(InterfaceListener listener) {
         listeners.remove(InterfaceListener.class, listener);
     }
-    
-    private void fireTogglePause() 
-    {
-        if(partie != null && !partie.enPause())
-        {
+
+    private void fireTogglePause() {
+        if (partie != null && !partie.enPause()) {
             interfaceDeJeu.tooglePause();
             for (InterfaceListener listener : listeners.getListeners(InterfaceListener.class)) {
                 listener.togglePause();
             }
         }
-    }
-
-    public void lancerPartie(SauvegardePartie partieChargee) 
-    {
-        gestionnaireJoueurs.setJoueur(partieChargee.getJoueur());
-        partie = new Partie(interfaceDeJeu, partieChargee.getPartie());
-        addInterfaceListener(partie);
-        CardLayout cl = (CardLayout) (container.getLayout());
-        cl.show(container, "Interface");
     }
 }

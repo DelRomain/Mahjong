@@ -7,6 +7,9 @@ import javax.swing.JOptionPane;
 import mahjong.GUI.utils.JTableModeleJoueur;
 import mahjong.joueur.Joueur;
 
+/**
+ * Fenetre permettant de choisir quel joueur va jouer au jeu
+ */
 public class SelectionJoueurGUI extends javax.swing.JPanel {
 
     private final Fenetre fenetre;
@@ -18,6 +21,7 @@ public class SelectionJoueurGUI extends javax.swing.JPanel {
         rechargerListeJoueur();
 
         jTable2.addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent mouseEvent) {
                 Point point = mouseEvent.getPoint();
                 int row = jTable2.rowAtPoint(point);
@@ -185,6 +189,7 @@ public class SelectionJoueurGUI extends javax.swing.JPanel {
             Joueur joueur = new Joueur(nom);
             if (fenetre.getGestionnaireJoueurs().add(joueur)) {
                 ((JTableModeleJoueur) jTable2.getModel()).ajouterEntree(joueur);
+                rechargerListeJoueur();
             } else {
                 JOptionPane.showMessageDialog(this, "Ce nom est déjà pris!", "Erreur", JOptionPane.ERROR_MESSAGE);
             }
@@ -192,7 +197,7 @@ public class SelectionJoueurGUI extends javax.swing.JPanel {
     }//GEN-LAST:event_jButtonCreerJoueurActionPerformed
 
     private void jButtonRechercheJoueurDossierActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRechercheJoueurDossierActionPerformed
-        // TODO add your handling code here:
+        fenetre.getGestionnaireJoueurs().chargerJoueurs();
     }//GEN-LAST:event_jButtonRechercheJoueurDossierActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

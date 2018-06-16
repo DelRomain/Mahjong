@@ -6,7 +6,7 @@
 package mahjong.PathFinder;
 
 import java.util.Objects;
-import mahjong.CaseAdjacente;
+import mahjong.Direction;
 import mahjong.Emplacement;
 
 
@@ -20,14 +20,14 @@ public class CaseRecherchee implements Comparable{
     private int total;
     private CaseRecherchee parent;
     private int nombreAngleDroit;
-    private final CaseAdjacente direction;
+    private final Direction direction;
 
-    public CaseAdjacente getDirection() {
+    public Direction getDirection() {
         return direction;
     }
 
     
-    public CaseRecherchee(CaseRecherchee parent, Emplacement emplacement, CaseAdjacente direction) {
+    public CaseRecherchee(CaseRecherchee parent, Emplacement emplacement, Direction direction) {
         this.parent = parent; 
         this.emplacement = emplacement;
         this.direction = direction;

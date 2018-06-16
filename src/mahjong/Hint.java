@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package mahjong;
 
 import java.util.ArrayList;
@@ -12,6 +7,10 @@ import static mahjong.Plateau.NOMBRE_COLONNE;
 import static mahjong.Plateau.NOMBRE_LIGNE;
 import mahjong.coup.CoupRetirerTuile;
 
+/**
+ * Classe gérant la recherche de coup possible.
+ * Elle permet de générer des indications de coups possibles et de vérifier si le plateau n'est pas bloqué.
+ */
 public class Hint {
 
     private final ArrayList<CoupRetirerTuile> coupPossible;
@@ -24,6 +23,9 @@ public class Hint {
         this.plateau = plateau;
     }
 
+    /**
+     * Fonction regénérant la liste de coup possible sur le plateau.
+     */
     public void regenererListeCoupPossible() {
         coupPossible.clear();
         Emplacement emplacement;
@@ -74,11 +76,14 @@ public class Hint {
             y = i / NOMBRE_COLONNE;
             if (tuile.equals(plateau.getTuile(x, y))) {
                 j = 0;
-                while (j < CaseAdjacente.values().length && enRecherche) {
-                    emplacement = new Emplacement(x, y).add(
+                while (j < Direction.values().length && enRecherche) {
+                    emplacement = Emplacement.add(
+                            new Emplacement(x, y),
                             new Emplacement(
-                                    CaseAdjacente.values()[j].getLigne(),
-                                    CaseAdjacente.values()[j].getColonne()));
+                                    Direction.values()[j].getLigne(),
+                                    Direction.values()[j].getColonne())
+                    );
+                    
                     tuile2 = plateau.getTuile(emplacement.getLigne(), emplacement.getColonne());
                     if (tuile2 == null || tuile2.equals(tuile)) {
                         enRecherche = false;
@@ -92,10 +97,14 @@ public class Hint {
         return solution;
     }
 
-    public boolean aCoupValide() {
+    public boolean plateauJouable() {
         return coupPossible.size()>0;
     }
-
+    
+    /**
+     * Renvoie un coup possible sur le plateau
+     * @return un coup possible
+     */
     public CoupRetirerTuile getUnCoupPossible() {
         CoupRetirerTuile coup = null;
         if (!coupPossible.isEmpty()) {

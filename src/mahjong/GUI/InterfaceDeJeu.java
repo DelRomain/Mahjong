@@ -1,4 +1,3 @@
-
 package mahjong.GUI;
 
 import java.awt.Color;
@@ -10,7 +9,11 @@ import mahjong.partie.Partie;
 import mahjong.Listener.ChronoListener;
 import mahjong.Listener.InterfaceListener;
 
-
+/**
+ * Fenetre encadrant l'afficheur du plateau et donnant accès au fonctionnalité
+ * complémentaire du jeu tel que le retour en arrière, le score, ...
+ *
+ */
 public class InterfaceDeJeu extends javax.swing.JPanel implements ChronoListener {
 
     private Partie partie;
@@ -28,12 +31,6 @@ public class InterfaceDeJeu extends javax.swing.JPanel implements ChronoListener
         this.labelNomJoueur.setText(fenetre.getGestionnaireJoueurs().getJoueur().getNom());
         plateauGUI.setPlateau(partie.getPlateau());
         plateauGUI.addPlateauListener(partie);
-    }
-
-    public void changerBarTemps(int temp, Color color) {
-        jProgressBarTempsRestant.setValue(temp);
-        jProgressBarTempsRestant.setForeground(color);
-        jProgressBarTempsRestant.repaint();         //evite le saccadement
     }
 
     /**
@@ -92,7 +89,8 @@ public class InterfaceDeJeu extends javax.swing.JPanel implements ChronoListener
             }
         });
 
-        boutonAnnulerCoup.setText("coup precedent");
+        boutonAnnulerCoup.setText("Coup précedent");
+        boutonAnnulerCoup.setToolTipText("-10 points");
         boutonAnnulerCoup.setEnabled(false);
         boutonAnnulerCoup.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -100,7 +98,8 @@ public class InterfaceDeJeu extends javax.swing.JPanel implements ChronoListener
             }
         });
 
-        boutonHint.setText("Hint (-30 points)");
+        boutonHint.setText("Hint ");
+        boutonHint.setToolTipText("- 30 points");
         boutonHint.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 boutonHintActionPerformed(evt);
@@ -113,7 +112,7 @@ public class InterfaceDeJeu extends javax.swing.JPanel implements ChronoListener
             jPanelInfoJoueurLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(boutonMelanger, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(boutonPause, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(boutonAnnulerCoup, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
+            .addComponent(boutonAnnulerCoup, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanelInfoJoueurLayout.createSequentialGroup()
                 .addGroup(jPanelInfoJoueurLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanelInfoJoueurLayout.createSequentialGroup()
@@ -177,7 +176,7 @@ public class InterfaceDeJeu extends javax.swing.JPanel implements ChronoListener
         plateauGUI.setLayout(plateauGUILayout);
         plateauGUILayout.setHorizontalGroup(
             plateauGUILayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 259, Short.MAX_VALUE)
+            .addGap(0, 253, Short.MAX_VALUE)
         );
         plateauGUILayout.setVerticalGroup(
             plateauGUILayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -225,16 +224,14 @@ public class InterfaceDeJeu extends javax.swing.JPanel implements ChronoListener
         jProgressBarTempsRestant.setMaximum(tempCoup);
     }
 
-    public void updateTempJeu(String tempsTotalDeJeu) {
-        labelTempPartie.setText(tempsTotalDeJeu);
+    public void changerBarTemps(int temp, Color color) {
+        jProgressBarTempsRestant.setValue(temp);
+        jProgressBarTempsRestant.setForeground(color);
+        jProgressBarTempsRestant.repaint();         //evite le saccadement
     }
 
     public void setScore(int score) {
         labelScoreJoueur.setText("" + score);
-    }
-
-    public void repaintPlateau() {
-        plateauGUI.repaint();
     }
 
     public void bloquerBoutonRetourCoup() {
@@ -243,39 +240,6 @@ public class InterfaceDeJeu extends javax.swing.JPanel implements ChronoListener
 
     public void debloquerBoutonRetourCoup() {
         boutonAnnulerCoup.setEnabled(true);
-    }
-
-    public void afficherMenuPrincipal() {
-        fenetre.afficherMenuPrincipal();
-    }
-
-    public void victoire() {
-        fenetre.getGestionnaireJoueurs().ajouterPartieAuJoueurCourant(partie);
-    }
-
-    @Override
-    public void mettreAJourChronometreDeCoup(long temps, Color color) {
-        jProgressBarTempsRestant.setValue((int) temps);
-        jProgressBarTempsRestant.setForeground(color);
-        jProgressBarTempsRestant.repaint();
-    }
-
-    @Override
-    public void mettreAJourChronometreDeJeu(long temps) {
-        labelTempPartie.setText(Chrono.getTempsFormate(temps));
-    }
-
-    @Override
-    public void effacerCheminLiaisonTuiles() {
-        plateauGUI.effacerCheminLiaisonTuiles();
-    }
-
-    public void addInterfaceListener(InterfaceListener listener) {
-        listeners.add(InterfaceListener.class, listener);
-    }
-
-    public void removeInterfaceListener(InterfaceListener listener) {
-        listeners.remove(InterfaceListener.class, listener);
     }
 
     public void verrouillerPlateau() {
@@ -287,20 +251,65 @@ public class InterfaceDeJeu extends javax.swing.JPanel implements ChronoListener
         boutonAnnulerCoup.setEnabled(true);
         boutonMelanger.setEnabled(true);
     }
-    
-    public void tooglePause()
-    {
+
+    public void victoire() {
+        fenetre.getGestionnaireJoueurs().ajouterPartieAuJoueurCourant(partie);
+    }
+
+    public void tooglePause() {
         if (partie.enPause()) {
+            verrouillerPlateau();
             plateauGUI.setPause(false);
             boutonPause.setText("Pause");
         } else {
+            deverrouillerPlateau();
             plateauGUI.setPause(true);
             boutonPause.setText("Reprendre");
         }
     }
+    
+    public void repaintPlateau() {
+        plateauGUI.repaint();
+    }
+    
+    public void afficherMenuPrincipal() {
+        fenetre.afficherMenuPrincipal();
+    }
+    
+    public void afficherAvertisementPlusDeCoup() {
+        String[] choixTexte = {"Mélanger", "Revenir en arrière", "Quitter"};
+        int choix = JOptionPane.showOptionDialog(
+                this,
+                "Votre partie est bloquée que voulez-vous faire?",
+                "Partie bloquée",
+                JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                choixTexte,
+                choixTexte[0]);
+        switch (choix) {
+            case 0:
+                fireMelangerPlateau();
+                break;
+            case 1:
+                fireAnnulerCoup();
+                break;
+            case 2:
+                afficherMenuPrincipal();
+                break;
+        }
+    }
 
-    private void fireTogglePause() 
-    {
+    //Méthode pour la classe InterfaceListener
+    public void addInterfaceListener(InterfaceListener listener) {
+        listeners.add(InterfaceListener.class, listener);
+    }
+
+    public void removeInterfaceListener(InterfaceListener listener) {
+        listeners.remove(InterfaceListener.class, listener);
+    }
+
+    private void fireTogglePause() {
         tooglePause();
         for (InterfaceListener listener : listeners.getListeners(InterfaceListener.class)) {
             listener.togglePause();
@@ -324,30 +333,22 @@ public class InterfaceDeJeu extends javax.swing.JPanel implements ChronoListener
             listener.hint();
         }
     }
+    
+    //Méthode ChronoListener
+    @Override
+    public void mettreAJourChronometreDeCoup(long temps, Color color) {
+        jProgressBarTempsRestant.setValue((int) temps);
+        jProgressBarTempsRestant.setForeground(color);
+        jProgressBarTempsRestant.repaint();
+    }
 
-    public void afficherAvertisementPlusDeCoup() 
-    {
-        String[] choixTexte = {"Mélanger","Revenir en arrière","Quitter"};
-        int choix = JOptionPane.showOptionDialog(
-                this,
-                "Votre partie est bloquée que voulez-vous faire?",
-                "Partie bloquée",
-                JOptionPane.YES_NO_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                choixTexte,
-                choixTexte[0]);
-        switch(choix)
-        {
-            case 0:
-                fireMelangerPlateau();
-                break;
-            case 1:
-                fireAnnulerCoup();
-                break;
-            case 2:
-                afficherMenuPrincipal();
-                break;
-        }
+    @Override
+    public void mettreAJourChronometreDeJeu(long temps) {
+        labelTempPartie.setText(Chrono.getTempsFormate(temps));
+    }
+
+    @Override
+    public void effacerCheminLiaisonTuiles() {
+        plateauGUI.effacerCheminLiaisonTuiles();
     }
 }

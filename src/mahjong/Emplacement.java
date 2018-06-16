@@ -13,27 +13,22 @@ public class Emplacement {
         this.colonne = colonne;
     }
 
+    public void setLigne(int ligne) {
+        this.ligne = ligne;
+    }
+    
     public int getLigne() {
         return ligne;
+    }
+    
+    public void setColonne(int colonne) {
+        this.colonne = colonne;
     }
 
     public int getColonne() {
         return colonne;
     }
 
-    public void setLigne(int ligne) {
-        this.ligne = ligne;
-    }
-
-    public void setColonne(int colonne) {
-        this.colonne = colonne;
-    }
-    
-    public Emplacement add(Emplacement toAdd)
-    {
-        return new Emplacement(this.ligne+toAdd.ligne,this.colonne+toAdd.colonne);
-    }
-    
     public Emplacement copy()
     {
         return new Emplacement(ligne, colonne);
@@ -59,9 +54,21 @@ public class Emplacement {
         }
         return true;
     }
-
+    
     @Override
     public String toString() {
         return this.ligne+"/"+this.colonne; 
+    }
+    
+    public static Emplacement getEmplacementAdjacent(Emplacement origine, Direction direction)
+    {
+        return new Emplacement(origine.ligne+direction.getLigne(), origine.colonne+direction.getColonne());
+    }
+    
+    public static Emplacement add(Emplacement emplacement1, Emplacement emplacement2)
+    {
+        return new Emplacement(
+                emplacement1.ligne+emplacement2.ligne,
+                emplacement2.colonne+emplacement2.colonne);
     }
 }

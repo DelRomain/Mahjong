@@ -55,7 +55,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="boutonMelanger" max="32767" attributes="0"/>
                   <Component id="boutonPause" alignment="0" max="32767" attributes="0"/>
-                  <Component id="boutonAnnulerCoup" alignment="0" pref="114" max="32767" attributes="0"/>
+                  <Component id="boutonAnnulerCoup" alignment="0" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
@@ -159,7 +159,8 @@
             </Component>
             <Component class="javax.swing.JButton" name="boutonAnnulerCoup">
               <Properties>
-                <Property name="text" type="java.lang.String" value="coup precedent"/>
+                <Property name="text" type="java.lang.String" value="Coup pr&#xe9;cedent"/>
+                <Property name="toolTipText" type="java.lang.String" value="-10 points"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
@@ -168,7 +169,8 @@
             </Component>
             <Component class="javax.swing.JButton" name="boutonHint">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Hint (-30 points)"/>
+                <Property name="text" type="java.lang.String" value="Hint "/>
+                <Property name="toolTipText" type="java.lang.String" value="- 30 points"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="boutonHintActionPerformed"/>
@@ -183,7 +185,7 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="259" max="32767" attributes="0"/>
+              <EmptySpace min="0" pref="253" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">

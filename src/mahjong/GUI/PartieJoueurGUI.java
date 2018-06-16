@@ -3,6 +3,10 @@ package mahjong.GUI;
 import mahjong.GUI.utils.JTableModelePartieJoueur;
 import mahjong.joueur.Joueur;
 
+/**
+ * Fenêtre affichant les parties effectués par le joueur
+ */
+
 public class PartieJoueurGUI extends javax.swing.JDialog {
 
     /**

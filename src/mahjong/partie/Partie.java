@@ -102,14 +102,14 @@ public class Partie implements ChronoListener, PlateauListener, InterfaceListene
     }
 
     public void verrifierVictoire() {
-        if (plateau.partieGagnee()) {
+        if (plateau.partieTerminee()) {
             chrono.cancel();
             interfaceDeJeu.verrouillerPlateau();
             JOptionPane.showMessageDialog(null, "Vous avez gagné !", "Victoire", JOptionPane.INFORMATION_MESSAGE);
             interfaceDeJeu.victoire();
             interfaceDeJeu.afficherMenuPrincipal();
         }
-        else if(!plateau.aEncoreUnCoup())
+        else if(!plateau.plateauJouable())
         {
             interfaceDeJeu.afficherAvertisementPlusDeCoup();
         }
@@ -145,13 +145,14 @@ public class Partie implements ChronoListener, PlateauListener, InterfaceListene
     @Override
     public void genererCoup(CoupRetirerTuile coup) {
         int scoreAjouter = chrono.getScoreTemp();
+        coup.setScore(scoreAjouter);
         score += scoreAjouter;
         interfaceDeJeu.debloquerBoutonRetourCoup();
         interfaceDeJeu.setScore(score);
         chrono.resetChronoCoup();
         chrono.resetChronoAffichageChemin();
         verrifierVictoire();
-        this.plateau.effacerCoupHint();
+        this.plateau.effacerHint();
     }
 
     @Override
@@ -172,7 +173,9 @@ public class Partie implements ChronoListener, PlateauListener, InterfaceListene
     @Override
     public void annulerCoup() {
         chrono.resetChronoCoup();
-        score -= plateau.annulerCoup();
+        System.out.println(score);
+        score -= plateau.annulerCoup() + 10;
+        System.out.println(score);
         interfaceDeJeu.setScore(score);
         interfaceDeJeu.repaint();
 
@@ -196,7 +199,7 @@ public class Partie implements ChronoListener, PlateauListener, InterfaceListene
     @Override
     public void hint() 
     {
-        plateau.showHint();
+        plateau.afficherHint();
         score -= 30;
         interfaceDeJeu.setScore(score);
         interfaceDeJeu.repaint();

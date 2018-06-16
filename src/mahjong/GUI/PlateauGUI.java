@@ -21,12 +21,18 @@ import mahjong.Plateau;
 import mahjong.Tuile;
 import mahjong.coup.CoupRetirerTuile;
 
+/**
+ * Panel servant à afficher le plateau et récuperer les actions du joueur
+ * vis-à-vis de celui-ci.
+ */
 public class PlateauGUI extends JPanel implements MouseListener {
 
     private BufferedImage imagePause;
     private BufferedImage[] images;
+    
     public static final int LARGEUR_TUILE = 35;
-    public static int HAUTEUR_TUILE = 46;
+    public static final int HAUTEUR_TUILE = 46;
+    
     private Plateau plateau;
     private CoupRetirerTuile dernierCoup;
     private boolean enPause;
@@ -132,24 +138,26 @@ public class PlateauGUI extends JPanel implements MouseListener {
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        if (this.dernierCoup != null) {
-            effacerCheminLiaisonTuiles();
-        }
-        if (e.getButton() == MouseEvent.BUTTON1) {
-            int ligneTuile;
-            int colonneTuile;
-            final int curseurX = e.getX();
-            final int curseurY = e.getY();
-
-            colonneTuile = curseurX / PlateauGUI.LARGEUR_TUILE;
-            ligneTuile = curseurY / PlateauGUI.HAUTEUR_TUILE;
-            this.dernierCoup = this.plateau.genererCoup(ligneTuile, colonneTuile);
-            if (dernierCoup != null) {
-                fireGenererCoup(dernierCoup);
+        if (!enPause) {
+            if (this.dernierCoup != null) {
+                effacerCheminLiaisonTuiles();
             }
-            this.repaint();
-        } else if (e.getButton() == MouseEvent.BUTTON3) {
-            this.plateau.deselectionnerTuile();
+            if (e.getButton() == MouseEvent.BUTTON1) {
+                int ligneTuile;
+                int colonneTuile;
+                final int curseurX = e.getX();
+                final int curseurY = e.getY();
+
+                colonneTuile = curseurX / PlateauGUI.LARGEUR_TUILE;
+                ligneTuile = curseurY / PlateauGUI.HAUTEUR_TUILE;
+                this.dernierCoup = this.plateau.creeCoupRetraitTuile(ligneTuile, colonneTuile);
+                if (dernierCoup != null) {
+                    fireGenererCoup(dernierCoup);
+                }
+                this.repaint();
+            } else if (e.getButton() == MouseEvent.BUTTON3) {
+                this.plateau.deselectionnerTuile();
+            }
         }
     }
 
@@ -168,7 +176,7 @@ public class PlateauGUI extends JPanel implements MouseListener {
 
     public void effacerCheminLiaisonTuiles() {
         if (dernierCoup != null) {
-            this.plateau.jouerCoup(this.dernierCoup, false);
+            this.plateau.jouerCoupRetrait(this.dernierCoup, true);
             fireApplicationCoup(dernierCoup);
         }
         this.dernierCoup = null;
