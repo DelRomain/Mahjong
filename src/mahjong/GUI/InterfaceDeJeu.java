@@ -327,6 +327,27 @@ public class InterfaceDeJeu extends javax.swing.JPanel implements ChronoListener
 
     public void afficherAvertisementPlusDeCoup() 
     {
-        JOptionPane.showConfirmDialog(this, "Plus de coups disponible", "Plus de coup", JOptionPane.ERROR_MESSAGE);
+        String[] choixTexte = {"Mélanger","Revenir en arrière","Quitter"};
+        int choix = JOptionPane.showOptionDialog(
+                this,
+                "Votre partie est bloquée que voulez-vous faire?",
+                "Partie bloquée",
+                JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                choixTexte,
+                choixTexte[0]);
+        switch(choix)
+        {
+            case 0:
+                fireMelangerPlateau();
+                break;
+            case 1:
+                fireAnnulerCoup();
+                break;
+            case 2:
+                afficherMenuPrincipal();
+                break;
+        }
     }
 }

@@ -26,6 +26,7 @@ public class Plateau {
     private Melangeur melangeur;
     private Hint hint;
     private CoupRetirerTuile hintCoup;
+    private long seed;
 
     public Plateau() {
         tuilesSelectionnee = null;
@@ -33,6 +34,7 @@ public class Plateau {
         tuileEnJeu = new ArrayList<>();
         rechercheChemin = new RechercheChemin(this);
         this.hint = new Hint(this);
+        this.seed = 0;
     }
 
     /**
@@ -42,7 +44,7 @@ public class Plateau {
      * @param typeDePlateau : gestion de la "physique" du terrain
      */
     public void genererNouveauPlateau(long seed, TypePlateau typeDePlateau) {
-
+        this.seed = seed;
         melangeur = new Melangeur(seed);
         plateau = melangeur.genererNouveauPlateau();
         regenererListeTuileEnJeu();
@@ -117,7 +119,7 @@ public class Plateau {
     }
 
     public void melangerPlateau() {
-        //regenererListeTuileEnJeu();
+        regenererListeTuileEnJeu();
         ArrayList<Tuile> copieDeTuileEnJeu = new ArrayList<>();
         for (Tuile tuile : tuileEnJeu) {
             copieDeTuileEnJeu.add(tuile.deepCopy());
@@ -162,6 +164,7 @@ public class Plateau {
 
             }
         }
+        hint.regenererListeCoupPossible();
         return score;
     }
 
@@ -171,6 +174,7 @@ public class Plateau {
 
     public void save(FileWriter fichier) throws IOException {
         fichier.write(typeDePlateau.toString() + "\n");
+        fichier.write(this.seed + "\n");
         String savePlateau = "";
         for (int indexLigne = 0; indexLigne < NOMBRE_LIGNE; indexLigne++) {
             for (int indexColonne = 0; indexColonne < NOMBRE_COLONNE; indexColonne++) {
@@ -191,7 +195,9 @@ public class Plateau {
 
     public void charger(BufferedReader fichier) throws IOException {
         this.plateau = new Tuile[NOMBRE_LIGNE][NOMBRE_COLONNE];
+        this.melangeur = new Melangeur(seed);
         typeDePlateau = TypePlateau.valueOf(fichier.readLine());
+        this.seed = Long.parseLong(fichier.readLine());
         String lignes[] = fichier.readLine().split(";");
         for (int indexLigne = 0; indexLigne < NOMBRE_LIGNE; indexLigne++) {
             String colonnes[] = lignes[indexLigne].split(":");
@@ -201,13 +207,13 @@ public class Plateau {
                     plateau[indexLigne][indexColonne] = new Tuile(colonnes[indexColonne]);
                 }
             }
-        }
-        regenererListeTuileEnJeu();
+        } 
         String sauvegardeCoups[] = fichier.readLine().split(";");
         for (String sauvegarde : sauvegardeCoups) {
 
             this.coups.add(Coup.loadSave(sauvegarde));
         }
+        regenererListeTuileEnJeu();
         hint.regenererListeCoupPossible();
     }
 
@@ -288,5 +294,9 @@ public class Plateau {
 
     public boolean aEncoreUnCoup() {
         return hint.aCoupValide();
+    }
+
+    public long getSeed() {
+        return seed;
     }
 }

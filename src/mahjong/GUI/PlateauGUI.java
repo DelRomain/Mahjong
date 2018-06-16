@@ -67,8 +67,7 @@ public class PlateauGUI extends JPanel implements MouseListener {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         if (plateau != null) {
-            if(!enPause)
-            {
+            if (!enPause) {
                 Tuile tuile;
                 for (int indexLigne = 0; indexLigne < Plateau.NOMBRE_LIGNE; indexLigne++) {
                     for (int indexColonne = 0; indexColonne < Plateau.NOMBRE_COLONNE; indexColonne++) {
@@ -82,9 +81,9 @@ public class PlateauGUI extends JPanel implements MouseListener {
                                         indexColonne * LARGEUR_TUILE,
                                         indexLigne * HAUTEUR_TUILE,
                                         LARGEUR_TUILE, HAUTEUR_TUILE, this);
-                            } else if(plateau.getHint()!=null &&
-                                    (plateau.getHint().getTuiles()[0] == tuile ||
-                                    plateau.getHint().getTuiles()[1] == tuile)){
+                            } else if (plateau.getHint() != null
+                                    && (plateau.getHint().getTuiles()[0] == tuile
+                                    || plateau.getHint().getTuiles()[1] == tuile)) {
                                 BufferedImageOp op = new RescaleOp(new float[]{1.2f, 1.2f, 0.8f, 1.0f}, new float[4], null);
                                 g.drawImage(
                                         op.filter(this.images[tuile.getImageID()], null),
@@ -101,7 +100,7 @@ public class PlateauGUI extends JPanel implements MouseListener {
                         }
                     }
                 }
-            
+
                 CaseRecherchee caseRechercheChemin = plateau.getCheminLiaisonTuiles();
                 if (caseRechercheChemin != null && dernierCoup != null) {
                     g.setColor(Color.red);
@@ -117,10 +116,8 @@ public class PlateauGUI extends JPanel implements MouseListener {
                         parent = caseRechercheChemin.getParent();
                     }
                 }
-            }
-            else
-            {
-                g.drawImage(imagePause,0,0,this);
+            } else {
+                g.drawImage(imagePause, 0, 0, this);
             }
         }
     }
@@ -137,7 +134,6 @@ public class PlateauGUI extends JPanel implements MouseListener {
     public void mouseReleased(MouseEvent e) {
         if (this.dernierCoup != null) {
             effacerCheminLiaisonTuiles();
-            this.plateau.effacerCoupHint();
         }
         if (e.getButton() == MouseEvent.BUTTON1) {
             int ligneTuile;
@@ -164,9 +160,8 @@ public class PlateauGUI extends JPanel implements MouseListener {
     @Override
     public void mouseExited(MouseEvent e) {
     }
-    
-    public void setPause(boolean enPause)
-    {
+
+    public void setPause(boolean enPause) {
         this.enPause = enPause;
         this.repaint();
     }
@@ -174,15 +169,10 @@ public class PlateauGUI extends JPanel implements MouseListener {
     public void effacerCheminLiaisonTuiles() {
         if (dernierCoup != null) {
             this.plateau.jouerCoup(this.dernierCoup, false);
+            fireApplicationCoup(dernierCoup);
         }
         this.dernierCoup = null;
         this.repaint();
-    }
-
-    public void fireGenererCoup(CoupRetirerTuile coup) {
-        for (PlateauListener listener : listeners.getListeners(PlateauListener.class)) {
-            listener.genererCoup(coup);
-        }
     }
 
     public void addPlateauListener(PlateauListener listener) {
@@ -191,5 +181,17 @@ public class PlateauGUI extends JPanel implements MouseListener {
 
     public void removePlateauListener(PlateauListener listener) {
         listeners.remove(PlateauListener.class, listener);
+    }
+
+    public void fireGenererCoup(CoupRetirerTuile coup) {
+        for (PlateauListener listener : listeners.getListeners(PlateauListener.class)) {
+            listener.genererCoup(coup);
+        }
+    }
+
+    private void fireApplicationCoup(CoupRetirerTuile coup) {
+        for (PlateauListener listener : listeners.getListeners(PlateauListener.class)) {
+            listener.applicationCoup(coup);
+        }
     }
 }

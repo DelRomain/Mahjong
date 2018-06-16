@@ -69,6 +69,14 @@ public class Partie implements ChronoListener, PlateauListener, InterfaceListene
         this.interfaceDeJeu.setTailleChronometre(TEMP_PAR_COUP * 100);
         
         this.enPause = false;
+        verrifierVictoire();
+        if (plateau.getCoups().isEmpty()) {
+            interfaceDeJeu.bloquerBoutonRetourCoup();
+        }
+        else
+        {
+            interfaceDeJeu.debloquerBoutonRetourCoup();
+        }
     }
 
     public Partie() {
@@ -94,16 +102,16 @@ public class Partie implements ChronoListener, PlateauListener, InterfaceListene
     }
 
     public void verrifierVictoire() {
-        if(!plateau.aEncoreUnCoup())
-        {
-            interfaceDeJeu.afficherAvertisementPlusDeCoup();
-        }
         if (plateau.partieGagnee()) {
             chrono.cancel();
             interfaceDeJeu.verrouillerPlateau();
             JOptionPane.showMessageDialog(null, "Vous avez gagné !", "Victoire", JOptionPane.INFORMATION_MESSAGE);
             interfaceDeJeu.victoire();
             interfaceDeJeu.afficherMenuPrincipal();
+        }
+        else if(!plateau.aEncoreUnCoup())
+        {
+            interfaceDeJeu.afficherAvertisementPlusDeCoup();
         }
     }
 
@@ -121,6 +129,7 @@ public class Partie implements ChronoListener, PlateauListener, InterfaceListene
         score = Integer.parseInt(values[0]);
         chrono = new Chrono(this, TEMP_PAR_COUP, Long.parseLong(values[1]), Long.parseLong(values[2]));
         plateau.charger(fichier);
+        seed = plateau.getSeed();
     }
 
     @Override
@@ -142,6 +151,7 @@ public class Partie implements ChronoListener, PlateauListener, InterfaceListene
         chrono.resetChronoCoup();
         chrono.resetChronoAffichageChemin();
         verrifierVictoire();
+        this.plateau.effacerCoupHint();
     }
 
     @Override
@@ -191,5 +201,11 @@ public class Partie implements ChronoListener, PlateauListener, InterfaceListene
         interfaceDeJeu.setScore(score);
         interfaceDeJeu.repaint();
         
+    }
+
+    @Override
+    public void applicationCoup(CoupRetirerTuile coup) 
+    {
+        verrifierVictoire();
     }
 }

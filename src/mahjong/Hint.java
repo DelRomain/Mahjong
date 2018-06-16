@@ -29,23 +29,18 @@ public class Hint {
         Emplacement emplacement;
         int indexRecherche;
         for (int index = 15; index < (NOMBRE_LIGNE - 1) * NOMBRE_COLONNE; index++) {
-            System.out.println("recher sur index : " + index);
             if (plateau.getTuile(index % NOMBRE_COLONNE, index / NOMBRE_COLONNE) != null) {
                 indexRecherche = index;
-                System.out.println("Tuile trouvée ");
                 while (indexRecherche < (NOMBRE_LIGNE - 1) * NOMBRE_COLONNE) {
                     if (plateau.getTuile(indexRecherche % NOMBRE_COLONNE, indexRecherche / NOMBRE_COLONNE) != null) {
                         emplacement = rechercherTuileAccessible(indexRecherche);
                         if (emplacement != null) {
-                            System.out.println("Tuile apairable trouvée " + indexRecherche);
                             CoupRetirerTuile coup = new CoupRetirerTuile(
                                     plateau.getTuile(index % NOMBRE_COLONNE, index / NOMBRE_COLONNE),
                                     plateau.getTuile(emplacement.getLigne(), emplacement.getColonne()));
                             if (plateau.verifierCoupJouable(coup)) {
-                                System.out.println("chemin OK");
                                 coupPossible.add(coup);
                             }
-                            System.out.println(emplacement.getLigne() + emplacement.getColonne() * 14 );
                             indexRecherche = emplacement.getLigne()+ emplacement.getColonne() * 14 ;
                         } else {
                             indexRecherche = 1234;
@@ -55,7 +50,6 @@ public class Hint {
                         indexRecherche++;
                 }
             }
-            System.out.println("");
         }
     }
 
@@ -110,5 +104,4 @@ public class Hint {
         }
         return coup;
     }
-
 }

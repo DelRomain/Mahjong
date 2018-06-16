@@ -11,7 +11,7 @@ import java.awt.event.MouseEvent;
 import mahjong.GUI.utils.JTableModeleClassement;
 import mahjong.joueur.Joueur;
 
-public class classementGUI extends javax.swing.JPanel {
+public class ClassementGUI extends javax.swing.JPanel {
 
     private final Fenetre fenetre;
 
@@ -19,7 +19,7 @@ public class classementGUI extends javax.swing.JPanel {
      * Creates new form classementGUI
      * @param fenetre
      */
-    public classementGUI(Fenetre fenetre) {
+    public ClassementGUI(Fenetre fenetre) {
         initComponents();
         this.fenetre = fenetre;
         
