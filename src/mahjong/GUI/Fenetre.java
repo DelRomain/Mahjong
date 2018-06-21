@@ -9,11 +9,16 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.event.EventListenerList;
+import mahjong.Listener.InterfaceListener;
 import mahjong.Type_Plateau.TypePlateau;
 import mahjong.joueur.GestionnaireJoueur;
 import mahjong.partie.Partie;
 import mahjong.partie.SauvegardePartie;
 
+/**
+ * Fenetre du mahjong
+ */
 public class Fenetre extends JFrame implements WindowListener {
 
     private final JPanel container;
@@ -21,8 +26,10 @@ public class Fenetre extends JFrame implements WindowListener {
     private final MenuPrincipal menu;
     private final GestionnaireJoueur gestionnaireJoueurs;
     private final SelectionJoueurGUI ecranSelectionJoueur;
-    private final classementGUI classement;
+    private final ClassementGUI classement;
     private Partie partie;
+
+    private final EventListenerList listeners = new EventListenerList();
 
     public Fenetre() {
         super("Mahjong");
@@ -44,7 +51,7 @@ public class Fenetre extends JFrame implements WindowListener {
         ecranSelectionJoueur = new SelectionJoueurGUI(this);
         container.add(ecranSelectionJoueur, "EcranSelectionJoueur");
 
-        classement = new classementGUI(this);
+        classement = new ClassementGUI(this);
         container.add(classement, "Classement");
 
         this.setContentPane(container);
@@ -52,13 +59,34 @@ public class Fenetre extends JFrame implements WindowListener {
         this.setVisible(true);
     }
 
+    /**
+     * Lance une nouvelle partie avec la seed et le type de plateau indiqués
+     *
+     * @param seed de la partie
+     * @param typePlateau de la partie
+     */
     public void lancerPartie(long seed, TypePlateau typePlateau) {
         partie = new Partie(interfaceDeJeu, seed, typePlateau);
+        addInterfaceListener(partie);
+        CardLayout cl = (CardLayout) (container.getLayout());
+        cl.show(container, "Interface");
+    }
+
+    /**
+     * Lance une partie à partir d'un fichier de sauvegarde
+     *
+     * @param partieChargee
+     */
+    public void lancerPartie(SauvegardePartie partieChargee) {
+        gestionnaireJoueurs.setJoueur(partieChargee.getJoueur());
+        partie = new Partie(interfaceDeJeu, partieChargee.getPartie());
+        addInterfaceListener(partie);
         CardLayout cl = (CardLayout) (container.getLayout());
         cl.show(container, "Interface");
     }
 
     public void afficherMenuPrincipal() {
+        removeInterfaceListener(partie);
         partie = null;
         CardLayout cl = (CardLayout) (container.getLayout());
         cl.show(container, "Menu");
@@ -89,6 +117,7 @@ public class Fenetre extends JFrame implements WindowListener {
     public void windowClosing(WindowEvent e) {
         boolean doitFermer = true;
         if (partie != null) {
+            fireTogglePause();
             int option = JOptionPane.showConfirmDialog(this, "Voulez-vous sauvegarder la partie courante ?", "Fermeture fenetre", JOptionPane.YES_NO_CANCEL_OPTION);
             if (option == JOptionPane.YES_OPTION) {
                 JFileChooser fileChooser = new JFileChooser("partie");
@@ -97,10 +126,10 @@ public class Fenetre extends JFrame implements WindowListener {
                 int returnVal = fileChooser.showSaveDialog(this);
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     File file = fileChooser.getSelectedFile();
-                    
+
                     SauvegardePartie save = new SauvegardePartie(partie, gestionnaireJoueurs.getJoueur());
-                    save.sauvegarder(file.getAbsolutePath()+".mprt");
-                    
+                    save.sauvegarder(file.getAbsolutePath() + ".mprt");
+
                 } else if (returnVal == JFileChooser.CANCEL_OPTION) {
                     doitFermer = false;
                 }
@@ -136,6 +165,23 @@ public class Fenetre extends JFrame implements WindowListener {
 
     @Override
     public void windowDeactivated(WindowEvent e) {
+        fireTogglePause();
+    }
 
+    public void addInterfaceListener(InterfaceListener listener) {
+        listeners.add(InterfaceListener.class, listener);
+    }
+
+    public void removeInterfaceListener(InterfaceListener listener) {
+        listeners.remove(InterfaceListener.class, listener);
+    }
+
+    private void fireTogglePause() {
+        if (partie != null && !partie.enPause()) {
+            interfaceDeJeu.tooglePause();
+            for (InterfaceListener listener : listeners.getListeners(InterfaceListener.class)) {
+                listener.togglePause();
+            }
+        }
     }
 }

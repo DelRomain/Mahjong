@@ -3,9 +3,11 @@ package mahjong.partie;
 
 import java.awt.Color;
 import java.util.TimerTask;
+import javax.swing.event.EventListenerList;
+import mahjong.Listener.ChronoListener;
 
-public class Chrono extends TimerTask{
-
+public class Chrono extends TimerTask
+{
     private long temp;
     private long tempsTotalDeJeu;
     private long tempsAffichageChemin;
@@ -14,11 +16,13 @@ public class Chrono extends TimerTask{
     private final int TEMP_COUP_FIN_CHRONO;
     private final Partie partie;
     
-    public Chrono(Partie partie, int tempCoup, long tempCoupRestant, long tempTotal, long tempsAffichageChemin) {
+    private final EventListenerList listeners = new EventListenerList();
+    
+    public Chrono(Partie partie, int tempCoup, long tempCoupRestant, long tempTotal) {
        this(partie,tempCoup);
        this.tempsTotalDeJeu = tempTotal;
        this.temp = tempCoupRestant;
-       this.tempsAffichageChemin = tempsAffichageChemin;
+       this.tempsAffichageChemin = 21;
     }
     
     
@@ -30,8 +34,18 @@ public class Chrono extends TimerTask{
         this.TEMP_COUP_RETRAIT_POINT = (int) (0.75*TEMP_COUP);
         this.TEMP_COUP_FIN_CHRONO = (int) (0.25*TEMP_COUP);
         this.partie = partie;
-        this.partie.getInterfaceDeJeu().setTailleChronometre(TEMP_COUP);
         this.tempsAffichageChemin = 0;
+    }
+
+    public Chrono(Chrono chrono) 
+    {
+       this.partie = chrono.partie;
+       this.tempsTotalDeJeu = chrono.tempsTotalDeJeu;
+       this.temp = chrono.temp;
+       this.tempsAffichageChemin = chrono.tempsAffichageChemin;
+       this.TEMP_COUP = chrono.TEMP_COUP;
+       this.TEMP_COUP_FIN_CHRONO = chrono.TEMP_COUP_FIN_CHRONO;
+       this.TEMP_COUP_RETRAIT_POINT = chrono.TEMP_COUP_RETRAIT_POINT;
     }
 
     @Override
@@ -46,11 +60,10 @@ public class Chrono extends TimerTask{
         
         if(tempsAffichageChemin == 20)
         {
-            this.partie.getPlateau().setAfficherChemin(false);
-            this.partie.getInterfaceDeJeu().repaintPlateau();
+            fireEffacerCheminLiaisonTuiles();
         }
         
-        this.partie.getInterfaceDeJeu().updateTempJeu(getTempsFormate(tempsTotalDeJeu));
+        fireMettreAJourChronometreDeJeu(tempsTotalDeJeu);
         
         if(temp>TEMP_COUP_RETRAIT_POINT)
             color = Color.GREEN;
@@ -58,8 +71,8 @@ public class Chrono extends TimerTask{
             color = Color.ORANGE;
         else
             color = Color.RED;
-        this.partie.getInterfaceDeJeu().changerBarTemps((int)temp,color);
-     
+        
+        fireMettreAJourChronometreDeCoup(temp,color);
     }
 
     public void resetChronoCoup() 
@@ -100,7 +113,40 @@ public class Chrono extends TimerTask{
         return tempsTotalDeJeu;
     }
 
+    public void setTempsTotalDeJeu(long tempsTotalDeJeu) {
+        this.tempsTotalDeJeu = tempsTotalDeJeu;
+    }
+    
     public long getTempsAffichage() {
         return tempsAffichageChemin;
+    }
+    
+    public void fireEffacerCheminLiaisonTuiles()
+    {
+        for(ChronoListener listener : listeners.getListeners(ChronoListener.class)) {
+            listener.effacerCheminLiaisonTuiles();
+        }
+    }
+    
+    public void fireMettreAJourChronometreDeCoup(long temps, Color color)
+    {
+        for(ChronoListener listener : listeners.getListeners(ChronoListener.class)) {
+            listener.mettreAJourChronometreDeCoup(temps, color);
+        }
+    }
+    
+    public void fireMettreAJourChronometreDeJeu(long temps)
+    {
+        for(ChronoListener listener : listeners.getListeners(ChronoListener.class)) {
+            listener.mettreAJourChronometreDeJeu(temps);
+        }
+    }
+
+    public void addChronoListener(ChronoListener listener) {
+        listeners.add(ChronoListener.class, listener);
+    }
+    
+    public void removeChronoListener(ChronoListener listener) {
+        listeners.remove(ChronoListener.class, listener);
     }
 }

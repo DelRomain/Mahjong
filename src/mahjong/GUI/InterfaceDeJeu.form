@@ -55,6 +55,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="boutonMelanger" max="32767" attributes="0"/>
                   <Component id="boutonPause" alignment="0" max="32767" attributes="0"/>
+                  <Component id="boutonAnnulerCoup" alignment="0" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
@@ -76,7 +77,7 @@
                       </Group>
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="boutonCoupRedo" alignment="0" pref="114" max="32767" attributes="0"/>
+                  <Component id="boutonHint" alignment="0" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -97,8 +98,10 @@
                           <Component id="jLabelLabelTemps" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="labelTempPartie" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="154" max="32767" attributes="0"/>
-                      <Component id="boutonCoupRedo" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="125" max="32767" attributes="0"/>
+                      <Component id="boutonHint" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="boutonAnnulerCoup" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="boutonPause" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -154,13 +157,23 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="boutonPauseActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JButton" name="boutonCoupRedo">
+            <Component class="javax.swing.JButton" name="boutonAnnulerCoup">
               <Properties>
-                <Property name="text" type="java.lang.String" value="coup precedent"/>
+                <Property name="text" type="java.lang.String" value="Coup pr&#xe9;cedent"/>
+                <Property name="toolTipText" type="java.lang.String" value="-10 points"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="boutonCoupRedoActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="boutonAnnulerCoupActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JButton" name="boutonHint">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Hint "/>
+                <Property name="toolTipText" type="java.lang.String" value="- 30 points"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="boutonHintActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>
@@ -172,7 +185,7 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="259" max="32767" attributes="0"/>
+              <EmptySpace min="0" pref="253" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">

@@ -40,8 +40,8 @@ public class Joueur{
         listePartie.add(partie);
         if(partie.getScore()>meilleurScore)
             meilleurScore = partie.getScore();
-        if(partie.getTempTotalChronoPause()>meilleurTemps)
-            meilleurTemps = partie.getTempTotalChronoPause();
+        if(partie.getTempsDejeu()>meilleurTemps)
+            meilleurTemps = partie.getTempsDejeu();
     }
 
     @Override

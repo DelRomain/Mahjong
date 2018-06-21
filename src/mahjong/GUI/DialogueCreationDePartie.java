@@ -1,28 +1,31 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package mahjong.GUI;
 
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.util.Random;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileFilter;
 import mahjong.Type_Plateau.TypePlateau;
+import mahjong.partie.Chrono;
+import mahjong.partie.SauvegardePartie;
 
 /**
- *
- * @author axelp
+ * Gère la fenetre permettant de créer ou charger une partie
  */
 public class DialogueCreationDePartie extends javax.swing.JDialog {
 
     private final Fenetre fenetre;
+
     /**
-     * Creates new form DialogueCreationDePartie
+     * Crée une nouvelle fenetre de parametrage de partie
+     *
      * @param parent
      * @param modal
      */
     public DialogueCreationDePartie(Fenetre parent, boolean modal) {
         super(parent, modal);
+        this.setTitle("Création d'une partie");
         initComponents();
         this.fenetre = parent;
         this.labelNomJoeur.setText(fenetre.getGestionnaireJoueurs().getJoueur().getNom());
@@ -40,6 +43,7 @@ public class DialogueCreationDePartie extends javax.swing.JDialog {
 
         boutonLancer = new javax.swing.JButton();
         boutonAnnuler = new javax.swing.JButton();
+        boutonCharger = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -66,7 +70,14 @@ public class DialogueCreationDePartie extends javax.swing.JDialog {
             }
         });
 
-        jLabel1.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
+        boutonCharger.setText("Charger");
+        boutonCharger.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                boutonChargerActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setFont(new java.awt.Font("Elephant", 1, 24)); // NOI18N
         jLabel1.setText("Création d'une nouvelle partie");
 
         jLabel2.setText("Joueur :");
@@ -86,7 +97,7 @@ public class DialogueCreationDePartie extends javax.swing.JDialog {
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(labelNomJoeur)))
-                .addContainerGap(119, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -150,12 +161,14 @@ public class DialogueCreationDePartie extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(boutonAnnuler)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(boutonLancer))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(boutonCharger)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(boutonLancer)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -168,36 +181,92 @@ public class DialogueCreationDePartie extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(boutonLancer)
-                    .addComponent(boutonAnnuler))
+                    .addComponent(boutonAnnuler)
+                    .addComponent(boutonCharger))
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Permet de revenir au menu principale
+     * @param evt 
+     */
     private void boutonAnnulerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boutonAnnulerActionPerformed
         dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }//GEN-LAST:event_boutonAnnulerActionPerformed
 
+    /**
+     * Lance une nouvelle partie
+     * @param evt 
+     */
     private void boutonLancerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boutonLancerActionPerformed
         long seed;
-        if(textFieldSeed.getValue() != null)
-            seed = (long)textFieldSeed.getValue();
-        else
-        {
+        if (textFieldSeed.getValue() != null) {
+            seed = (long) textFieldSeed.getValue();
+        } else {
             Random random = new Random();
             seed = random.nextLong();
-            System.out.println("generation seed : "+seed);
+            System.out.println("generation seed : " + seed);
         }
-        fenetre.lancerPartie(seed,TypePlateau.getTypeParNom((String)comboBoxTypeTerrain.getSelectedItem()));
+        fenetre.lancerPartie(seed, TypePlateau.getTypeParNom((String) comboBoxTypeTerrain.getSelectedItem()));
         dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
     }//GEN-LAST:event_boutonLancerActionPerformed
+
+    /**
+     * Affiche la fenetre de chargement d'une partie sauvegardé
+     * @param evt 
+     */
+    private void boutonChargerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boutonChargerActionPerformed
+        JFileChooser fileChooser = new JFileChooser("partie");
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fileChooser.setFileFilter(new FileFilter() {
+            @Override
+            public boolean accept(File f) {
+                boolean result = false;
+                if (f.isFile() && f.getName().endsWith(".mprt")) {
+                    result = true;
+                }
+                return result;
+            }
+
+            @Override
+            public String getDescription() {
+                return "Fichier de partie mahjong";
+            }
+        });
+        int returnVal = fileChooser.showOpenDialog(this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            
+            SauvegardePartie partieChargee = new SauvegardePartie();
+            partieChargee.charger(file.getAbsolutePath());
+            
+            int chargerPartie = JOptionPane.showConfirmDialog(
+                    this,
+                    "Voulez-vous charger cette partie :\n"
+                    + "Joueur : " + partieChargee.getJoueur().getNom() + "\n"
+                    + "Type de plateau : " + partieChargee.getPartie().getPlateau().getTypeDePlateau().getNom() + "\n"
+                    + "Temps : " + Chrono.getTempsFormate(partieChargee.getPartie().getTempsDejeu()) + "\n"
+                    + "Score : " + partieChargee.getPartie().getScore(),
+                    "Chargement partie",
+                    JOptionPane.YES_NO_OPTION);
+            
+            if (chargerPartie == JOptionPane.OK_OPTION) {
+                fenetre.lancerPartie(partieChargee);
+                dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+            }
+        }
+    }//GEN-LAST:event_boutonChargerActionPerformed
     
-    private String[] genererListeComboBox()
-    {
+    /**
+     * Gènere la liste des types de plateaux disponible pour l'affichage dans la comboBox
+     * @return la liste des noms de type de plateau
+     */
+    private String[] genererListeComboBox() {
         String[] listeItems = new String[TypePlateau.values().length];
-        for(int i = 0; i<TypePlateau.values().length; i++)
-        {
+        for (int i = 0; i < TypePlateau.values().length; i++) {
             listeItems[i] = TypePlateau.values()[i].getNom();
         }
         return listeItems;
@@ -205,6 +274,7 @@ public class DialogueCreationDePartie extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton boutonAnnuler;
+    private javax.swing.JButton boutonCharger;
     private javax.swing.JButton boutonLancer;
     private javax.swing.JComboBox<String> comboBoxTypeTerrain;
     private javax.swing.JLabel jLabel1;

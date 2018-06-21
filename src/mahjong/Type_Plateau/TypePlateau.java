@@ -2,7 +2,8 @@ package mahjong.Type_Plateau;
 
 public enum TypePlateau 
 {
-    TUILE_TOMBANTE("Tuile tombante", new PlateauTuileTombante());
+    TUILE_TOMBANTE("Tuile tombante", new PlateauTuileTombante()),
+    TUILE_MONTANTE("Tuile montante", new PlateauTuileMontante());
     
     private final PlateauGenerique typePlateau;
     private final String nom;
@@ -26,8 +27,9 @@ public enum TypePlateau
         int i = 0;
         while(type == null && i<TypePlateau.values().length)
         {
-            if(nom.equals(TypePlateau.values()[i].nom))
+            if(nom.equalsIgnoreCase(TypePlateau.values()[i].nom))
                 type = TypePlateau.values()[i];
+            i++;
         }
         return type;
     }

@@ -10,9 +10,8 @@ public abstract class Coup {
         Coup coup;
         if (texteSauvegarde.substring(0, 2).equals("CR")) {
             String values[] = texteSauvegarde.substring(2).split(",");
-            Tuile[] tuiles = new Tuile[]{new Tuile(values[0]), new Tuile(values[1])};
             int score = Integer.parseInt(values[2]);
-            coup = new CoupRetirerTuile(tuiles, score);
+            coup = new CoupRetirerTuile(new Tuile(values[0]), new Tuile(values[1]), score);
         }
         else
         {

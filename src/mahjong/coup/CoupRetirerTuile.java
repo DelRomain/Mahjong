@@ -7,13 +7,18 @@ public class CoupRetirerTuile extends Coup
     private Tuile[] tuiles;
     private int score; 
 
-    public CoupRetirerTuile(Tuile[] tuiles, int score) {
-        this.tuiles = tuiles;
+    
+    public CoupRetirerTuile(Tuile tuile1, Tuile tuile2, int score) {
+        this.tuiles = new Tuile[]{tuile1,tuile2};
         this.score = score;
     }
     
-    public CoupRetirerTuile(Tuile[] tuiles) {
-        this.tuiles = tuiles;
+    public CoupRetirerTuile(Tuile tuile1, Tuile tuile2) {
+        if (tuile1.getLigne() > tuile2.getLigne()) {
+            this.tuiles = new Tuile[]{tuile2,tuile1};
+        } else {
+            this.tuiles = new Tuile[]{tuile1,tuile2};
+        }
     }
 
     public Tuile[] getTuiles() {

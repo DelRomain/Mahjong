@@ -10,54 +10,82 @@ import mahjong.PathFinder.CaseRecherchee;
 import mahjong.PathFinder.RechercheChemin;
 import mahjong.coup.Coup;
 import mahjong.coup.CoupMelangerPlateau;
-import mahjong.partie.Partie;
 
+/**
+ * Classe gérant le plateau et les classes travaillant dessus.
+ */
 public class Plateau {
 
-    private Tuile[][] plateau;
+    //Parametre de base du plateau
     public static final int NOMBRE_LIGNE = 14;
     public static final int NOMBRE_COLONNE = 14;
+
+    //Champ caractérisant le plateau de jeu
+    private Tuile[][] plateau;
+    private long seed;
     private TypePlateau typeDePlateau;
-    private Tuile tuilesSelectionnee;
     private final ArrayList<Coup> coups;
     private final ArrayList<Tuile> tuileEnJeu;
-    private Partie partie;
-    private final RechercheChemin rechercheChemin;
-    private boolean afficherChemin;
+
+    //Classe intervenant sur le plateau
     private Melangeur melangeur;
+    private final Hint verificateurBlocage;
+    private final RechercheChemin rechercheChemin;
+
+    //Champ pour utilisation exterieur (GUI)
+    private Tuile tuilesSelectionnee;
+    private CoupRetirerTuile hint;
 
     public Plateau() {
         tuilesSelectionnee = null;
-        plateau = new Tuile[NOMBRE_LIGNE][NOMBRE_COLONNE];
         coups = new ArrayList<>();
         tuileEnJeu = new ArrayList<>();
         rechercheChemin = new RechercheChemin(this);
-        afficherChemin = false;
-
+        this.verificateurBlocage = new Hint(this);
+        this.plateau = new Tuile[NOMBRE_LIGNE][NOMBRE_COLONNE];
+        this.seed = 0;
     }
 
     /**
-     * Genere un nouveau plateau de jeu de manière aléatoire
+     * Génère un nouveau plateau de jeu de manière aléatoire
      *
      * @param seed : graine de génération du terrain
      * @param typeDePlateau : gestion de la "physique" du terrain
      */
     public void genererNouveauPlateau(long seed, TypePlateau typeDePlateau) {
-
+        this.seed = seed;
         melangeur = new Melangeur(seed);
         plateau = melangeur.genererNouveauPlateau();
         regenererListeTuileEnJeu();
         this.typeDePlateau = typeDePlateau;
+        verificateurBlocage.regenererListeCoupPossible();
     }
 
     /**
-     * Selectionne une tuile et tente de jouer un coup
-     *
-     * @param indexLigne : index de la tuile sur une ligne
-     * @param indexColonne : index de la ligne sur une colonne
+     * Génère un coup où le plateau est mélangé
      */
-    public void jouer(int indexLigne, int indexColonne) {
+    public void melangerPlateau() {
+        regenererListeTuileEnJeu();
+        ArrayList<Tuile> copieDeTuileEnJeu = new ArrayList<>();
+        for (Tuile tuile : tuileEnJeu) {
+            copieDeTuileEnJeu.add(tuile.deepCopy());
+        }
 
+        Object[] result = melangeur.melangerPlateau(plateau, copieDeTuileEnJeu);
+        plateau = (Tuile[][]) result[0];
+        coups.add(new CoupMelangerPlateau((long) result[1]));
+        verificateurBlocage.regenererListeCoupPossible();
+    }
+
+    /**
+     * Génère un coup où une tuile sera retiré du plateau
+     *
+     * @param indexLigne de le tuile
+     * @param indexColonne de le tuile
+     * @return un coup si celui-ci était jouable, null sinon
+     */
+    public CoupRetirerTuile creeCoupRetraitTuile(int indexLigne, int indexColonne) {
+        CoupRetirerTuile coup = null;
         if (tuilesSelectionnee == null) {
             tuilesSelectionnee = getTuile(indexLigne, indexColonne);
         } else if (tuilesSelectionnee == plateau[indexLigne][indexColonne]) {
@@ -65,32 +93,42 @@ public class Plateau {
         } else {
             Tuile tuile = getTuile(indexLigne, indexColonne);
             if (tuile != null) {
-                CoupRetirerTuile coup = new CoupRetirerTuile(new Tuile[]{tuilesSelectionnee, tuile});
-                if (verifierCoupJouable(coup)) {
-
-                    //On retire les references des objets de la selection et du plateau
+                coup = new CoupRetirerTuile(tuilesSelectionnee, tuile);
+                if (!verifierCoupJouable(coup)) {
+                    coup = null;
+                } else {
                     tuilesSelectionnee = null;
-                    tuileEnJeu.remove(coup.getTuiles()[0]);
-                    tuileEnJeu.remove(coup.getTuiles()[1]);
-                    coups.add(coup);
-                    //XXX POUR LES TESTS
-                    if (partie != null) {
-                        coup.setScore(partie.resetChrono());
-                    }
-                    this.partie.getInterfaceDeJeu().bloquerPlateau(true);
-
-                    afficherChemin = true;
-
                 }
             }
         }
+        return coup;
     }
 
     /**
-     * Verifier si un chemin valide est trouver entre les tuiles selectionnee
+     * Applique un coup où une tuile sera retiré du plateau
      *
-     * @param coup
-     * @return vrai si le coup est jouable, faux sinon
+     * @param coup qui sera joué
+     * @param coupJoueur indique si c'est l'ordinateur qui effectue le coup ou
+     * le joueur
+     */
+    public void jouerCoupRetrait(CoupRetirerTuile coup, boolean coupJoueur) {
+        if (coupJoueur) {
+            coups.add(coup);
+        }
+        tuileEnJeu.remove(coup.getTuiles()[0]);
+        tuileEnJeu.remove(coup.getTuiles()[1]);
+        plateau[coup.getTuiles()[0].getLigne()][coup.getTuiles()[0].getColonne()] = null;
+        plateau[coup.getTuiles()[1].getLigne()][coup.getTuiles()[1].getColonne()] = null;
+        typeDePlateau.getPhysiquePlateau().traitementTerrainPostCoup(plateau, coup);
+        verificateurBlocage.regenererListeCoupPossible();
+    }
+
+    /**
+     * Vérifie si les deux tuiles sont apairables et s'il existe un chemin
+     * valide entre les deux tuiles selectionnées
+     *
+     * @param coup à vérifier
+     * @return true si le coup est jouable, false sinon
      */
     public boolean verifierCoupJouable(CoupRetirerTuile coup) {
         boolean coupValide = coup.isValid();
@@ -100,113 +138,61 @@ public class Plateau {
         return coupValide;
     }
 
-    public boolean partieGagnee() {
-        return tuileEnJeu.isEmpty();
-    }
-
-    public Tuile getTuilesSelectionnee() {
-        return tuilesSelectionnee;
-    }
-
-    public Tuile getTuile(int indexLigne, int indexColonne) {
-        Tuile tuile = null;
-        if ((0 <= indexLigne && indexLigne < this.NOMBRE_COLONNE)
-                && (0 <= indexColonne && indexColonne < this.NOMBRE_LIGNE)) {
-            tuile = plateau[indexLigne][indexColonne];
-        }
-        return tuile;
-    }
-
-    public void melangerPlateau() {
-        ArrayList<Tuile> copieDeTuileEnJeu = new ArrayList<>();
-        for(Tuile tuile : tuileEnJeu)
-        {
-            copieDeTuileEnJeu.add(tuile.deepCopy());
-        }
-        
-        Object[] result = melangeur.melangerPlateau(plateau, copieDeTuileEnJeu);
-        plateau = (Tuile[][]) result[0];
-        coups.add(new CoupMelangerPlateau((long)result[1]));
-    }
-
-    public int[] rechercherTuile(int indexDeBase, Tuile tuile) {
-        int[] solution = null;
-        final int indexMax = NOMBRE_LIGNE * NOMBRE_COLONNE;
-        int i = indexDeBase + 1;
-        boolean enRecherche = true;
-        while (i < indexMax && enRecherche) {
-            if (tuile.equals(plateau[i % NOMBRE_COLONNE][i / NOMBRE_COLONNE])) {
-                enRecherche = false;
-                solution = new int[]{i % NOMBRE_COLONNE, i / NOMBRE_COLONNE};
-            }
-            i++;
-        }
-        return solution;
-    }
-
-    public void setPartie(Partie partie) {
-        this.partie = partie;
-    }
-
-    public CaseRecherchee getCheminTuile() {
-        return afficherChemin ? rechercheChemin.getCheminEnCours() : null;
-    }
-
-    public void setAfficherChemin(boolean afficherChemin) {
-        this.partie.getInterfaceDeJeu().bloquerPlateau(false);
-        appliquerCoup();
-        this.afficherChemin = afficherChemin;
-    }
-
-    public void appliquerCoup(Coup coup) {
-        if (coup instanceof CoupRetirerTuile) {
-            CoupRetirerTuile coupRetrait = (CoupRetirerTuile) coup;
-            System.out.println(coupRetrait.save());
-            plateau[coupRetrait.getTuiles()[0].getCoordonnees()[0]][coupRetrait.getTuiles()[0].getCoordonnees()[1]] = null;
-            plateau[coupRetrait.getTuiles()[1].getCoordonnees()[0]][coupRetrait.getTuiles()[1].getCoordonnees()[1]] = null;
-            typeDePlateau.getPhysiquePlateau().traitementTerrainPostCoup(plateau, coupRetrait);
-        } else {
-            regenererListeTuileEnJeu();
-            CoupMelangerPlateau coupMelange = (CoupMelangerPlateau)coup;
-            melangeur.melangerPlateau(plateau, tuileEnJeu, coupMelange.getSeed());
-        }
-    }
-
-    public void appliquerCoup() {
-        if (!coups.isEmpty() && coups.get(coups.size() - 1) instanceof CoupRetirerTuile) {
-            CoupRetirerTuile coup = (CoupRetirerTuile) coups.get(coups.size() - 1);
-            plateau[coup.getTuiles()[0].getCoordonnees()[0]][coup.getTuiles()[0].getCoordonnees()[1]] = null;
-            plateau[coup.getTuiles()[1].getCoordonnees()[0]][coup.getTuiles()[1].getCoordonnees()[1]] = null;
-            typeDePlateau.getPhysiquePlateau().traitementTerrainPostCoup(plateau, coup);
-            System.out.println(coup.save());        
-        }
-    }
-
-    public int retourCoup() {
+    /**
+     * Annule le dernier coup joué par le joueur
+     *
+     * @return le score qu'il faut retirer au joueur
+     */
+    public int annulerCoup() {
         int score = 0;
-        if (!coups.isEmpty() && !afficherChemin) {
+        if (!coups.isEmpty()) {
             Coup coup = coups.remove(coups.size() - 1);
             if (coup instanceof CoupRetirerTuile) {
                 CoupRetirerTuile coupRetirer = (CoupRetirerTuile) coup;
-                typeDePlateau.getPhysiquePlateau().remonterCoup(plateau, coupRetirer);
+                typeDePlateau.getPhysiquePlateau().annulerCoup(plateau, coupRetirer);
+                tuileEnJeu.add(coupRetirer.getTuiles()[0]);
+                tuileEnJeu.add(coupRetirer.getTuiles()[1]);
                 score = coupRetirer.getScore();
             } else {
                 plateau = melangeur.genererNouveauPlateau();
+                regenererListeTuileEnJeu();
                 for (int i = 0; i < coups.size(); i++) {
-                    appliquerCoup(coups.get(i));
+                    rejouerAncienCoup(coups.get(i));
                 }
 
             }
         }
+        verificateurBlocage.regenererListeCoupPossible();
         return score;
     }
 
-    public ArrayList<Coup> getCoups() {
-        return coups;
+    /**
+     * Rejoue un coup
+     *
+     * @param coup à rejouer
+     */
+    public void rejouerAncienCoup(Coup coup) {
+        if (coup instanceof CoupRetirerTuile) {
+            jouerCoupRetrait((CoupRetirerTuile) coup, false);
+        } else {
+            ArrayList<Tuile> copieDeTuileEnJeu = new ArrayList<>();
+            for (Tuile tuile : tuileEnJeu) {
+                copieDeTuileEnJeu.add(tuile.deepCopy());
+            }
+            CoupMelangerPlateau coupMelange = (CoupMelangerPlateau) coup;
+            Object[] result = melangeur.melangerPlateau(plateau, copieDeTuileEnJeu, coupMelange.getSeed());
+            plateau = (Tuile[][]) result[0];
+        }
     }
 
+    /**
+     * Sauvegarde le plateau (type, seed, plateau, liste de coup)
+     * @param fichier dans lequel il faut sauvegarder
+     * @throws IOException
+     */
     public void save(FileWriter fichier) throws IOException {
         fichier.write(typeDePlateau.toString() + "\n");
+        fichier.write(this.seed + "\n");
         String savePlateau = "";
         for (int indexLigne = 0; indexLigne < NOMBRE_LIGNE; indexLigne++) {
             for (int indexColonne = 0; indexColonne < NOMBRE_COLONNE; indexColonne++) {
@@ -224,9 +210,16 @@ public class Plateau {
         }
         fichier.write(savePlateau.substring(0, savePlateau.length() - 1));
     }
-
+    /**
+     * Charge un plateau
+     * @param fichier dans lequel est la sauvegarde du plateau
+     * @throws IOException
+     */
     public void charger(BufferedReader fichier) throws IOException {
+        this.plateau = new Tuile[NOMBRE_LIGNE][NOMBRE_COLONNE];
+        this.melangeur = new Melangeur(seed);
         typeDePlateau = TypePlateau.valueOf(fichier.readLine());
+        this.seed = Long.parseLong(fichier.readLine());
         String lignes[] = fichier.readLine().split(";");
         for (int indexLigne = 0; indexLigne < NOMBRE_LIGNE; indexLigne++) {
             String colonnes[] = lignes[indexLigne].split(":");
@@ -237,16 +230,19 @@ public class Plateau {
                 }
             }
         }
-
         String sauvegardeCoups[] = fichier.readLine().split(";");
         for (String sauvegarde : sauvegardeCoups) {
 
             this.coups.add(Coup.loadSave(sauvegarde));
         }
+        regenererListeTuileEnJeu();
+        verificateurBlocage.regenererListeCoupPossible();
     }
 
     /**
      * Affiche le plateau directement dans la console
+     *
+     * @param plateau
      */
     public static void afficherTerrainSurConsole(Tuile[][] plateau) {
         for (int indexLigne = -1; indexLigne < NOMBRE_LIGNE + 1; indexLigne++) {
@@ -280,7 +276,12 @@ public class Plateau {
         System.out.println("==");
     }
 
+    /**
+     * Actualise la liste de tuile en jeu. Sert à savoir quand la partie se
+     * termine et au mélange du plateau.
+     */
     private void regenererListeTuileEnJeu() {
+        tuileEnJeu.clear();
         for (int indexLigne = 1; indexLigne < NOMBRE_LIGNE - 1; indexLigne++) {
             for (int indexColonne = 1; indexColonne < NOMBRE_COLONNE - 1; indexColonne++) {
                 Tuile tuile = plateau[indexLigne][indexColonne];
@@ -290,4 +291,64 @@ public class Plateau {
             }
         }
     }
+
+    /**
+     * Recherche une tuile par ça position
+     * @param indexLigne de la tuile
+     * @param indexColonne de la tuile
+     * @return une tuile ou null si la position est vide ou hors plateau
+     */
+    public Tuile getTuile(int indexLigne, int indexColonne) {
+        Tuile tuile = null;
+        if ((0 <= indexLigne && indexLigne < this.NOMBRE_COLONNE)
+                && (0 <= indexColonne && indexColonne < this.NOMBRE_LIGNE)) {
+            tuile = plateau[indexLigne][indexColonne];
+        }
+        return tuile;
+    }
+    
+    public void afficherHint() {
+        hint = verificateurBlocage.getUnCoupPossible();
+    }
+    
+    public void effacerHint() {
+        this.hint = null;
+    }
+
+    public CoupRetirerTuile getHint() {
+        return hint;
+    }
+    
+    public boolean partieTerminee() {
+        return tuileEnJeu.isEmpty();
+    }
+    
+    public boolean plateauJouable() {
+        return verificateurBlocage.plateauJouable();
+    }
+    
+    public void deselectionnerTuile() {
+        this.tuilesSelectionnee = null;
+    }
+    
+    public Tuile getTuilesSelectionnee() {
+        return tuilesSelectionnee;
+    }
+
+    public ArrayList<Coup> getCoups() {
+        return coups;
+    }
+
+    public CaseRecherchee getCheminLiaisonTuiles() {
+        return rechercheChemin.getCheminEnCours();
+    }
+
+    public long getSeed() {
+        return seed;
+    }
+    
+    public TypePlateau getTypeDePlateau() {
+        return typeDePlateau;
+    }
+
 }

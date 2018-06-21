@@ -5,7 +5,9 @@
  */
 package mahjong.PathFinder;
 
-import mahjong.CaseAdjacente;
+import java.util.Objects;
+import mahjong.Direction;
+import mahjong.Emplacement;
 
 
 /**
@@ -14,21 +16,20 @@ import mahjong.CaseAdjacente;
  */
 public class CaseRecherchee implements Comparable{
 
-    private final int ligne,colonne;
+    private final Emplacement emplacement;
     private int total;
     private CaseRecherchee parent;
     private int nombreAngleDroit;
-    private final CaseAdjacente direction;
+    private final Direction direction;
 
-    public CaseAdjacente getDirection() {
+    public Direction getDirection() {
         return direction;
     }
 
     
-    public CaseRecherchee(CaseRecherchee parent,int ligne, int colonne, CaseAdjacente direction) {
+    public CaseRecherchee(CaseRecherchee parent, Emplacement emplacement, Direction direction) {
         this.parent = parent; 
-        this.ligne = ligne;
-        this.colonne = colonne;
+        this.emplacement = emplacement;
         this.direction = direction;
         
         nombreAngleDroit = getNombreAngleDroit(parent);
@@ -62,11 +63,15 @@ public class CaseRecherchee implements Comparable{
     }
 
     public int getLigne() {
-        return ligne;
+        return emplacement.getLigne();
     }
 
     public int getColonne() {
-        return colonne;
+        return emplacement.getColonne();
+    }
+
+    public Emplacement getEmplacement() {
+        return emplacement;
     }
 
     @Override
@@ -81,10 +86,7 @@ public class CaseRecherchee implements Comparable{
             return false;
         }
         final CaseRecherchee other = (CaseRecherchee) obj;
-        if (this.ligne != other.ligne) {
-            return false;
-        }
-        if (this.colonne != other.colonne) {
+        if (!Objects.equals(this.emplacement, other.emplacement)) {
             return false;
         }
         return true;
@@ -95,6 +97,10 @@ public class CaseRecherchee implements Comparable{
         return nombreAngleDroit;
     }
 
+    public void setNombreAngleDroit(int nombreAngleDroit) {
+        this.nombreAngleDroit = nombreAngleDroit;
+    }
+    
     public void setParent(CaseRecherchee parent) {
         this.parent = parent;
     }
@@ -112,7 +118,7 @@ public class CaseRecherchee implements Comparable{
 
     @Override
     public String toString() {
-        return "CaseRecherchee{" + "lgn=" + ligne + ", col=" + colonne + ", total=" + total + ", nombreAngleDroit=" + nombreAngleDroit + ", direction=" + direction + ", parent=" + parent + '}';
+        return "CaseRecherchee{" + "lgn=" + emplacement.getLigne() + ", col=" + emplacement.getColonne() + ", total=" + total + ", nombreAngleDroit=" + nombreAngleDroit + ", direction=" + direction + ", parent=" + parent + '}';
     }
 
     public void setDistance(int distance) 

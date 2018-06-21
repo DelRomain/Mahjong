@@ -1,31 +1,35 @@
 package mahjong;
 
+/**
+ * Classe représentant une tuile
+ */
 public class Tuile {
 
     private final FamilleDeTuile typeTuile;
     private final int id;
-    private int coordonneeX, coordonneeY;
+    private final Emplacement coordonnees;
 
+    /**
+     * Crée une tuile à partir sa famille et son numéro
+     * @param typeTuile : famille de la tuile
+     * @param id : numéro de la tuile au sein de sa famille
+     */
     public Tuile(FamilleDeTuile typeTuile, int id) {
         this.typeTuile = typeTuile;
         this.id = id;
+        coordonnees = new Emplacement(-1, -1);
     }
 
+    /**
+     * Crée une tuile à partir d'un fichier de sauvegarde
+     * @param chaineCaractereSauvegarde : chaine contenant les informations de la tuile sous le format de sauvegarde
+     */
     public Tuile(String chaineCaractereSauvegarde) 
     {
         String values[] = chaineCaractereSauvegarde.split("/");
         typeTuile = FamilleDeTuile.valueOf(values[0]);
         this.id = Integer.parseInt(values[1]);
-        this.coordonneeX = Integer.parseInt(values[2]);
-        this.coordonneeY = Integer.parseInt(values[3]);
-    }
-
-    public FamilleDeTuile getTypeTuile() {
-        return typeTuile;
-    }
-
-    public int getID() {
-        return id;
+        this.coordonnees = new Emplacement(Integer.parseInt(values[2]),Integer.parseInt(values[3]));
     }
 
     @Override
@@ -41,32 +45,51 @@ public class Tuile {
         return false;
     }
 
-    public void setCoordonnees(int coordonneeX, int coordonneeY) {
-        this.coordonneeX = coordonneeX;
-        this.coordonneeY = coordonneeY;
-    }
-
-    public int[] getCoordonnees() {
-        return new int[]{coordonneeX, coordonneeY};
-    }
-
+        
     @Override
     public String toString() {
         return typeTuile.toString().substring(0, 1) + id;
     }
-    
-    public int getImageID()
-    {
-        return FamilleDeTuile.indexBaseFammile[typeTuile.ordinal()]+id;
-    }
-    
+
     public String save()
     {
-        return typeTuile.toString()+"/"+id+"/"+coordonneeX+"/"+coordonneeY;
+        return typeTuile.toString()+"/"+id+"/"+coordonnees.getLigne()+"/"+coordonnees.getColonne();
     }
     
     public Tuile deepCopy()
     {
         return new Tuile(typeTuile,id);
+    }
+        
+    public int getImageID()
+    {
+        return FamilleDeTuile.indexBaseFammile[typeTuile.ordinal()]+id;
+    }
+    
+    public void setCoordonnees(int coordonneeX, int coordonneeY) {
+        this.coordonnees.setLigne(coordonneeX);
+        this.coordonnees.setColonne(coordonneeY);
+    }
+
+    public Emplacement getCoordonnees() {
+        return coordonnees;
+    }
+    
+    public int getLigne()
+    {
+        return coordonnees.getLigne();
+    }
+    
+    public int getColonne()
+    {
+        return coordonnees.getColonne();
+    }
+
+    public FamilleDeTuile getTypeTuile() {
+        return typeTuile;
+    }
+
+    public int getID() {
+        return id;
     }
 }
