@@ -100,8 +100,9 @@ public class GestionnaireJoueur {
             sauvegarderJoueur(joueur);
         });
         if (joueurActuel != null) {
+            FileWriter fichier;
             try {
-                FileWriter fichier = new FileWriter("joueurs/default.djur");
+                fichier = new FileWriter("joueurs/default.djur");
                 fichier.write(joueurActuel.getNom());
                 fichier.close();
             } catch (IOException ex) {
@@ -116,8 +117,9 @@ public class GestionnaireJoueur {
      * @param joueur
      */
     private void sauvegarderJoueur(Joueur joueur) {
+        FileWriter fichier;
         try {
-            FileWriter fichier = new FileWriter("joueurs/" + joueur.getNom() + ".jur");
+            fichier = new FileWriter("joueurs/" + joueur.getNom() + ".jur");
             joueur.save(fichier);
             fichier.close();
         } catch (IOException ex) {
@@ -138,8 +140,9 @@ public class GestionnaireJoueur {
         }
         for (File file : files) {
             if (file.getName().endsWith("jur")) {
+                BufferedReader fichier;
                 try {
-                    BufferedReader fichier = new BufferedReader(new FileReader(file));
+                    fichier = new BufferedReader(new FileReader(file));
                     while (fichier.ready()) {
                         if (file.getName().equals("default.djur")) {
                             joueurParDefault = fichier.readLine();

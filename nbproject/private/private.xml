@@ -3,8 +3,18 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Programme/Java/Mahjong/src/mahjong/Plateau.java</file>
-            <file>file:/D:/Programme/Java/Mahjong/src/mahjong/Melangeur.java</file>
+            <file>file:/D:/Programme/Java/Mahjong/src/mahjong/RechercheChemin/Direction.java</file>
+            <file>file:/D:/Programme/Java/Mahjong/src/mahjong/TypeDeCoup/CoupMelangerPlateau.java</file>
+            <file>file:/D:/Programme/Java/Mahjong/src/mahjong/TypeDePlateau/PlateauTuileTombante.java</file>
+            <file>file:/D:/Programme/Java/Mahjong/src/mahjong/TestDeClasses/TestCaseAdjacente.java</file>
+            <file>file:/D:/Programme/Java/Mahjong/src/mahjong/RechercheChemin/CaseRecherchee.java</file>
+            <file>file:/D:/Programme/Java/Mahjong/src/mahjong/TypeDeCoup/Coup.java</file>
+            <file>file:/D:/Programme/Java/Mahjong/src/mahjong/TypeDePlateau/TypePlateau.java</file>
+            <file>file:/D:/Programme/Java/Mahjong/src/mahjong/TypeDePlateau/PlateauTuileMontante.java</file>
+            <file>file:/D:/Programme/Java/Mahjong/src/mahjong/TypeDeCoup/CoupRetirerTuile.java</file>
+            <file>file:/D:/Programme/Java/Mahjong/src/mahjong/GestionPlateau/Hint.java</file>
+            <file>file:/D:/Programme/Java/Mahjong/src/mahjong/RechercheChemin/RechercheChemin.java</file>
+            <file>file:/D:/Programme/Java/Mahjong/src/mahjong/TypeDePlateau/PlateauGenerique.java</file>
         </group>
     </open-files>
 </project-private>

@@ -103,7 +103,7 @@ public class Partie implements ChronoListener, PlateauListener, InterfaceListene
         this.score = 0;
     }
 
-    public void verrifierVictoire() {
+    public final void verrifierVictoire() {
         if (plateau.partieTerminee()) {
             chrono.cancel();
             interfaceDeJeu.verrouillerPlateau();

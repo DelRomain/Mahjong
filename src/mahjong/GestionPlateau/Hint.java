@@ -4,7 +4,6 @@ import mahjong.RechercheChemin.Direction;
 import java.util.ArrayList;
 import java.util.Collections;
 import mahjong.GestionTuile.Coordonnees;
-import mahjong.RechercheChemin.RechercheChemin;
 import mahjong.GestionTuile.Tuile;
 import static mahjong.GestionPlateau.Plateau.NOMBRE_COLONNE;
 import static mahjong.GestionPlateau.Plateau.NOMBRE_LIGNE;

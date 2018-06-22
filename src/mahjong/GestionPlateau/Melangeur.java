@@ -67,8 +67,7 @@ public class Melangeur {
      * @return un plateau de même forme que le précedant mais mélangé
      */
     public Object[] melangerPlateau(Tuile[][] plateau, ArrayList<Tuile> tuileEnJeu) {
-        long seed = new Random().nextLong();
-        return melangerPlateau(plateau, tuileEnJeu, seed);
+        return melangerPlateau(plateau, tuileEnJeu, new Random().nextLong());
     }
 
     /**

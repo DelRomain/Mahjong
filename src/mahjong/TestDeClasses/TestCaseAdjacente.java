@@ -7,7 +7,6 @@ package mahjong.TestDeClasses;
 
 
 import mahjong.RechercheChemin.Direction;
-import mahjong.* ;
 /**
  *
  * @author alafitte
