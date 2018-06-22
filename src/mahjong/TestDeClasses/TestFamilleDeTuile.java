@@ -6,7 +6,7 @@
 package mahjong.TestDeClasses;
 
 import java.util.Arrays;
-import mahjong.FamilleDeTuile;
+import mahjong.GestionTuile.FamilleDeTuile;
 /**
  *
  * @author alafitte

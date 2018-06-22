@@ -7,9 +7,9 @@ package mahjong.TestDeClasses;
 
 import java.awt.Dimension;
 import javax.swing.JFrame;
-import mahjong.GUI.PlateauGUI;
-import mahjong.Plateau;
-import mahjong.Type_Plateau.TypePlateau;
+import mahjong.GUI.AfficheurDePlateau;
+import mahjong.GestionPlateau.Plateau;
+import mahjong.TypeDePlateau.TypePlateau;
 
 /**
  *
@@ -21,7 +21,7 @@ public class TestPlateau
         JFrame jframe = new JFrame("test plateau");
         
         
-        PlateauGUI gui = new PlateauGUI();
+        AfficheurDePlateau gui = new AfficheurDePlateau();
         Plateau plateau = new Plateau();
         plateau.genererNouveauPlateau(0, TypePlateau.TUILE_TOMBANTE);
         
@@ -29,7 +29,7 @@ public class TestPlateau
         
         jframe.add(gui);
         jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        jframe.setMinimumSize(new Dimension(PlateauGUI.LARGEUR_TUILE * 15 + 150, PlateauGUI.HAUTEUR_TUILE * 15));
+        jframe.setMinimumSize(new Dimension(AfficheurDePlateau.LARGEUR_TUILE * 15 + 150, AfficheurDePlateau.HAUTEUR_TUILE * 15));
         jframe.setVisible(true);
     }
     

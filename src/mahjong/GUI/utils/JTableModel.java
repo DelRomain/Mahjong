@@ -3,6 +3,10 @@ package mahjong.GUI.utils;
 import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 
+/**
+ * Canevas du modele pour tout les tableaux graphiques du jeu
+ * @param <T> definit le type d'information qui sera afficher par le tableau
+ */
 public abstract class JTableModel<T> extends AbstractTableModel {
 
     private static final long serialVersionUID = 1L;

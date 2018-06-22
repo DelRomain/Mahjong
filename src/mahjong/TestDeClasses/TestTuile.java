@@ -5,6 +5,8 @@
  */
 package mahjong.TestDeClasses;
 
+import mahjong.GestionTuile.Tuile;
+import mahjong.GestionTuile.FamilleDeTuile;
 import java.util.Arrays;
 import mahjong.*;
 /**

@@ -1,12 +1,11 @@
 package mahjong.GUI.utils;
 
 import java.util.ArrayList;
-import mahjong.joueur.Joueur;
-import mahjong.partie.Chrono;
+import mahjong.GestionJoueur.Joueur;
+import mahjong.GestionPartie.Chrono;
 
 /**
- *
- * @author axelp
+ * Modele pour le tableau d'affichage du classement
  */
 public class JTableModeleClassement extends JTableModel<Joueur> {
 

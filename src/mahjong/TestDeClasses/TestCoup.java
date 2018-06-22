@@ -5,7 +5,9 @@
  */
 package mahjong.TestDeClasses;
 
-import mahjong.coup.CoupRetirerTuile;
+import mahjong.GestionTuile.Tuile;
+import mahjong.GestionTuile.FamilleDeTuile;
+import mahjong.TypeDeCoup.CoupRetirerTuile;
 import java.util.Arrays;
 import mahjong.*;
 

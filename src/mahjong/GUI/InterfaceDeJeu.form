@@ -180,7 +180,7 @@
         </Container>
       </SubComponents>
     </Container>
-    <Container class="mahjong.GUI.PlateauGUI" name="plateauGUI">
+    <Container class="mahjong.GUI.AfficheurDePlateau" name="plateauGUI">
 
       <Layout>
         <DimensionLayout dim="0">

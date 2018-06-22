@@ -104,7 +104,7 @@ public class MenuPrincipal extends javax.swing.JPanel {
     private void boutonJouerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boutonJouerActionPerformed
         if(fenetre.getGestionnaireJoueurs().getJoueur()!=null)
         {
-            DialogueCreationDePartie dialogueCreationDePartie = new DialogueCreationDePartie(fenetre, true);
+            CreationDePartie dialogueCreationDePartie = new CreationDePartie(fenetre, true);
             dialogueCreationDePartie.setVisible(true);
         }
         else
@@ -113,14 +113,26 @@ public class MenuPrincipal extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_boutonJouerActionPerformed
 
+    /**
+     * Permet d'afficher l'écran de selection du joueur
+     * @param evt 
+     */
     private void boutonChangerDeJoueurActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boutonChangerDeJoueurActionPerformed
         fenetre.afficherEcranSelectionJoueur();
     }//GEN-LAST:event_boutonChangerDeJoueurActionPerformed
 
+    /**
+     * Permet d'afficher l'écran de classement des joueurs
+     * @param evt 
+     */
     private void boutonAccesClassementActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boutonAccesClassementActionPerformed
         fenetre.afficherClassement();
     }//GEN-LAST:event_boutonAccesClassementActionPerformed
 
+    /**
+     * Permet de quitter le jeu
+     * @param evt 
+     */
     private void boutonQuitterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_boutonQuitterActionPerformed
         fenetre.dispatchEvent(new WindowEvent(fenetre, WindowEvent.WINDOW_CLOSING));
     }//GEN-LAST:event_boutonQuitterActionPerformed

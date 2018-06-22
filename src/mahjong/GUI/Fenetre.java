@@ -11,10 +11,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.event.EventListenerList;
 import mahjong.Listener.InterfaceListener;
-import mahjong.Type_Plateau.TypePlateau;
-import mahjong.joueur.GestionnaireJoueur;
-import mahjong.partie.Partie;
-import mahjong.partie.SauvegardePartie;
+import mahjong.TypeDePlateau.TypePlateau;
+import mahjong.GestionJoueur.GestionnaireJoueur;
+import mahjong.GestionPartie.Partie;
+import mahjong.GestionPartie.SauvegardePartie;
 
 /**
  * Fenetre du mahjong
@@ -25,12 +25,15 @@ public class Fenetre extends JFrame implements WindowListener {
     private final InterfaceDeJeu interfaceDeJeu;
     private final MenuPrincipal menu;
     private final GestionnaireJoueur gestionnaireJoueurs;
-    private final SelectionJoueurGUI ecranSelectionJoueur;
-    private final ClassementGUI classement;
+    private final SelectionJoueur ecranSelectionJoueur;
+    private final ClassementJoueurs classement;
     private Partie partie;
 
     private final EventListenerList listeners = new EventListenerList();
 
+    /**
+     * Initialise une nouvelle fenetre
+     */
     public Fenetre() {
         super("Mahjong");
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -48,14 +51,14 @@ public class Fenetre extends JFrame implements WindowListener {
         interfaceDeJeu = new InterfaceDeJeu(this);
         container.add(interfaceDeJeu, "Interface");
 
-        ecranSelectionJoueur = new SelectionJoueurGUI(this);
+        ecranSelectionJoueur = new SelectionJoueur(this);
         container.add(ecranSelectionJoueur, "EcranSelectionJoueur");
 
-        classement = new ClassementGUI(this);
+        classement = new ClassementJoueurs(this);
         container.add(classement, "Classement");
 
         this.setContentPane(container);
-        this.setMinimumSize(new Dimension(PlateauGUI.LARGEUR_TUILE * 15 + 150, PlateauGUI.HAUTEUR_TUILE * 15));
+        this.setMinimumSize(new Dimension(AfficheurDePlateau.LARGEUR_TUILE * 15 + 150, AfficheurDePlateau.HAUTEUR_TUILE * 15));
         this.setVisible(true);
     }
 
@@ -85,6 +88,9 @@ public class Fenetre extends JFrame implements WindowListener {
         cl.show(container, "Interface");
     }
 
+    /**
+     * Affiche le menu principal dans la fenetre
+     */
     public void afficherMenuPrincipal() {
         removeInterfaceListener(partie);
         partie = null;
@@ -92,6 +98,9 @@ public class Fenetre extends JFrame implements WindowListener {
         cl.show(container, "Menu");
     }
 
+    /**
+     * Affiche l'ecran de selection du joueur dans la fenetre
+     */
     public void afficherEcranSelectionJoueur() {
         gestionnaireJoueurs.chargerJoueurs();
         ecranSelectionJoueur.rechargerListeJoueur();
@@ -99,10 +108,9 @@ public class Fenetre extends JFrame implements WindowListener {
         cl.show(container, "EcranSelectionJoueur");
     }
 
-    public GestionnaireJoueur getGestionnaireJoueurs() {
-        return gestionnaireJoueurs;
-    }
-
+    /**
+     * Affiche l'ecran de classement des joueur dans la fenetre
+     */
     void afficherClassement() {
         classement.rechargerListeJoueur();
         CardLayout cl = (CardLayout) (container.getLayout());
@@ -168,14 +176,27 @@ public class Fenetre extends JFrame implements WindowListener {
         fireTogglePause();
     }
 
+    /**
+     * Ajoute une classe écouteur des événement de type interface
+     *
+     * @param listener : la classe écouteur
+     */
     public void addInterfaceListener(InterfaceListener listener) {
         listeners.add(InterfaceListener.class, listener);
     }
 
+    /**
+     * Retire une classe écouteur des événement de type interface
+     *
+     * @param listener : la classe écouteur
+     */
     public void removeInterfaceListener(InterfaceListener listener) {
         listeners.remove(InterfaceListener.class, listener);
     }
 
+    /**
+     * Lance l'événement "tooglePause"
+     */
     private void fireTogglePause() {
         if (partie != null && !partie.enPause()) {
             interfaceDeJeu.tooglePause();
@@ -183,5 +204,9 @@ public class Fenetre extends JFrame implements WindowListener {
                 listener.togglePause();
             }
         }
+    }
+
+    public GestionnaireJoueur getGestionnaireJoueurs() {
+        return gestionnaireJoueurs;
     }
 }
